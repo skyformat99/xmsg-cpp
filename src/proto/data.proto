@@ -1,0 +1,82 @@
+/*
+ * Copyright (C) 2015. Jefferson Lab, xMsg framework (JLAB). All Rights Reserved.
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for educational, research, and not-for-profit purposes,
+ * without fee and without a signed licensing agreement.
+ *
+ * Author Vardan Gyurjyan
+ * Department of Experimental Nuclear Physics, Jefferson Lab.
+ *
+ * IN NO EVENT SHALL JLAB BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF JLAB HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * JLAB SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE. THE CLARA SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
+ * HEREUNDER IS PROVIDED "AS IS". JLAB HAS NO OBLIGATION TO PROVIDE MAINTENANCE,
+ * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ */
+
+option optimize_for = SPEED;
+
+package xmsg.proto;
+
+// ... Data class ...
+message Data {
+
+    optional sint32 VLSINT32 = 1; // variable length signed int32
+    optional sint64 VLSINT64 = 2; // variable length signed int64
+    optional sfixed32 FLSINT32 = 3; // fixed length signed int32
+    optional sfixed64 FLSINT64 = 4; // fixed length signed int64
+    optional float FLOAT = 5;
+    optional double DOUBLE = 6;
+    optional string STRING = 7; // contains UTF-8 encoding or 7-bit ASCII text
+    optional bytes BYTES = 8; // contains arbitrary sequence of bytes
+
+    repeated sint32 VLSINT32A = 9; // array of variable length signed int32s
+    repeated sint64 VLSINT64A = 10; // array of variable length signed int64s
+    repeated sfixed32 FLSINT32A = 11; // array of fixed length signed int32s
+    repeated sfixed64 FLSINT64A = 12; // array of fixed length signed int64s
+    repeated float FLOATA = 13; // array of floats
+    repeated double DOUBLEA = 14; // array of doubles
+    repeated string STRINGA = 15; // array of UTF-8 encoded or 7-bit ASCII strings
+    repeated bytes BYTESA = 16; // array of arbitrary sequence of bytes
+
+    optional Type type = 17;
+
+    // Data sub-type
+    enum Type {
+        T_VLSINT32 = 1;   // variable length signed int32
+        T_VLSINT64 = 2;   // variable length signed int64
+        T_FLSINT32 = 3;   // fixed length signed int32
+        T_FLSINT64 = 4;   // fixed length signed int64
+        T_FLOAT = 5;
+        T_DOUBLE = 6;
+        T_STRING = 7;     // contains UTF-8 encoding or 7-bit ASCII text
+        T_BYTES = 8;      // contains arbitrary sequence of bytes
+
+        T_VLSINT32A = 9;  // array of variable length signed int32s
+        T_VLSINT64A = 10; // array of variable length signed int64s
+        T_FLSINT32A = 11; // array of fixed length signed int32s
+        T_FLSINT64A = 12; // array of fixed length signed int64s
+        T_FLOATA = 13;    // array of floats
+        T_DOUBLEA = 14;   // array of doubles
+        T_STRINGA = 15;   // array of UTF-8 encoded or 7-bit ASCII strings
+        T_BYTESA = 16;    // array of arbitrary sequence of bytes
+
+        T_PAYLOAD = 17;    // payload data type
+    }
+}
+
+//... Payload class ...
+message Payload {
+
+    message Item {
+        required string name =1; // payload name
+        required Data data = 2; // data
+    }
+
+    repeated Item item = 1;
+}

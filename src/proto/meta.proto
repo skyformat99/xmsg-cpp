@@ -1,0 +1,116 @@
+/*
+ * Copyright (C) 2015. Jefferson Lab, xMsg framework (JLAB). All Rights Reserved.
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for educational, research, and not-for-profit purposes,
+ * without fee and without a signed licensing agreement.
+ *
+ * Author Vardan Gyurjyan
+ * Department of Experimental Nuclear Physics, Jefferson Lab.
+ *
+ * IN NO EVENT SHALL JLAB BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL,
+ * INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF
+ * THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF JLAB HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * JLAB SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE. THE CLARA SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY, PROVIDED
+ * HEREUNDER IS PROVIDED "AS IS". JLAB HAS NO OBLIGATION TO PROVIDE MAINTENANCE,
+ * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ */
+
+option optimize_for = SPEED;
+
+package xmsg.proto;
+
+// ... Metta-data class ...
+message MetaData {
+
+    // ... Communication section ...
+    // Version
+    optional string version = 1;
+
+    // Description
+    optional string description = 2;
+
+    // Author of the communicating data
+    optional string author = 3;
+
+    // Status of the data production
+    optional Status status = 4;
+
+    // Data production status severity id
+    optional sfixed32 severityId = 5;
+
+    // The sender of the data.
+    // Note, in most cases this is going to be the author
+    optional string sender = 6;
+
+    // The state of the message sender.
+    // Note, this is reserved to be used for state machine organization
+    optional string senderState = 7;
+
+    // Communication id, used to genetically relate messages
+    optional fixed32 communicationId = 8;
+
+    // Reserved and used for Clara service based application
+    // composition i.e. link schema (list of linked service names)
+    // e.g. s1+s2;s1+s3,s4,s5+&s6
+    optional string composition = 10;
+
+    // Time spent in processing the inout data.
+    // Service engine execution time
+    optional sfixed64 executionTime = 11;
+
+    // Reserved and used to define which of the CLARA interface
+    // methods must be called on a service engine.
+    optional ControlAction action = 12;
+
+    // Reserved control field
+    optional SubControlAction control = 13;
+
+    // ... Data section ...
+    // Type of the data
+    optional string dataType = 14 [ default = "native"];
+
+    // description of the type, for e.g. If data
+    // type = J_Object then this can be used to
+    // further clarify what type of Java object is this.
+    optional string datTypeDescription = 15;
+
+    // Defines if data passed is serialized
+    optional bool isDataSerialized = 16 [default = true];
+
+    // Sync request reply_to address
+    optional string replyTo = 17 [default = "undefined"];
+
+    // Byte ordering in case data
+    // sub-type is T_BYTES/T_BYTESA
+    optional Endian byteOrder = 18;
+
+
+    // Data processing status
+    enum Status {
+        INFO = 1;
+        WARNING = 2;
+        ERROR = 3;
+    }
+
+    // Endianness
+    enum Endian {
+        Little = 1;
+        Big = 2;
+    }
+
+    // Control actions, used to define service control directive
+    enum ControlAction {
+        EXECUTE = 0;
+        CONFIGURE = 1;
+    }
+
+    // Sub control action, used to micromanage service engine activity
+    enum SubControlAction {
+        SKIP = 0;
+    }
+
+}
