@@ -1,6 +1,7 @@
 include_directories(${CMAKE_SOURCE_DIR}/include/xmsg)
 
 set(XMSG_FILES
+  topic.cpp
   util.cpp
 )
 
