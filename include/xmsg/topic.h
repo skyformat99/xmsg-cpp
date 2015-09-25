@@ -189,7 +189,12 @@ private:
      * Construct a topic from the given string.
      * The string must be a valid topic.
      */
-    template <typename T>
+    template <
+        typename T,
+        typename = std::enable_if_t<
+            !std::is_same<Topic, std::decay_t<T>>::value
+        >
+    >
     Topic(T&& topic)
         : topic_{std::forward<T>(topic)} { }
 
