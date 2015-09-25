@@ -47,6 +47,7 @@ if (XMSG_BUILD_TESTS)
   enable_testing()
   include("cmake/External/GMock.cmake")
   add_subdirectory("test/core")
+  add_subdirectory("test/perf")
 endif (XMSG_BUILD_TESTS)
 
 
