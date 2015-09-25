@@ -21,33 +21,22 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#ifndef XMSG_CORE_PRIVATE_H_
-#define XMSG_CORE_PRIVATE_H_
-
-#include "address.h"
-#include "connection.h"
 #include "connection_setup.h"
 
 #include "zmq.hpp"
 
 namespace xmsg {
 
-struct Connection::Impl {
-    Impl(zmq::context_t& ctx,
-         ProxyAddress addr,
-         std::shared_ptr<ConnectionSetup>&& setup)
-      : addr{addr},
-        setup{std::move(setup)},
-        pub{ctx, zmq::socket_type::pub},
-        sub{ctx, zmq::socket_type::sub}
-    { }
+void ConnectionSetup::pre_connection(zmq::socket_t& socket)
+{
+    socket.setsockopt(ZMQ_RCVHWM, 0);
+    socket.setsockopt(ZMQ_SNDHWM, 0);
+}
 
-    ProxyAddress addr;
-    std::shared_ptr<ConnectionSetup> setup;
-    zmq::socket_t pub;
-    zmq::socket_t sub;
-};
+
+void ConnectionSetup::post_connection()
+{
+    // nothing
+}
 
 } // end namespace xmsg
-
-#endif // XMSG_CORE_PRIVATE_H_
