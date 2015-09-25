@@ -1,6 +1,7 @@
 include_directories(${ZMQ_INCLUDE_DIRS})
 
 set(XMSG_FILES
+  address.cpp
   topic.cpp
   util.cpp
 )
