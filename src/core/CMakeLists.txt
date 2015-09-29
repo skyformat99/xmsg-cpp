@@ -6,8 +6,8 @@ set(XMSG_FILES
   util.cpp
 )
 
-add_library(xmsg SHARED ${XMSG_FILES})
-target_link_libraries(xmsg xmsgproto ${ZMQ_LIBRARIES})
+add_library(xmsg SHARED ${XMSG_FILES} $<TARGET_OBJECTS:xmsgproto>)
+target_link_libraries(xmsg xmsgproto_headers ${ZMQ_LIBRARIES})
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/xmsg/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/xmsg)
 install(TARGETS xmsg DESTINATION ${CMAKE_INSTALL_LIBDIR})
