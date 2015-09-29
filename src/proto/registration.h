@@ -26,4 +26,21 @@
 
 #include "registration.pb.h"
 
+namespace xmsg {
+
+namespace proto {
+
+struct CompareRegistration {
+    bool operator()(const Registration& lhs, const Registration& rhs) const;
+};
+
+bool operator==(const Registration& lhs, const Registration& rhs);
+bool operator!=(const Registration& lhs, const Registration& rhs);
+
+} // end namespace proto
+
+using RegDataSet = std::set<proto::Registration, proto::CompareRegistration>;
+
+} // end namespace xmsg
+
 #endif // XMSG_PROTO_REG_H_
