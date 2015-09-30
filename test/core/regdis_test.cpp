@@ -79,6 +79,138 @@ TEST(Response, CreateDataResponse)
 
 
 
+class MockContext : public zmq::context_t
+{
+};
+
+class MockDriver : public Driver
+{
+    friend struct DriverTest;
+
+    MockDriver(MockContext& ctx) : Driver{ctx, {}} {};
+
+    MOCK_METHOD2(request, Response(Request&, int));
+};
+
+struct DriverTest : public Test
+{
+    DriverTest()
+      : driver{ctx},
+        subscriber{new_registration("bradbury_sub", "localhost",
+                                    "writer:scifi:books", false)},
+        publisher {new_registration("bradbury_pub", "localhost",
+                                    "writer:scifi:books", true)}
+    {
+        ON_CALL(driver, request(_, _))
+            .WillByDefault(Return(Response{"", "", ""}));
+    }
+
+    void set_response(const Response& response)
+    {
+        EXPECT_CALL(driver, request(_, _)).WillOnce(Return(response));
+    }
+
+    template<typename T>
+    void expect_request(const std::string& name,
+                        T&& data,
+                        const std::string& topic,
+                        int timeout)
+    {
+        auto reg = Request{topic, name, std::forward<T>(data)};
+        EXPECT_CALL(driver, request(reg, timeout));
+    }
+
+    MockContext ctx;
+    MockDriver driver;
+    proto::Registration subscriber;
+    proto::Registration publisher;
+};
+
+
+TEST_F(DriverTest, SendPublisherRegistration)
+{
+    expect_request("bradbury_pub",
+                   publisher,
+                   constants::register_publisher,
+                   constants::register_request_timeout);
+    driver.add(publisher, true);
+}
+
+TEST_F(DriverTest, SendSubscriberRegistration)
+{
+    expect_request("bradbury_sub",
+                   subscriber,
+                   constants::register_subscriber,
+                   constants::register_request_timeout);
+    driver.add(subscriber, false);
+}
+
+TEST_F(DriverTest, SendPublisherRemoval)
+{
+    expect_request("bradbury_pub",
+                   publisher,
+                   constants::remove_publisher,
+                   constants::remove_request_timeout);
+    driver.remove(publisher, true);
+}
+
+TEST_F(DriverTest, SendSubscriberRemoval)
+{
+    expect_request("bradbury_sub",
+                   subscriber,
+                   constants::remove_subscriber,
+                   constants::remove_request_timeout);
+    driver.remove(subscriber, false);
+}
+
+TEST_F(DriverTest, SendHostRemoval)
+{
+    expect_request("10.2.9.1_node",
+                   "10.2.9.1",
+                   constants::remove_all_registration,
+                   constants::remove_request_timeout);
+    driver.remove_all("10.2.9.1_node", "10.2.9.1");
+}
+
+
+TEST_F(DriverTest, SendPublisherFind)
+{
+    auto data = new_registration("10.2.9.1_node", "10.2.9.1",
+                                 "bradbury:scifi:books", true);
+    expect_request("10.2.9.1_node",
+                   data,
+                   constants::find_publisher,
+                   constants::find_request_timeout);
+    driver.find(data, true);
+}
+
+
+TEST_F(DriverTest, SendSubscriberFind)
+{
+    auto data = new_registration("10.2.9.1_node", "10.2.9.1",
+                                 "bradbury:scifi:books", false);
+    expect_request("10.2.9.1_node",
+                   data,
+                   constants::find_subscriber,
+                   constants::find_request_timeout);
+    driver.find(data, false);
+}
+
+
+TEST_F(DriverTest, GetRegistration)
+{
+    auto all_reg = RegDataSet{publisher, subscriber};
+    auto data = new_registration("10.2.9.1_node", "10.2.9.1",
+                                 "bradbury:scifi:books", false);
+    set_response({"", "", all_reg});
+
+    auto res = driver.find(data, false);
+
+    EXPECT_THAT(res, ContainerEq(all_reg));
+}
+
+
+
 int main(int argc, char *argv[])
 {
     testing::InitGoogleTest(&argc, argv);

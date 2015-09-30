@@ -107,6 +107,29 @@ private:
 };
 
 
+class Driver
+{
+public:
+    Driver(zmq::context_t& ctx, RegAddress addr);
+    virtual ~Driver() = default;
+
+    void add(const proto::Registration& data, bool is_publisher);
+
+    void remove(const proto::Registration& data, bool is_publisher);
+    void remove_all(const std::string& sender, const std::string& host);
+
+    RegDataSet find(const proto::Registration& data, bool is_publisher);
+
+private:
+    virtual Response request(Request&, int);
+
+private:
+    zmq::context_t& ctx_;
+    RegAddress addr_;
+    zmq::socket_t socket_;
+};
+
+
 bool operator==(const Request& lhs, const Request& rhs);
 bool operator!=(const Request& lhs, const Request& rhs);
 

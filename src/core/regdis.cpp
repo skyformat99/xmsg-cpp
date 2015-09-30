@@ -184,6 +184,81 @@ ResponseMsg Response::msg()
 }
 
 
+Driver::Driver(zmq::context_t& ctx, RegAddress addr)
+  : ctx_{ctx},
+    addr_{addr},
+    socket_{ctx_, zmq::socket_type::req}
+{
+    socket_.setsockopt(ZMQ_RCVHWM, 0);
+    socket_.setsockopt(ZMQ_SNDHWM, 0);
+    socket_.connect("tcp://" + addr_.host + ":" + std::to_string(addr_.port));
+}
+
+
+void Driver::add(const proto::Registration& data, bool is_publisher)
+{
+    auto topic = is_publisher ? constants::register_publisher
+                              : constants::register_subscriber;
+    auto reg_req = Request{topic, data.name(), data};
+    request(reg_req, constants::register_request_timeout);
+}
+
+
+void Driver::remove(const proto::Registration& data, bool is_publisher)
+{
+    auto topic = is_publisher ? constants::remove_publisher
+                              : constants::remove_subscriber;
+    auto reg_req = Request{topic, data.name(), data};
+    request(reg_req, constants::remove_request_timeout);
+}
+
+
+void Driver::remove_all(const std::string& sender,
+                        const std::string& host)
+{
+    auto reg_req = Request{constants::remove_all_registration, sender, host};
+    request(reg_req, constants::remove_request_timeout);
+}
+
+
+RegDataSet Driver::find(const proto::Registration& data, bool is_publisher)
+{
+    auto topic = is_publisher ? constants::find_publisher
+                              : constants::find_subscriber;
+    auto reg_req = Request{topic, data.name(), data};
+    auto res = request(reg_req, constants::find_request_timeout);
+    return std::move(res.data());
+}
+
+
+Response Driver::request(Request& req, int timeout)
+{
+    using Items = std::array<zmq::pollitem_t, 1>;
+
+    auto out_msg = req.msg();
+    socket_.send(out_msg[0], ZMQ_SNDMORE);
+    socket_.send(out_msg[1], ZMQ_SNDMORE);
+    socket_.send(out_msg[2], 0);
+
+    auto items = Items{ {(void*) socket_, 0, ZMQ_POLLIN, 0} };
+    zmq::poll(items.data(), 1, timeout);
+    if (items[0].revents & ZMQ_POLLIN) {
+        auto in_msg = ResponseMsg{};
+        while (true) {
+            in_msg.emplace_back();
+            auto& msg = in_msg.back();
+            socket_.recv(&msg);
+            if (!msg.more()) {
+                break;
+            }
+        }
+        return { in_msg };
+    } else {
+        throw std::runtime_error{"timeout"};
+    }
+}
+
+
 
 bool operator==(const Request& lhs, const Request& rhs)
 {
