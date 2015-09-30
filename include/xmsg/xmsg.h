@@ -25,6 +25,7 @@
 #define XMSG_CORE_XMSG_H_
 
 #include "address.h"
+#include "connection.h"
 #include "registration.h"
 #include "topic.h"
 
@@ -35,6 +36,7 @@
 namespace xmsg {
 
 class ConnectionPool;
+class ConnectionSetup;
 
 
 /**
@@ -64,6 +66,13 @@ public:
     xMsg& operator=(xMsg&&);
 
     virtual ~xMsg();
+
+public:
+    std::unique_ptr<Connection> connect();
+    std::unique_ptr<Connection> connect(const ProxyAddress& addr);
+    void set_connection_setup(std::unique_ptr<ConnectionSetup> setup);
+
+    void release(std::unique_ptr<Connection>&& connection);
 
 public:
     void register_as_publisher(const Topic& topic,

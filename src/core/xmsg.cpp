@@ -81,6 +81,30 @@ xMsg& xMsg::operator=(xMsg &&) = default;
 xMsg::~xMsg() = default;
 
 
+std::unique_ptr<Connection> xMsg::connect()
+{
+    return xmsg_->con_pool->get_connection(xmsg_->default_proxy_addr);
+}
+
+
+std::unique_ptr<Connection> xMsg::connect(const ProxyAddress& addr)
+{
+    return xmsg_->con_pool->get_connection(addr);
+}
+
+
+void xMsg::set_connection_setup(std::unique_ptr<ConnectionSetup> setup)
+{
+    return xmsg_->con_pool->set_default_setup(std::move(setup));
+}
+
+
+void xMsg::release(std::unique_ptr<Connection>&& connection)
+{
+    xmsg_->con_pool->release_connection(std::move(connection));
+}
+
+
 void xMsg::register_as_publisher(const Topic& topic,
                                  const std::string& description)
 {
