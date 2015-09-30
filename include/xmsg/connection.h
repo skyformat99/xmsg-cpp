@@ -24,6 +24,8 @@
 #ifndef XMSG_CORE_CONNECTION_H_
 #define XMSG_CORE_CONNECTION_H_
 
+#include "message.h"
+
 #include <memory>
 
 namespace xmsg {
@@ -49,12 +51,15 @@ public:
 private:
     void connect();
 
+    void send(Message& msg);
+
 private:
     struct Impl;
     std::unique_ptr<Impl> con_;
     Connection(std::unique_ptr<Impl>&&);
 
     friend class ConnectionPool;
+    friend class xMsg;
 };
 
 } // end namespace xmsg

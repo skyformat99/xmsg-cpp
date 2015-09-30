@@ -57,6 +57,18 @@ void Connection::connect()
 }
 
 
+void Connection::send(Message& msg)
+{
+    const auto& t = msg.topic().str();
+    const auto& m = msg.metadata()->SerializeAsString();
+    const auto& d = msg.data();
+
+    con_->pub.send(t.data(), t.size(), ZMQ_SNDMORE);
+    con_->pub.send(m.data(), m.size(), ZMQ_SNDMORE);
+    con_->pub.send(d.data(), d.size(), 0);
+}
+
+
 const ProxyAddress& Connection::address()
 {
     return con_->addr;

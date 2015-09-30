@@ -105,6 +105,12 @@ void xMsg::release(std::unique_ptr<Connection>&& connection)
 }
 
 
+void xMsg::publish(std::unique_ptr<Connection>& connection, Message& msg)
+{
+    connection->send(msg);
+}
+
+
 void xMsg::register_as_publisher(const Topic& topic,
                                  const std::string& description)
 {

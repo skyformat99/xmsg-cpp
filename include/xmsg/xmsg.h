@@ -26,6 +26,7 @@
 
 #include "address.h"
 #include "connection.h"
+#include "message.h"
 #include "registration.h"
 #include "topic.h"
 
@@ -73,6 +74,9 @@ public:
     void set_connection_setup(std::unique_ptr<ConnectionSetup> setup);
 
     void release(std::unique_ptr<Connection>&& connection);
+
+public:
+    void publish(std::unique_ptr<Connection>& connection, Message& msg);
 
 public:
     void register_as_publisher(const Topic& topic,
