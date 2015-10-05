@@ -9,6 +9,7 @@ set(XMSG_FILES
   connection_setup.cpp
   regdis.cpp
   topic.cpp
+  subscription.cpp
   util.cpp
 )
 

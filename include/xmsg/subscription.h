@@ -21,52 +21,57 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#ifndef XMSG_CORE_CONNECTION_H_
-#define XMSG_CORE_CONNECTION_H_
+#ifndef XMSG_CORE_SUBSCRIPTION_H_
+#define XMSG_CORE_SUBSCRIPTION_H_
 
-#include "message.h"
+#include "topic.h"
 
+#include <atomic>
+#include <functional>
 #include <memory>
+#include <string>
+#include <thread>
 
 namespace xmsg {
 
-class ProxyAddress;
+class Connection;
+class Message;
+class xMsg;
 
-/**
- * The standard connection to xMsg nodes.
- * Contains ProxyAddress object and two 0MQ sockets for publishing and
- * subscribing xMsg messages respectfully.
- */
-class Connection final {
+class Subscription final
+{
 public:
-    Connection(const Connection&) = delete;
-    Connection& operator=(const Connection&) = delete;
+    Subscription(const Subscription&) = delete;
+    Subscription& operator=(const Subscription&) = delete;
 
-    Connection(Connection&&);
-    Connection& operator=(Connection&&);
-    ~Connection();
+    Subscription(Subscription&&) = delete;
+    Subscription& operator=(Subscription&&) = delete;
 
-    const ProxyAddress& address();
-
-private:
-    void connect();
-
-    void send(Message& msg);
-    Message recv();
-
-    void subscribe(const Topic& topic);
-    void unsubscribe(const Topic& topic);
+    ~Subscription();
 
 private:
-    struct Impl;
-    std::unique_ptr<Impl> con_;
-    Connection(std::unique_ptr<Impl>&&);
+    using Callback = std::function<void(Message&)>;
+    using ConnectionDeleter = std::function<void(Connection*)>;
+    using ConnectionWrapperPtr = std::unique_ptr<Connection, ConnectionDeleter>;
 
-    friend class ConnectionPool;
-    friend class xMsg;
-    friend class Subscription;
+    Subscription(const Topic& topic,
+                 ConnectionWrapperPtr connection,
+                 Callback handler);
+
+    void run();
+    void stop();
+
+private:
+    friend xMsg;
+
+    Topic topic_;
+    ConnectionWrapperPtr connection_;
+    std::function<void(Message&)> handler_;
+
+    std::thread thread_;
+    std::atomic_bool is_alive_;
 };
 
-} // end namespace xmsg
+}; // end namespace xmsg
 
-#endif // XMSG_CORE_CONNECTION_H_
+#endif // XMSG_CORE_SUBSCRIPTION_H_

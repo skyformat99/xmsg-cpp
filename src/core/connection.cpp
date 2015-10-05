@@ -30,6 +30,8 @@
 
 #include "zmq.hpp"
 
+#include <array>
+
 namespace xmsg {
 
 Connection::Connection(std::unique_ptr<Connection::Impl>&& impl)
@@ -66,6 +68,50 @@ void Connection::send(Message& msg)
     con_->pub.send(t.data(), t.size(), ZMQ_SNDMORE);
     con_->pub.send(m.data(), m.size(), ZMQ_SNDMORE);
     con_->pub.send(d.data(), d.size(), 0);
+}
+
+
+Message Connection::recv()
+{
+    using MultiMessage = std::array<zmq::message_t, 3>;
+
+    auto multi_msg = MultiMessage{};
+    auto counter = size_t{0};
+    for (auto& msg : multi_msg) {
+        con_->sub.recv(&msg);
+        ++counter;
+        if (!msg.more()) {
+            break;
+        }
+    }
+    if (counter != multi_msg.size() || multi_msg.end()->more()) {
+        throw std::runtime_error{"Invalid multi-part message"};
+    }
+
+    auto topic = Topic::raw(multi_msg[0].data<const char>());
+
+    auto meta = std::make_unique<xmsg::proto::MetaData>();
+    meta->ParseFromArray(multi_msg[1].data(), multi_msg[1].size());
+
+    auto data_ptr = multi_msg[2].data<std::uint8_t>();
+    auto data_size = multi_msg[2].size();
+    auto data = std::vector<std::uint8_t>(data_ptr, data_ptr + data_size);
+
+    return {topic, std::move(meta), std::move(data)};
+}
+
+
+void Connection::subscribe(const Topic& topic)
+{
+    auto& str = topic.str();
+    con_->sub.setsockopt(ZMQ_SUBSCRIBE, str.data(), str.size());
+}
+
+
+void Connection::unsubscribe(const Topic& topic)
+{
+    auto& str = topic.str();
+    con_->sub.setsockopt(ZMQ_UNSUBSCRIBE, str.data(), str.size());
 }
 
 

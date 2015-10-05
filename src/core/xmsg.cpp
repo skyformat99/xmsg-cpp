@@ -111,6 +111,23 @@ void xMsg::publish(std::unique_ptr<Connection>& connection, Message& msg)
 }
 
 
+std::unique_ptr<Subscription>
+xMsg::subscribe(const Topic& topic,
+                std::unique_ptr<Connection> connection,
+                std::function<void(Message&)> callback)
+{
+    return std::unique_ptr<Subscription>{
+            new Subscription{topic, std::move(connection), std::move(callback)}
+    };
+}
+
+
+void xMsg::unsubscribe(std::unique_ptr<Subscription> handler)
+{
+    handler->stop();
+}
+
+
 void xMsg::register_as_publisher(const Topic& topic,
                                  const std::string& description)
 {
