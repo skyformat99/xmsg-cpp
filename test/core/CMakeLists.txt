@@ -11,6 +11,10 @@ add_dependencies(test_util googlemock)
 add_test(test_util test_util)
 target_link_libraries(test_util xmsg ${GMOCK_LIBRARIES})
 
+add_executable(test_subscription subscription_test.cpp)
+add_dependencies(test_subscription googlemock)
+target_link_libraries(test_subscription xmsg ${GMOCK_LIBRARIES})
+
 add_executable(test_regdis regdis_test.cpp)
 add_dependencies(test_regdis googlemock)
 add_test(test_regdis test_regdis)
