@@ -1,4 +1,3 @@
-include_directories(${CMAKE_SOURCE_DIR}/include/xmsg)
 include_directories(${GMOCK_INCLUDE_DIRS})
 
 add_executable(test_topic topic_test.cpp)
