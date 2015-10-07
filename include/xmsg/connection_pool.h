@@ -21,42 +21,58 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#ifndef XMSG_CORE_CONNECTION_H_
-#define XMSG_CORE_CONNECTION_H_
+#ifndef XMSG_CORE_CONNECTION_POOL_H_
+#define XMSG_CORE_CONNECTION_POOL_H_
 
 #include <memory>
 
+namespace zmq {
+class context_t;
+} // end namespace zmq
+
 namespace xmsg {
 
+class Connection;
+class ConnectionSetup;
 class ProxyAddress;
+class RegAddress;
 
-/**
- * The standard connection to xMsg nodes.
- * Contains ProxyAddress object and two 0MQ sockets for publishing and
- * subscribing xMsg messages respectfully.
- */
-class Connection final {
+namespace registration {
+class Driver;
+}
+
+using ContextPtr = std::unique_ptr<zmq::context_t>;
+using ConnectionPtr = std::unique_ptr<Connection>;
+using DriverPtr = std::unique_ptr<registration::Driver>;
+
+using SetupPtr = std::unique_ptr<ConnectionSetup>;
+using SetupSharedPtr = std::shared_ptr<ConnectionSetup>;
+
+class ConnectionPool {
 public:
-    Connection(const Connection&) = delete;
-    Connection& operator=(const Connection&) = delete;
+    ConnectionPool();
+    ConnectionPool(ContextPtr ctx);
 
-    Connection(Connection&&);
-    Connection& operator=(Connection&&);
-    ~Connection();
+public:
+    ConnectionPtr get_connection(const ProxyAddress& addr);
+    ConnectionPtr get_connection(const ProxyAddress& addr, SetupPtr&& setup);
+    void set_default_setup(SetupPtr&& setup);
 
-    const ProxyAddress& address();
+    DriverPtr get_connection(const RegAddress& addr);
+
+    void release_connection(ConnectionPtr&& con);
+    void release_connection(DriverPtr&& con);
 
 private:
-    void connect();
+    ConnectionPtr create_connection(const ProxyAddress& addr,
+                                    SetupSharedPtr&& setup);
+    DriverPtr create_connection(const RegAddress& addr);
 
 private:
-    struct Impl;
-    std::unique_ptr<Impl> con_;
-    Connection(std::unique_ptr<Impl>&&);
-
-    friend class ConnectionPool;
+    ContextPtr ctx_;
+    SetupSharedPtr default_setup_;
 };
 
 } // end namespace xmsg
 
-#endif // XMSG_CORE_CONNECTION_H_
+#endif // XMSG_CORE_CONNECTION_POOL_H_
