@@ -113,6 +113,63 @@ TEST(Subscription, SuscribeReceivesAllMessages)
 }
 
 
+TEST(Subscription, syncPublishReceivesAllResponses)
+{
+    struct Check {
+        std::atomic_int counter{0};
+        std::atomic_long sum{0};
+
+        const int N = 100;
+        const long SUM_N = 4950L;
+    } check;
+
+    auto proxy_thread = xmsg::test::ProxyThread{};
+
+    auto syncpub_thread = std::thread{[&](){
+        try {
+            auto sub_actor = xmsg::xMsg{"test_subscriber"};
+            auto sub_con = sub_actor.connect();
+            auto rep_con = sub_actor.connect();
+            xmsg::util::sleep(100);
+
+            auto sub_topic = xmsg::Topic::raw("test_topic");
+            auto sub_cb = [&] (xmsg::Message& m) {
+                auto r_topic = m.metadata()->replyto();
+                auto r_data = parseData(m);
+                auto r_msg = create_message(xmsg::Topic::raw(r_topic), r_data);
+                sub_actor.publish(rep_con, r_msg);
+            };
+
+            auto sub = sub_actor.subscribe(sub_topic, std::move(sub_con), sub_cb);
+            xmsg::util::sleep(100);
+
+            auto pub_actor = xmsg::xMsg{"test_publisher"};
+            auto pub_con = pub_actor.connect();
+            xmsg::util::sleep(100);
+
+            auto pub_topic = xmsg::Topic::raw("test_topic");
+            for (int i = 0; i < check.N; i++) {
+                auto msg = create_message(pub_topic, i);
+                auto res_msg = pub_actor.sync_publish(pub_con, msg, 1000);
+                int data = parseData(res_msg);
+                check.counter.fetch_add(1);
+                check.sum.fetch_add(data);
+            }
+
+            sub_actor.unsubscribe(std::move(sub));
+        } catch (std::exception& e) {
+            std::cerr << e.what() << std::endl;
+        }
+    }};
+
+    syncpub_thread.join();
+    proxy_thread.stop();
+
+    ASSERT_THAT(check.counter.load(), Eq(check.N));
+    ASSERT_THAT(check.sum.load(), Eq(check.SUM_N));
+}
+
+
 
 int main(int argc, char *argv[])
 {
