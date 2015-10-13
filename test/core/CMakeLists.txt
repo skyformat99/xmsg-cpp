@@ -15,3 +15,7 @@ add_executable(test_regdis regdis_test.cpp)
 add_dependencies(test_regdis googlemock)
 add_test(test_regdis test_regdis)
 target_link_libraries(test_regdis xmsg ${GMOCK_LIBRARIES})
+
+add_executable(test_registration registrar_test.cpp)
+add_dependencies(test_registration googlemock)
+target_link_libraries(test_registration xmsg ${GMOCK_LIBRARIES})
