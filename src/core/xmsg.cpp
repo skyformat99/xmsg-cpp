@@ -25,6 +25,7 @@
 
 #include "connection_setup.h"
 #include "connection_pool.h"
+#include "regdis.h"
 #include "util.h"
 
 namespace xmsg {
@@ -78,6 +79,119 @@ xMsg::xMsg(xMsg &&) = default;
 xMsg& xMsg::operator=(xMsg &&) = default;
 
 xMsg::~xMsg() = default;
+
+
+void xMsg::register_as_publisher(const Topic& topic,
+                                 const std::string& description)
+{
+    register_as_publisher(xmsg_->default_reg_addr, topic, description);
+}
+
+
+void xMsg::register_as_publisher(const RegAddress& addr,
+                                 const Topic& topic,
+                                 const std::string& description)
+{
+    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto proxy = xmsg_->default_proxy_addr;
+    auto data = registration::create(xmsg_->name, description,
+                                     proxy.host, proxy.pub_port,
+                                     topic, true);
+    data.set_description(description);
+
+    driver->add(data, true);
+}
+
+
+void xMsg::register_as_subscriber(const Topic& topic,
+                                  const std::string& description)
+{
+    register_as_subscriber(xmsg_->default_reg_addr, topic, description);
+}
+
+
+void xMsg::register_as_subscriber(const RegAddress& addr,
+                                  const Topic& topic,
+                                  const std::string& description)
+{
+    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto proxy = xmsg_->default_proxy_addr;
+    auto data = registration::create(xmsg_->name, description,
+                                     proxy.host, proxy.sub_port,
+                                     topic, false);
+    data.set_description(description);
+
+    driver->add(data, false);
+}
+
+
+void xMsg::remove_as_publisher(const Topic& topic)
+{
+    remove_as_publisher(xmsg_->default_reg_addr, topic);
+}
+
+
+void xMsg::remove_as_publisher(const RegAddress& addr, const Topic& topic)
+{
+    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto proxy = xmsg_->default_proxy_addr;
+    auto data = registration::create(xmsg_->name, "",
+                                     proxy.host, proxy.pub_port,
+                                     topic, true);
+    driver->remove(data, true);
+}
+
+
+
+void xMsg::remove_as_subscriber(const Topic& topic)
+{
+    remove_as_subscriber(xmsg_->default_reg_addr, topic);
+}
+
+
+void xMsg::remove_as_subscriber(const RegAddress& addr, const Topic& topic)
+{
+    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto proxy = xmsg_->default_proxy_addr;
+    auto data = registration::create(xmsg_->name, "",
+                                     proxy.host, proxy.sub_port,
+                                     topic, false);
+    driver->remove(data, false);
+}
+
+
+RegDataSet xMsg::find_publishers(const Topic& topic)
+{
+    return find_publishers(xmsg_->default_reg_addr, topic);
+}
+
+
+RegDataSet xMsg::find_publishers(const RegAddress& addr, const Topic& topic)
+{
+    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto proxy = xmsg_->default_proxy_addr;
+    auto data = registration::create(xmsg_->name, "",
+                                     proxy.host, proxy.pub_port,
+                                     topic, true);
+    return driver->find(data, true);
+}
+
+
+RegDataSet xMsg::find_subscribers(const Topic& topic)
+{
+    return find_subscribers(xmsg_->default_reg_addr, topic);
+}
+
+
+RegDataSet xMsg::find_subscribers(const RegAddress& addr, const Topic& topic)
+{
+    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto proxy = xmsg_->default_proxy_addr;
+    auto data = registration::create(xmsg_->name, "",
+                                     proxy.host, proxy.sub_port,
+                                     topic, false);
+    return driver->find(data, false);
+}
 
 
 const std::string& xMsg::name()

@@ -25,13 +25,17 @@
 #define XMSG_CORE_XMSG_H_
 
 #include "address.h"
+#include "registration.h"
+#include "topic.h"
 
 #include <memory>
 #include <string>
+#include <set>
 
 namespace xmsg {
 
 class ConnectionPool;
+
 
 /**
  * xMsg actor.
@@ -60,6 +64,31 @@ public:
     xMsg& operator=(xMsg&&);
 
     virtual ~xMsg();
+
+public:
+    void register_as_publisher(const Topic& topic,
+                               const std::string& description);
+    void register_as_publisher(const RegAddress& addr,
+                               const Topic& topic,
+                               const std::string& description);
+
+    void register_as_subscriber(const Topic& topic,
+                                const std::string& description);
+    void register_as_subscriber(const RegAddress& addr,
+                                const Topic& topic,
+                                const std::string& description);
+
+    void remove_as_publisher(const Topic& topic);
+    void remove_as_publisher(const RegAddress& addr, const Topic& topic);
+
+    void remove_as_subscriber(const Topic& topic);
+    void remove_as_subscriber(const RegAddress& addr, const Topic& topic);
+
+    RegDataSet find_publishers(const Topic& topic);
+    RegDataSet find_publishers(const RegAddress& addr, const Topic& topic);
+
+    RegDataSet find_subscribers(const Topic& topic);
+    RegDataSet find_subscribers(const RegAddress& addr, const Topic& topic);
 
 public:
     const std::string& name();
