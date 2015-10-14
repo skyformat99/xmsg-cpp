@@ -79,6 +79,7 @@ public:
 
 public:
     void publish(std::unique_ptr<Connection>& connection, Message& msg);
+    Message sync_publish(std::unique_ptr<Connection>&, Message& msg, int timeout);
 
     std::unique_ptr<Subscription>
     subscribe(const Topic& topic,
