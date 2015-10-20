@@ -1,0 +1,26 @@
+To run the performance tests, go to the base directory and run the following
+on several terminals:
+
+1. Start an xMsg node:
+
+    $ ./build/src/sys/cx_proxy
+
+2. Start the subscriber. Pass the message size and the expected number of
+   messages:
+
+   $ ./build/test/perf/local_thr localhost 50000 100000
+
+2. Start the publisher. Pass the message size and the number of
+   messages to be sent:
+
+   $ ./build/test/perf/remote_thr localhost 50000 100000
+
+Once all the messages have been received, the subscriber will print the
+performance and throughput results:
+
+    message elapsed: 4.081 [s]
+    message size: 50000 [B]
+    message count: 100000
+    mean transfer time: 40.807 [us]
+    mean transfer rate: 24505 [msg/s]
+    mean throughput: 9802.000 [Mb/s]
