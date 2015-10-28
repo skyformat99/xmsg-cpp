@@ -25,8 +25,8 @@
 #define XMSG_CORE_MESSAGE_HPP_
 
 #include "topic.h"
-#include "meta.pb.h"
-#include "data.pb.h"
+#include "meta.h"
+#include "data.h"
 
 #include <cstdint>
 #include <memory>
