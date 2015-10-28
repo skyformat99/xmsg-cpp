@@ -107,6 +107,21 @@ private:
 };
 
 
+template<typename T,
+         typename D,
+         typename = std::enable_if_t<
+            !std::is_same<proto::Data, std::decay_t<D>>::value
+         >
+        >
+inline Message make_message(T&& topic, D&& data)
+{
+    auto xdata = proto::make_data(std::forward<D>(data));
+    return {std::forward<T>(topic),
+            proto::internal::get_mimetype<std::decay_t<D>>(),
+            proto::serialize_data(xdata)};
+}
+
+
 template<typename T>
 inline Message make_message(T&& topic, const proto::Data& data)
 {
@@ -115,6 +130,15 @@ inline Message make_message(T&& topic, const proto::Data& data)
 }
 
 
+template<typename T>
+inline T parse_message(const Message& msg)
+{
+    auto xdata = proto::parse_data(msg.data());
+    return proto::parse_data<T>(xdata);
+}
+
+
+template<>
 inline proto::Data parse_message(const Message& msg)
 {
     return proto::parse_data(msg.data());

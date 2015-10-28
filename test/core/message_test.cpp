@@ -112,10 +112,75 @@ TEST(Message, CreateWithProtoData)
 {
     auto data = make_test_data();
     auto msg = xmsg::make_message(topic, data);
-    auto result = xmsg::parse_message(msg);
+    auto result = xmsg::parse_message<xmsg::proto::Data>(msg);
 
     EXPECT_THAT(result, Eq(data));
     EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::xmsg_data));
+}
+
+
+TEST(Message, CreateWithIntegerData)
+{
+    auto msg = xmsg::make_message(topic, 42);
+    auto result = xmsg::parse_message<std::int32_t>(msg);
+
+    EXPECT_THAT(result, Eq(42));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_sint32));
+}
+
+
+TEST(Message, CreateWithFloatData)
+{
+    auto data = 4.8f;
+    auto msg = xmsg::make_message(topic, data);
+    auto result = xmsg::parse_message<float>(msg);
+
+    EXPECT_THAT(result, Eq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_float));
+}
+
+
+TEST(Message, CreateWithStringData)
+{
+    auto data = "some_string";
+    auto msg = xmsg::make_message(topic, data);
+    auto result = xmsg::parse_message<std::string>(msg);
+
+    EXPECT_THAT(result, Eq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_string));
+}
+
+
+TEST(Message, CreateWithIntegerArray)
+{
+    auto data = std::vector<std::int64_t>{ 1000L, 2000L, 3000L };
+    auto msg = xmsg::make_message(topic, data);
+    auto result = xmsg::parse_message<std::vector<std::int64_t>>(msg);
+
+    EXPECT_THAT(result, ContainerEq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_sint64));
+}
+
+
+TEST(Message, CreateWithFloatArray)
+{
+    auto data = std::vector<double>{ 1000., 2000., 3000. };
+    auto msg = xmsg::make_message(topic, data);
+    auto result = xmsg::parse_message<std::vector<double>>(msg);
+
+    EXPECT_THAT(result, ContainerEq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_double));
+}
+
+
+TEST(Message, CreateWithStringArray)
+{
+    auto data = std::vector<std::string>{ "one", "two", "three" };
+    auto msg = xmsg::make_message(topic, data);
+    auto result = xmsg::parse_message<std::vector<std::string>>(msg);
+
+    EXPECT_THAT(result, ContainerEq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_string));
 }
 
 

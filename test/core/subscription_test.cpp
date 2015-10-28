@@ -14,28 +14,6 @@
 using namespace testing;
 
 
-xmsg::Message create_message(const xmsg::Topic& topic, int data)
-{
-    auto xmeta = std::make_unique<xmsg::proto::Meta>();
-    auto xdata = xmsg::proto::Data{};
-    xmeta->set_datatype("native");
-    xdata.set_flsint32(data);
-    auto vdata = std::vector<std::uint8_t>(xdata.ByteSize());
-    xdata.SerializeToArray(vdata.data(), vdata.size());
-    return {topic, std::move(xmeta), std::move(vdata)};
-}
-
-
-int parseData(const xmsg::Message& msg)
-{
-    auto& v = msg.data();
-    xmsg::proto::Data data;
-    data.ParseFromArray(v.data(), v.size());
-    return data.flsint32();
-}
-
-
-
 TEST(Subscription, UnsubscribeStopsThread)
 {
     auto actor = xmsg::xMsg{"test"};
@@ -69,7 +47,7 @@ TEST(Subscription, SuscribeReceivesAllMessages)
 
             auto topic = xmsg::Topic::raw("test_topic");
             auto cb = [&] (xmsg::Message& msg) {
-                int i = parseData(msg);
+                auto i = xmsg::parse_message<int>(msg);
                 check.counter.fetch_add(1);
                 check.sum.fetch_add(i);
                 return std::move(msg);
@@ -95,7 +73,7 @@ TEST(Subscription, SuscribeReceivesAllMessages)
 
             auto topic = xmsg::Topic::raw("test_topic");
             for (int i = 0; i < check.N; i++) {
-                auto msg = create_message(topic, i);
+                auto msg = xmsg::make_message(topic, i);
                 actor.publish(connection, msg);
             }
         } catch (std::exception& e) {
@@ -135,8 +113,8 @@ TEST(Subscription, syncPublishReceivesAllResponses)
             auto sub_topic = xmsg::Topic::raw("test_topic");
             auto sub_cb = [&] (xmsg::Message& m) {
                 auto r_topic = m.meta()->replyto();
-                auto r_data = parseData(m);
-                auto r_msg = create_message(xmsg::Topic::raw(r_topic), r_data);
+                auto r_data = xmsg::parse_message<int>(m);
+                auto r_msg = xmsg::make_message(xmsg::Topic::raw(r_topic), r_data);
                 sub_actor.publish(rep_con, r_msg);
             };
 
@@ -149,9 +127,9 @@ TEST(Subscription, syncPublishReceivesAllResponses)
 
             auto pub_topic = xmsg::Topic::raw("test_topic");
             for (int i = 0; i < check.N; i++) {
-                auto msg = create_message(pub_topic, i);
+                auto msg = xmsg::make_message(pub_topic, i);
                 auto res_msg = pub_actor.sync_publish(pub_con, msg, 1000);
-                int data = parseData(res_msg);
+                auto data = xmsg::parse_message<int>(res_msg);
                 check.counter.fetch_add(1);
                 check.sum.fetch_add(data);
             }
