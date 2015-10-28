@@ -107,6 +107,20 @@ private:
 };
 
 
+template<typename T>
+inline Message make_message(T&& topic, const proto::Data& data)
+{
+    auto buffer = proto::serialize_data(data);
+    return {std::forward<T>(topic), mimetype::xmsg_data, std::move(buffer)};
+}
+
+
+inline proto::Data parse_message(const Message& msg)
+{
+    return proto::parse_data(msg.data());
+}
+
+
 inline bool operator==(const Message& lhs, const Message& rhs)
 {
     return std::tie(lhs.topic(), *lhs.meta(), lhs.data())

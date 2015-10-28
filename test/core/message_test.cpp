@@ -8,6 +8,8 @@
 
 using namespace testing;
 
+namespace mt = xmsg::mimetype;
+
 namespace {
 
 auto make_test_data()
@@ -103,6 +105,17 @@ TEST(Message, SwapMessages)
 
     ASSERT_THAT(copy1, Eq(msg2));
     ASSERT_THAT(copy2, Eq(msg1));
+}
+
+
+TEST(Message, CreateWithProtoData)
+{
+    auto data = make_test_data();
+    auto msg = xmsg::make_message(topic, data);
+    auto result = xmsg::parse_message(msg);
+
+    EXPECT_THAT(result, Eq(data));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::xmsg_data));
 }
 
 
