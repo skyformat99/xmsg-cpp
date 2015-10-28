@@ -33,6 +33,21 @@
 namespace xmsg {
 namespace proto {
 
+inline std::vector<std::uint8_t> serialize_data(const Data& data)
+{
+    auto buffer = std::vector<std::uint8_t>(data.ByteSize());
+    data.SerializeToArray(buffer.data(), buffer.size());
+    return buffer;
+}
+
+inline Data parse_data(const std::vector<std::uint8_t>& buffer)
+{
+    auto xdata = Data{};
+    xdata.ParseFromArray(buffer.data(), buffer.size());
+    return xdata;
+}
+
+
 inline bool operator==(const Data& lhs, const Data& rhs)
 {
     return lhs.SerializeAsString() == rhs.SerializeAsString();

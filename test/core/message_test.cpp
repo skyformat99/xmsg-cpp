@@ -10,8 +10,29 @@ using namespace testing;
 
 namespace {
 
+auto make_test_data()
+{
+    auto data = xmsg::proto::Data{};
+    data.set_flsint32(29);
+    data.set_float_(42.f);
+    data.set_string("november");
+    data.add_doublea(0.);
+    data.add_doublea(9.);
+    return data;
+}
+
 const xmsg::Topic topic = xmsg::Topic::raw("test/topic");
 
+}
+
+
+TEST(Data, Serialize)
+{
+    auto data = make_test_data();
+    auto buffer = xmsg::proto::serialize_data(data);
+    auto result = xmsg::proto::parse_data(buffer);
+
+    EXPECT_THAT(result, Eq(data));
 }
 
 
