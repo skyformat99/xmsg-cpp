@@ -25,6 +25,7 @@
 #define XMSG_PROTO_DATA_H_
 
 #include "data.pb.h"
+#include "constants.h"
 
 #include <cstdint>
 #include <memory>
@@ -32,6 +33,83 @@
 
 namespace xmsg {
 namespace proto {
+
+namespace internal {
+
+template <typename T>
+inline void set_value(Data& data, const T& value)
+        { static_assert(sizeof(T) == 0, "Unsupported data type"); }
+
+inline void set_value(Data& data, std::int32_t value)
+        { data.set_flsint32(value); }
+inline void set_value(Data& data, std::int64_t &value)
+        { data.set_flsint64(value); }
+inline void set_value(Data& data, float value)
+        { data.set_float_(value); }
+inline void set_value(Data& data, double value)
+        { data.set_double_(value); }
+inline void set_value(Data& data, const std::string& value)
+        { data.set_string(value); }
+inline void set_value(Data& data, const char* value)
+        { data.set_string(value); }
+
+template <typename R, typename C>
+inline void set_repeated(R* repeated, const C& values)
+        { R data{values.cbegin(), values.cend()}; repeated->Swap(&data); }
+
+inline void set_value(Data& data, const std::vector<std::int32_t>& value)
+        { set_repeated(data.mutable_flsint32a(), value); }
+inline void set_value(Data& data, const std::vector<std::int64_t>& value)
+        { set_repeated(data.mutable_flsint64a(), value); }
+inline void set_value(Data& data, const std::vector<float>& value)
+        { set_repeated(data.mutable_floata(), value); }
+inline void set_value(Data& data, const std::vector<double>& value)
+        { set_repeated(data.mutable_doublea(), value); }
+inline void set_value(Data& data, const std::vector<std::string>& value)
+        { set_repeated(data.mutable_stringa(), value); }
+
+template <typename T>
+inline T get_value(Data& data)
+        { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
+
+template<> inline std::int32_t get_value(Data& data)
+        { return data.flsint32(); }
+template<> inline std::int64_t get_value(Data& data)
+        { return data.flsint64(); }
+template<> inline float get_value(Data& data)
+        { return data.float_(); }
+template<> inline double get_value(Data& data)
+        { return data.double_(); }
+template<> inline std::string get_value(Data& data)
+        { return data.string(); }
+
+template<> inline std::vector<std::int32_t> get_value(Data& data)
+        { auto& a = data.flsint32a(); return {a.begin(), a.end()}; }
+template<> inline std::vector<std::int64_t> get_value(Data& data)
+        { auto& a = data.flsint64a(); return {a.begin(), a.end()}; }
+template<> inline std::vector<float> get_value(Data& data)
+        { auto& a = data.floata(); return {a.begin(), a.end()}; }
+template<> inline std::vector<double> get_value(Data& data)
+        { auto& a = data.doublea(); return {a.begin(), a.end()}; }
+template<> inline std::vector<std::string> get_value(Data& data)
+        { auto& a = data.stringa(); return {a.begin(), a.end()}; }
+
+} // end namespace internal
+
+
+template<typename T>
+inline Data make_data(T&& data)
+{
+    auto xdata = Data{};
+    internal::set_value(xdata, std::forward<T>(data));
+    return xdata;
+}
+
+template<typename T>
+inline T parse_data(Data& data)
+{
+    return internal::get_value<T>(data);
+}
 
 inline std::vector<std::uint8_t> serialize_data(const Data& data)
 {
