@@ -1,6 +1,11 @@
 include_directories(${GMOCK_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 
+add_executable(test_message message_test.cpp)
+add_dependencies(test_message googlemock)
+add_test(test_message test_message)
+target_link_libraries(test_message xmsg ${GMOCK_LIBRARIES})
+
 add_executable(test_topic topic_test.cpp)
 add_dependencies(test_topic googlemock)
 add_test(test_topic test_topic)
