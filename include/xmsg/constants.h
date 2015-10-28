@@ -65,6 +65,34 @@ const int registrar_port = 8888;
 
 } // end namespace constants
 
+
+namespace mimetype {
+
+const std::string single_sint32 = "binary/sint32";
+const std::string single_sint64 = "binary/sint64";
+const std::string single_sfixed32 = "binary/sfixed32";
+const std::string single_sfixed64 = "binary/sfixed64";
+const std::string single_float = "binary/float";
+const std::string single_double = "binary/double";
+const std::string single_string = "text/string";
+const std::string bytes = "binary/bytes";
+
+const std::string array_sint32 = "binary/array-sint32";
+const std::string array_sint64 = "binary/array-sint64";
+const std::string array_sfixed32 = "binary/array-sfixed32";
+const std::string array_sfixed64 = "binary/array-sfixed32";
+const std::string array_float = "binary/array-float";
+const std::string array_double = "binary/array-double";
+const std::string array_string = "binary/array-string";
+const std::string array_bytes = "binary/array-bytes";
+
+const std::string xmsg_data = "binary/native";
+const std::string java_object = "binary/java";
+const std::string cpp_object = "binary/cpp";
+const std::string python_object = "binary/python";
+
+} // end namespace mime
+
 } // end namespace xmsg
 
 #endif  // XMSG_CORE_CONSTANTS_H_
