@@ -94,6 +94,34 @@ template<> inline std::vector<double> get_value(Data& data)
 template<> inline std::vector<std::string> get_value(Data& data)
         { auto& a = data.stringa(); return {a.begin(), a.end()}; }
 
+template <typename T>
+inline std::string get_mimetype()
+        { static_assert(sizeof(T) == 0, "Unsupported data type"); return ""; }
+
+template<> inline std::string get_mimetype<std::int32_t>()
+        { return mimetype::single_sint32; }
+template<> inline std::string get_mimetype<std::int64_t>()
+        { return mimetype::single_sint64; }
+template<> inline std::string get_mimetype<float>()
+        { return mimetype::single_float; }
+template<> inline std::string get_mimetype<double>()
+        { return mimetype::single_double; }
+template<> inline std::string get_mimetype<std::string>()
+        { return mimetype::single_string; }
+template<> inline std::string get_mimetype<const char*>()
+        { return mimetype::single_string; }
+
+template<> inline std::string get_mimetype<std::vector<std::int32_t>>()
+        { return mimetype::array_sint32; }
+template<> inline std::string get_mimetype<std::vector<std::int64_t>>()
+        { return mimetype::array_sint64; }
+template<> inline std::string get_mimetype<std::vector<float>>()
+        { return mimetype::array_float; }
+template<> inline std::string get_mimetype<std::vector<double>>()
+        { return mimetype::array_double; }
+template<> inline std::string get_mimetype<std::vector<std::string>>()
+        { return mimetype::array_string; }
+
 } // end namespace internal
 
 
