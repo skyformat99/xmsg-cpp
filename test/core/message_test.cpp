@@ -54,6 +54,37 @@ TEST(Message, EqualMessages)
 }
 
 
+TEST(Message, CreateCopy)
+{
+    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+
+    auto msg1 = xmsg::Message{topic, "test/binary", data};
+    auto msg2 = xmsg::Message{msg1};
+
+    ASSERT_TRUE(msg1 == msg2);
+}
+
+
+TEST(Message, SwapMessages)
+{
+    auto topic1 = xmsg::Topic::raw("topic1");
+    auto topic2 = xmsg::Topic::raw("topic2");
+    auto data1 = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto data2 = std::vector<std::uint8_t>{ 0x0, 0x4, 0x5, 0x6, 0xc, 0xd };
+
+    auto msg1 = xmsg::Message{topic1, "test/binary1", data1};
+    auto msg2 = xmsg::Message{topic2, "test/binary2", data2};
+
+    auto copy1 = msg1;
+    auto copy2 = msg2;
+
+    swap(copy1, copy2);
+
+    ASSERT_THAT(copy1, Eq(msg2));
+    ASSERT_THAT(copy2, Eq(msg1));
+}
+
+
 int main(int argc, char *argv[])
 {
     testing::InitGoogleTest(&argc, argv);

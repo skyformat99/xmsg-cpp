@@ -58,6 +58,35 @@ public:
         proto::set_datatype(*meta_, mimetype);
     }
 
+    Message(const Message& other)
+      : topic_{other.topic_},
+        meta_{std::make_unique<proto::Meta>(*other.meta_)},
+        data_{other.data_}
+    { }
+
+    Message& operator=(const Message& other)
+    {
+        topic_ = other.topic_;
+        meta_ = std::make_unique<proto::Meta>(*other.meta_);
+        data_ = other.data_;
+        return *this;
+    }
+
+    Message(Message&&) = default;
+    Message& operator=(Message&&) = default;
+
+    ~Message() = default;
+
+public:
+    friend void swap(Message& lhs, Message& rhs)
+    {
+        using std::swap;
+        swap(lhs.topic_, rhs.topic_);
+        swap(lhs.meta_, rhs.meta_);
+        swap(lhs.data_, rhs.data_);
+    }
+
+public:
     const Topic& topic() const { return topic_; }
 
     proto::Meta* meta() { return meta_.get(); }
