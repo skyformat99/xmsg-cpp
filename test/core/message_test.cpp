@@ -3,6 +3,7 @@
 
 #include "message.h"
 
+#include "helper/utils.h"
 #include "gmock/gmock.h"
 
 using namespace testing;
@@ -21,6 +22,24 @@ TEST(Message, CreateWithBytes)
 
     EXPECT_THAT(msg.data(), ContainerEq(data));
     EXPECT_THAT(msg.meta()->datatype(), StrEq("test/binary"));
+}
+
+
+TEST(Message, PassingNullMetadataThrows)
+{
+    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto meta = std::unique_ptr<xmsg::proto::Meta>{};
+
+    EXPECT_EXCEPTION(xmsg::Message(topic, std::move(meta), data),
+                     std::invalid_argument,  "null metadata");
+}
+
+
+TEST(Message, PassingNullMimeTypeThrows)
+{
+    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    EXPECT_EXCEPTION(xmsg::Message(topic, nullptr, data),
+                     std::invalid_argument,  "null mime-type");
 }
 
 

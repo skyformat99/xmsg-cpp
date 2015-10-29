@@ -26,8 +26,25 @@
 
 #include "meta.pb.h"
 
+#include <stdexcept>
+
 namespace xmsg {
 namespace proto {
+
+inline void set_datatype(Meta& meta, const char* datatype)
+{
+    if (datatype) {
+        meta.set_datatype(datatype);
+    } else {
+        throw std::invalid_argument{"null mime-type"};
+    }
+}
+
+inline void set_datatype(Meta& meta, const std::string& datatype)
+{
+    meta.set_datatype(datatype);
+}
+
 
 inline bool operator==(const Meta& lhs, const Meta& rhs)
 {

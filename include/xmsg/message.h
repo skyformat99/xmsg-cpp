@@ -42,7 +42,8 @@ public:
     template<typename T, typename V>
     Message(T&& topic, std::unique_ptr<proto::Meta>&& metadata, V&& data)
       : topic_{std::forward<T>(topic)},
-        meta_{std::move(metadata)},
+        meta_{metadata ? std::move(metadata)
+                       : throw std::invalid_argument{"null metadata"}},
         data_{std::forward<V>(data)}
     {
         // nothing
@@ -54,7 +55,7 @@ public:
         meta_{std::make_unique<proto::Meta>()},
         data_{std::forward<V>(data)}
     {
-        meta_->set_datatype(mimetype);
+        proto::set_datatype(*meta_, mimetype);
     }
 
     const Topic& topic() const { return topic_; }

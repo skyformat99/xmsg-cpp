@@ -131,7 +131,7 @@ Message xMsg::sync_publish(std::unique_ptr<Connection>& connection,
     msg.meta()->set_replyto(return_addr);
 
     std::atomic_bool response{false};
-    auto rmsg = Message{Topic::raw(""), {}, std::vector<std::uint8_t>{}};
+    auto rmsg = Message{Topic::raw(""), "", std::vector<std::uint8_t>{}};
 
     auto cb = [&](Message& m) {
         rmsg = std::move(m);
