@@ -16,7 +16,7 @@ using namespace testing;
 
 xmsg::Message create_message(const xmsg::Topic& topic, int data)
 {
-    auto xmeta = std::make_unique<xmsg::proto::MetaData>();
+    auto xmeta = std::make_unique<xmsg::proto::Meta>();
     auto xdata = xmsg::proto::Data{};
     xmeta->set_datatype("native");
     xdata.set_flsint32(data);
@@ -134,7 +134,7 @@ TEST(Subscription, syncPublishReceivesAllResponses)
 
             auto sub_topic = xmsg::Topic::raw("test_topic");
             auto sub_cb = [&] (xmsg::Message& m) {
-                auto r_topic = m.metadata()->replyto();
+                auto r_topic = m.meta()->replyto();
                 auto r_data = parseData(m);
                 auto r_msg = create_message(xmsg::Topic::raw(r_topic), r_data);
                 sub_actor.publish(rep_con, r_msg);

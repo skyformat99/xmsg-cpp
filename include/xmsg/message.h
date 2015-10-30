@@ -39,7 +39,7 @@ class Message final
 {
 public:
     template<typename T, typename V>
-    Message(T&& topic, std::unique_ptr<proto::MetaData>&& metadata, V&& data)
+    Message(T&& topic, std::unique_ptr<proto::Meta>&& metadata, V&& data)
       : topic_{std::forward<T>(topic)},
         meta_{std::move(metadata)},
         data_{std::forward<V>(data)}
@@ -50,7 +50,7 @@ public:
     template<typename T, typename S, typename V>
     Message(T&& topic, S&& mimetype, V&& data)
       : topic_{std::forward<T>(topic)},
-        meta_{std::make_unique<proto::MetaData>()},
+        meta_{std::make_unique<proto::Meta>()},
         data_{std::forward<V>(data)}
     {
         meta_->set_datatype(mimetype);
@@ -58,14 +58,14 @@ public:
 
     const Topic& topic() const { return topic_; }
 
-    proto::MetaData* metadata() { return meta_.get(); }
-    const proto::MetaData* metadata() const { return meta_.get(); }
+    proto::Meta* meta() { return meta_.get(); }
+    const proto::Meta* meta() const { return meta_.get(); }
 
     const std::vector<std::uint8_t>& data() const { return data_; };
 
 private:
     Topic topic_;
-    std::unique_ptr<proto::MetaData> meta_;
+    std::unique_ptr<proto::Meta> meta_;
     std::vector<std::uint8_t> data_;
 };
 

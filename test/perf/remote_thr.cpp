@@ -24,7 +24,7 @@ int main(int argc, char** argv)
         xmsg::util::sleep(100);
 
         auto topic = xmsg::Topic::raw("thr_topic");
-        auto meta = std::make_unique<xmsg::proto::MetaData>();
+        auto meta = std::make_unique<xmsg::proto::Meta>();
         auto data = std::vector<std::uint8_t>(message_size);
         meta->set_datatype("data/binary");
 

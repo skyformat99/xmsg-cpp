@@ -24,7 +24,7 @@ option optimize_for = SPEED;
 package xmsg.proto;
 
 // ... Metta-data class ...
-message MetaData {
+message Meta {
 
     // ... Communication section ...
     // Version
