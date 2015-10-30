@@ -24,6 +24,17 @@ TEST(Message, CreateWithBytes)
 }
 
 
+TEST(Message, EqualMessages)
+{
+    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+
+    auto msg1 = xmsg::Message{topic, "test/binary", data};
+    auto msg2 = xmsg::Message{topic, "test/binary", data};
+
+    ASSERT_TRUE(msg1 == msg2);
+}
+
+
 int main(int argc, char *argv[])
 {
     testing::InitGoogleTest(&argc, argv);

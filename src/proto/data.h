@@ -26,4 +26,24 @@
 
 #include "data.pb.h"
 
+#include <cstdint>
+#include <memory>
+#include <vector>
+
+namespace xmsg {
+namespace proto {
+
+inline bool operator==(const Data& lhs, const Data& rhs)
+{
+    return lhs.SerializeAsString() == rhs.SerializeAsString();
+}
+
+inline bool operator!=(const Data& lhs, const Data& rhs)
+{
+    return !(lhs == rhs);
+}
+
+} // end namespace proto
+} // end namespace xmsg
+
 #endif // XMSG_PROTO_DATA_H_

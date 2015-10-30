@@ -30,6 +30,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <tuple>
 #include <vector>
 
 
@@ -68,6 +69,19 @@ private:
     std::unique_ptr<proto::Meta> meta_;
     std::vector<std::uint8_t> data_;
 };
+
+
+inline bool operator==(const Message& lhs, const Message& rhs)
+{
+    return std::tie(lhs.topic(), *lhs.meta(), lhs.data())
+        == std::tie(rhs.topic(), *rhs.meta(), rhs.data());
+}
+
+inline bool operator!=(const Message& lhs, const Message& rhs)
+{
+    return !(lhs == rhs);
+}
+
 
 } // end namespace xmsg
 

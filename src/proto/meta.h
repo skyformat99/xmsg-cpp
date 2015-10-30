@@ -26,4 +26,20 @@
 
 #include "meta.pb.h"
 
+namespace xmsg {
+namespace proto {
+
+inline bool operator==(const Meta& lhs, const Meta& rhs)
+{
+    return lhs.SerializeAsString() == rhs.SerializeAsString();
+}
+
+inline bool operator!=(const Meta& lhs, const Meta& rhs)
+{
+    return !(lhs == rhs);
+}
+
+} // end namespace proto
+} // end namespace xmsg
+
 #endif // XMSG_PROTO_META_H_
