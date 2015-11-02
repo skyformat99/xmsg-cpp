@@ -128,10 +128,10 @@ Message xMsg::sync_publish(std::unique_ptr<Connection>& connection,
     using ConnectionView = Subscription::ConnectionWrapperPtr;
 
     auto return_addr = "return:" + std::to_string(gen(rng));
-    msg.metadata()->set_replyto(return_addr);
+    msg.meta_->set_replyto(return_addr);
 
     std::atomic_bool response{false};
-    auto rmsg = Message{Topic::raw(""), {}, std::vector<std::uint8_t>{}};
+    auto rmsg = Message{Topic::raw(""), "", std::vector<std::uint8_t>{}};
 
     auto cb = [&](Message& m) {
         rmsg = std::move(m);

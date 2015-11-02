@@ -26,4 +26,49 @@
 
 #include "meta.pb.h"
 
+#include <memory>
+#include <stdexcept>
+
+namespace xmsg {
+namespace proto {
+
+inline std::unique_ptr<Meta> make_meta()
+{
+    return std::make_unique<Meta>();
+}
+
+inline std::unique_ptr<Meta> copy_meta(const Meta& meta)
+{
+    return std::make_unique<Meta>(meta);
+}
+
+
+inline void set_datatype(Meta& meta, const char* datatype)
+{
+    if (datatype) {
+        meta.set_datatype(datatype);
+    } else {
+        throw std::invalid_argument{"null mime-type"};
+    }
+}
+
+inline void set_datatype(Meta& meta, const std::string& datatype)
+{
+    meta.set_datatype(datatype);
+}
+
+
+inline bool operator==(const Meta& lhs, const Meta& rhs)
+{
+    return lhs.SerializeAsString() == rhs.SerializeAsString();
+}
+
+inline bool operator!=(const Meta& lhs, const Meta& rhs)
+{
+    return !(lhs == rhs);
+}
+
+} // end namespace proto
+} // end namespace xmsg
+
 #endif // XMSG_PROTO_META_H_

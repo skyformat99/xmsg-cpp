@@ -62,7 +62,7 @@ void Connection::connect()
 void Connection::send(Message& msg)
 {
     const auto& t = msg.topic().str();
-    const auto& m = msg.metadata()->SerializeAsString();
+    const auto& m = msg.meta()->SerializeAsString();
     const auto& d = msg.data();
 
     con_->pub.send(t.data(), t.size(), ZMQ_SNDMORE);
@@ -90,7 +90,7 @@ Message Connection::recv()
 
     auto topic = Topic::raw(multi_msg[0].data<const char>());
 
-    auto meta = std::make_unique<xmsg::proto::MetaData>();
+    auto meta = proto::make_meta();
     meta->ParseFromArray(multi_msg[1].data(), multi_msg[1].size());
 
     auto data_ptr = multi_msg[2].data<std::uint8_t>();
