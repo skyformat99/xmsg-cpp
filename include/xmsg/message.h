@@ -91,7 +91,6 @@ public:
 public:
     const Topic& topic() const { return topic_; }
 
-    proto::Meta* meta() { return meta_.get(); }
     const proto::Meta* meta() const { return meta_.get(); }
 
     const std::vector<std::uint8_t>& data() const { return data_; }
