@@ -90,7 +90,7 @@ Message Connection::recv()
 
     auto topic = Topic::raw(multi_msg[0].data<const char>());
 
-    auto meta = std::make_unique<xmsg::proto::Meta>();
+    auto meta = proto::make_meta();
     meta->ParseFromArray(multi_msg[1].data(), multi_msg[1].size());
 
     auto data_ptr = multi_msg[2].data<std::uint8_t>();

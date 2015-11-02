@@ -52,7 +52,7 @@ public:
     template<typename T, typename S, typename V>
     Message(T&& topic, S&& mimetype, V&& data)
       : topic_{std::forward<T>(topic)},
-        meta_{std::make_unique<proto::Meta>()},
+        meta_{proto::make_meta()},
         data_{std::forward<V>(data)}
     {
         proto::set_datatype(*meta_, mimetype);
@@ -60,14 +60,14 @@ public:
 
     Message(const Message& other)
       : topic_{other.topic_},
-        meta_{std::make_unique<proto::Meta>(*other.meta_)},
+        meta_{proto::copy_meta(*other.meta_)},
         data_{other.data_}
     { }
 
     Message& operator=(const Message& other)
     {
         topic_ = other.topic_;
-        meta_ = std::make_unique<proto::Meta>(*other.meta_);
+        meta_ = proto::copy_meta(*other.meta_);
         data_ = other.data_;
         return *this;
     }
