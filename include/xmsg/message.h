@@ -36,6 +36,8 @@
 
 namespace xmsg {
 
+class xMsg;
+
 class Message final
 {
 public:
@@ -101,6 +103,7 @@ public:
     Topic replyto() const { return Topic::raw(meta_->replyto()); }
 
 private:
+    friend xMsg;
     Topic topic_;
     std::unique_ptr<proto::Meta> meta_;
     std::vector<std::uint8_t> data_;
