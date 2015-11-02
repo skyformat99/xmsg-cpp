@@ -63,7 +63,7 @@ public:
     proto::Meta* meta() { return meta_.get(); }
     const proto::Meta* meta() const { return meta_.get(); }
 
-    const std::vector<std::uint8_t>& data() const { return data_; };
+    const std::vector<std::uint8_t>& data() const { return data_; }
 
 private:
     Topic topic_;
