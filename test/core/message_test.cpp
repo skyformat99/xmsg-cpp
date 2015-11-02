@@ -184,6 +184,42 @@ TEST(Message, CreateWithStringArray)
 }
 
 
+TEST(Message, CreateCopyResponse)
+{
+    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto meta = xmsg::proto::make_meta();
+    meta->set_replyto("return_123");
+    meta->set_datatype("test/binary");
+    auto msg = xmsg::Message{topic, std::move(meta), data};
+
+    auto res_msg = xmsg::make_response(msg);
+
+    ASSERT_THAT(res_msg.topic().str(), StrEq("return_123"));
+    ASSERT_THAT(res_msg.data(), ContainerEq(data));
+    ASSERT_THAT(res_msg.datatype(), StrEq("test/binary"));
+}
+
+
+TEST(Message, CreateMoveResponse)
+{
+    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto meta = xmsg::proto::make_meta();
+    meta->set_replyto("return_123");
+    meta->set_datatype("test/binary");
+    auto msg = xmsg::Message{topic, std::move(meta), data};
+
+    auto res_msg = xmsg::make_response(std::move(msg));
+
+    ASSERT_THAT(res_msg.topic().str(), StrEq("return_123"));
+    ASSERT_THAT(res_msg.data(), ContainerEq(data));
+    ASSERT_THAT(res_msg.datatype(), StrEq("test/binary"));
+
+    ASSERT_THAT(msg.topic().str(), StrEq(""));
+    ASSERT_THAT(msg.meta(), Eq(nullptr));
+    ASSERT_THAT(msg.data(), IsEmpty());
+}
+
+
 int main(int argc, char *argv[])
 {
     testing::InitGoogleTest(&argc, argv);

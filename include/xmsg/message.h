@@ -101,6 +101,10 @@ public:
     bool has_replyto() const { return meta_->has_replyto(); }
     Topic replyto() const { return Topic::raw(meta_->replyto()); }
 
+public:
+    friend Message make_response(Message&& msg);
+    friend Message make_response(const Message& msg);
+
 private:
     friend xMsg;
     Topic topic_;
@@ -144,6 +148,21 @@ template<>
 inline proto::Data parse_message(const Message& msg)
 {
     return proto::parse_data(msg.data());
+}
+
+
+inline Message make_response(Message&& msg)
+{
+    msg.topic_ = msg.replyto();
+    msg.meta_->clear_replyto();
+    return std::move(msg);
+}
+
+inline Message make_response(const Message& msg)
+{
+    auto meta = proto::copy_meta(*msg.meta_);
+    meta->clear_replyto();
+    return {msg.replyto(), std::move(meta), msg.data_};
 }
 
 
