@@ -24,11 +24,8 @@ int main(int argc, char** argv)
         xmsg::util::sleep(100);
 
         auto topic = xmsg::Topic::raw("thr_topic");
-        auto meta = std::make_unique<xmsg::proto::Meta>();
         auto data = std::vector<std::uint8_t>(message_size);
-        meta->set_datatype("data/binary");
-
-        auto msg = xmsg::Message{topic, std::move(meta), data};
+        auto msg = xmsg::Message{topic, "data/binary", data};
 
         for (int i = 0; i < message_count; ++i) {
             publisher.publish(connection, msg);
