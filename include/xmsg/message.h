@@ -94,6 +94,12 @@ public:
 
     const std::vector<std::uint8_t>& data() const { return data_; }
 
+public:
+    const std::string& datatype() const { return meta_->datatype(); }
+
+    bool has_replyto() const { return meta_->has_replyto(); }
+    Topic replyto() const { return Topic::raw(meta_->replyto()); }
+
 private:
     Topic topic_;
     std::unique_ptr<proto::Meta> meta_;
