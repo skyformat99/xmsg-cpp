@@ -26,6 +26,9 @@
 
 #include "registration.pb.h"
 
+#include "address.h"
+#include "topic.h"
+
 namespace xmsg {
 
 namespace proto {
@@ -33,6 +36,17 @@ namespace proto {
 struct CompareRegistration {
     bool operator()(const Registration& lhs, const Registration& rhs) const;
 };
+
+
+inline Topic parse_topic(const Registration& reg)
+{
+    return Topic::build(reg.domain(), reg.subject(), reg.type());
+}
+
+inline ProxyAddress parse_address(const Registration& reg)
+{
+    return { reg.host(), reg.port() };
+}
 
 bool operator==(const Registration& lhs, const Registration& rhs);
 bool operator!=(const Registration& lhs, const Registration& rhs);
