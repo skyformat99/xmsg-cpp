@@ -57,7 +57,7 @@ public:
         meta_{proto::make_meta()},
         data_{std::forward<V>(data)}
     {
-        proto::set_datatype(*meta_, mimetype);
+        proto::internal::set_datatype(*meta_, mimetype);
     }
 
     Message(const Message& other)
