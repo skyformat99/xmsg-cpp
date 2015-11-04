@@ -187,5 +187,5 @@ RegDataSet find(const std::string& topic, bool is_publisher)
 
 bool check_publisher(const Registration& reg)
 {
-    return reg.ownertype() == Registration::OwnerType::Registration_OwnerType_PUBLISHER;
+    return reg.ownertype() == Registration::PUBLISHER;
 }

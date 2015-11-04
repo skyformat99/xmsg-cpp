@@ -294,8 +294,8 @@ proto::Registration create(const std::string& name,
                            bool is_publisher)
 {
     auto data_type = is_publisher
-            ? proto::Registration::OwnerType::Registration_OwnerType_PUBLISHER
-            : proto::Registration::OwnerType::Registration_OwnerType_SUBSCRIBER;
+            ? proto::Registration::PUBLISHER
+            : proto::Registration::SUBSCRIBER;
     auto data = proto::Registration{};
     data.set_name(name);
     data.set_host(host);
