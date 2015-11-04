@@ -42,6 +42,7 @@ option(XMSG_BUILD_TESTS "Build tests" ON)
 add_subdirectory("src/core")
 add_subdirectory("src/proto")
 add_subdirectory("src/sys")
+add_subdirectory("doc")
 
 if (XMSG_BUILD_TESTS)
   enable_testing()
