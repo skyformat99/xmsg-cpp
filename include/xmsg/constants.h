@@ -28,12 +28,16 @@
 
 namespace xmsg {
 
+/**
+ * Global constants.
+ */
 namespace constants {
 
 const std::string undefined = "undefined";
 const std::string success = "success";
 const std::string any = "*";
 
+/// \cond HIDDEN_SYMBOLS
 const std::string registrar = "xMsg_Registrar";
 
 const std::string register_publisher = "registerPublisher";
@@ -48,6 +52,7 @@ const int remove_request_timeout = 3000;
 const std::string find_publisher = "findPublisher";
 const std::string find_subscriber = "findSubscriber";
 const int find_request_timeout = 3000;
+/// \endcond
 
 const std::string info = "INFO";
 const std::string warning = "WARNING";
@@ -57,8 +62,10 @@ const std::string data = "data";
 
 const std::string no_result = "none";
 
+/// \cond HIDDEN_SYMBOLS
 const std::string bind = "bind";
 const std::string connect = "connect";
+/// \endcond
 
 const int default_port = 7771;
 const int registrar_port = 8888;
@@ -66,6 +73,9 @@ const int registrar_port = 8888;
 } // end namespace constants
 
 
+/**
+ * Identifiers for base data types.
+ */
 namespace mimetype {
 
 const std::string single_sint32 = "binary/sint32";

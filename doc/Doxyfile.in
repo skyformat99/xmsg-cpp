@@ -808,7 +808,11 @@ RECURSIVE              = NO
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                =
+EXCLUDE                = "@CMAKE_SOURCE_DIR@/include/xmsg/connection_pool.h" \
+                         "@CMAKE_SOURCE_DIR@/src/core/connection_impl.h" \
+                         "@CMAKE_SOURCE_DIR@/src/core/connection_pool.cpp" \
+                         "@CMAKE_SOURCE_DIR@/src/core/regdis.cpp" \
+                         "@CMAKE_SOURCE_DIR@/src/core/regdis.h"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -835,7 +839,22 @@ EXCLUDE_PATTERNS       =
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
-EXCLUDE_SYMBOLS        =
+EXCLUDE_SYMBOLS        = xmsg::proto::internal* \
+                         xmsg::proto::Payload* \
+                         xmsg::proto::Static* \
+                         Payload* \
+                         Data_Type* \
+                         *_Name \
+                         *_Parse \
+                         *_MIN \
+                         *_MAX \
+                         *_ARRAYSIZE* \
+                         T_* \
+                         *_descriptor \
+                         *_IsValid \
+                         *2eproto* \
+                         k*FieldNumber \
+                         is_proto_enum* \
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include

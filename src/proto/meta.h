@@ -30,6 +30,10 @@
 #include <stdexcept>
 
 namespace xmsg {
+
+/**
+ * Protobuf data classes and helpers.
+ */
 namespace proto {
 
 namespace internal {

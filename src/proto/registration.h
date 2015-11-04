@@ -33,9 +33,11 @@ namespace xmsg {
 
 namespace proto {
 
+/// \cond HIDDEN_SYMBOLS
 struct CompareRegistration {
     bool operator()(const Registration& lhs, const Registration& rhs) const;
 };
+/// \endcond
 
 
 inline Topic parse_topic(const Registration& reg)

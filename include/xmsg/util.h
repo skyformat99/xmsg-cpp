@@ -29,6 +29,9 @@
 
 namespace xmsg {
 
+/**
+ * A collection of auxiliary functions.
+ */
 namespace util {
 
 /**

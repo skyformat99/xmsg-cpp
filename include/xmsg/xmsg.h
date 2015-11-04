@@ -36,6 +36,9 @@
 #include <string>
 #include <set>
 
+/**
+ * Core %xMsg classes and functions.
+ */
 namespace xmsg {
 
 class ConnectionPool;
