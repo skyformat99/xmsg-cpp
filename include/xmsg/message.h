@@ -38,9 +38,55 @@ namespace xmsg {
 
 class xMsg;
 
+/**
+ * The standard message for %xMsg pub/sub communications.
+ *
+ * Messages are composed of a topic, metadata and data.
+ *
+ * %xMsg actors send (receive) messages to (from) other actors, using the
+ * **topic** to identify and filter messages of interest.
+ * See the Topic class documentation for details about topic matching.
+ *
+ * The **data** is always a byte buffer containing the serialized representation
+ * of the value or object to be sent. For simple data types, the
+ * proto::Data class can be used to store and serialize data, and the
+ * \ref make_message helper should be preferred to create messages.
+ * Otherwise it is up to the client to define the serialization of custom
+ * complex objects.
+ * The created message will give access to the binary buffer, which should
+ * be deserialized to get the data back. With simple types,
+ * \ref parse_message should be sufficient.
+ *
+ * The **metadata** can be used to provide further description of the data.
+ * The `datatype` field is mandatory to identify the type of the data,
+ * and can be used by clients to check if the message contains data they can
+ * work with. It is responsibility of the publisher to create messages with
+ * proper data and datatype (i.e. the datatype matches the data).
+ * See proto::Meta for all available fields.
+ *
+ * When an actor publishes a message and expects a response
+ * (using xMsg::sync_publish), the message will have the metadata field
+ * `replyto` set to the topic where the response should be published.
+ * To reuse the message for the response, construct it with \ref make_response.
+ * Otherwise, create a new message using the \ref Message::replyto "replyto"
+ * as the topic.
+ */
 class Message final
 {
 public:
+    /**
+     * Creates a new message with the given topic, metadata and serialized
+     * data.
+     *
+     * The metadata must contain the correct data type identifier for the data,
+     * and any other field required by the client.
+     *
+     * \tparam T Topic
+     * \tparam V `std::vector<std::uint8_t>`
+     * \param topic the topic of the message
+     * \param metadata description of the data
+     * \param data serialized user data
+     */
     template<typename T, typename V>
     Message(T&& topic, std::unique_ptr<proto::Meta>&& metadata, V&& data)
       : topic_{std::forward<T>(topic)},
@@ -51,6 +97,20 @@ public:
         // nothing
     }
 
+    /**
+     * Creates a new message with the given topic, data type and serialized
+     * data.
+     *
+     * The data type must be the correct identifier for the data.
+     * The metadata will be automatically created with only the data type set.
+     *
+     * \tparam T Topic
+     * \tparam S `std::string` or `const char*`
+     * \tparam V `std::vector<std::uint8_t>`
+     * \param topic the topic of the message
+     * \param mimetype the (literal) string identifier of the data
+     * \param data serialized user data
+     */
     template<typename T, typename S, typename V>
     Message(T&& topic, S&& mimetype, V&& data)
       : topic_{std::forward<T>(topic)},
@@ -89,16 +149,24 @@ public:
     }
 
 public:
+    /// Read-only access to the topic
     const Topic& topic() const { return topic_; }
 
+    /// Read-only access to the metadata
     const proto::Meta* meta() const { return meta_.get(); }
 
+    /// Read-only access to the serialized data
     const std::vector<std::uint8_t>& data() const { return data_; }
 
 public:
+    /// Gets the `datatype` identifier from the metadata.
     const std::string& datatype() const { return meta_->datatype(); }
 
+    /// Checks if the metadata contains a `replyto` value
     bool has_replyto() const { return meta_->has_replyto(); }
+
+    /// Gets a %Topic using the `replyto` value from the metadata.
+    /// Useful when creating a response message.
     Topic replyto() const { return Topic::raw(meta_->replyto()); }
 
 public:
@@ -113,6 +181,24 @@ private:
 };
 
 
+/**
+ * Creates a simple message with a data value of type D.
+ *
+ * D must be one of the types that can be set on proto::Data objects.
+ * The meta field `datatype` will be set accordingly.
+ * Use \ref parse_message(const Message&) "parse_message" to get the value back.
+ *
+ * This is just a one line wrapper to create a message using
+ * proto::make_data and proto::serialize_data.
+ * Call the same functions and the message constructor directly
+ * if more setup is needed with the metadata field,
+ * and `datatype` must be set carefully.
+ *
+ * \tparam T Topic
+ * \tparam D a type that can be set on proto::Data objects
+ * \param topic the topic of the message
+ * \param data the value to be set in the message
+ */
 template<typename T,
          typename D,
          typename = std::enable_if_t<
@@ -128,6 +214,22 @@ inline Message make_message(T&& topic, D&& data)
 }
 
 
+/**
+ * Creates a message with data of type proto::Data.
+ * The meta field `datatype` will be set to mimetype::xmsg_data,
+ * and the protobuf data will be serialized.
+ * Use \ref parse_message to deserialized the object back.
+ *
+ * This is just a one line wrapper to create a message using
+ * proto::serialize_data.
+ * Call the same function and the message constructor directly
+ * if more setup is needed with the metadata field,
+ * and `datatype` must be set carefully.
+ *
+ * \tparam T Topic
+ * \param topic the topic of the message
+ * \param data the object to be serialized in the message
+ */
 template<typename T>
 inline Message make_message(T&& topic, const proto::Data& data)
 {
@@ -136,6 +238,13 @@ inline Message make_message(T&& topic, const proto::Data& data)
 }
 
 
+/**
+ * Deserializes a data of type T from the given message.
+ *
+ * \tparam T a type that can be get from proto::Data objects
+ * \param msg the message
+ * \return the value of type T contained in the message
+ */
 template<typename T>
 inline T parse_message(const Message& msg)
 {
@@ -144,6 +253,12 @@ inline T parse_message(const Message& msg)
 }
 
 
+/**
+ * Deserializes a proto::Data object from the given message.
+ *
+ * \param msg the message
+ * \return the deserialized %Data object
+ */
 template<>
 inline proto::Data parse_message(const Message& msg)
 {
@@ -151,6 +266,13 @@ inline proto::Data parse_message(const Message& msg)
 }
 
 
+/**
+ * Moves the given message into a response message.
+ *
+ * - The topic will be set to \ref Message::replyto "msg.replyto()"
+ * - The metadata will be reused (and the `replyto` field will be cleared)
+ * - The data will be reused
+ */
 inline Message make_response(Message&& msg)
 {
     msg.topic_ = msg.replyto();
@@ -158,6 +280,14 @@ inline Message make_response(Message&& msg)
     return std::move(msg);
 }
 
+
+/**
+ * Copies the given message into a response message.
+ *
+ * - The topic will be set to \ref Message::replyto "msg.replyto()"
+ * - The metadata will be copied (and the `replyto` field will be cleared)
+ * - The data will be copied
+ */
 inline Message make_response(const Message& msg)
 {
     auto meta = proto::copy_meta(*msg.meta_);
