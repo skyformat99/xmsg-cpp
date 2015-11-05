@@ -67,8 +67,8 @@ const std::string bind = "bind";
 const std::string connect = "connect";
 /// \endcond
 
-const int default_port = 7771;
-const int registrar_port = 8888;
+const int default_port = 7771;      ///< Default publication port for proxies
+const int registrar_port = 8888;    ///< Default listening port for registrar services
 
 } // end namespace constants
 

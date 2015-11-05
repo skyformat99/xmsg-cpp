@@ -29,15 +29,35 @@
 namespace xmsg {
 
 /**
- * Advanced setup of a Connection.
+ * Advanced setup of a connection to an %xMsg proxy.
+ *
+ * This class can be used to customize the internal sockets of a new Connection
+ * created by the xMsg actor.
  */
 class ConnectionSetup
 {
 public:
     virtual ~ConnectionSetup() { }
 
+    /**
+     * Configures the socket before it is connected.
+     * This method will be called for both pub/sub sockets.
+     * It should be used to set options on the socket.
+     *
+     * Leave empty if no configuration is required.
+     *
+     * \see <a href="http://api.zeromq.org/3-2:zmq-setsockopt">zmq_setsockopt</a>
+     */
     virtual void pre_connection(zmq::socket_t& socket);
 
+    /**
+     * Runs after the two sockets have been connected.
+     * This method can be used to run some action after connecting the sockets.
+     * For example, sleep a while to give time to the sockets to be actually
+     * connected internally.
+     *
+     * Leave empty if no action is required.
+     */
     virtual void post_connection();
 };
 

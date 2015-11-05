@@ -38,6 +38,9 @@ class Connection;
 class Message;
 class xMsg;
 
+/**
+ * The handler for an active subscription.
+ */
 class Subscription final
 {
 public:

@@ -33,9 +33,9 @@ namespace xmsg {
 class ProxyAddress;
 
 /**
- * The standard connection to xMsg nodes.
+ * The standard pub/sub connection to an %xMsg proxy.
  * Contains ProxyAddress object and two 0MQ sockets for publishing and
- * subscribing xMsg messages respectfully.
+ * subscribing %xMsg messages respectfully.
  */
 class Connection final {
 public:
@@ -46,15 +46,22 @@ public:
     Connection& operator=(Connection&&);
     ~Connection();
 
+public:
+    /// Returns the address of the connected proxy
     const ProxyAddress& address();
 
 private:
+    /// Connects the internal sockets to the proxy
     void connect();
 
+    /// Sends the message through the proxy
     void send(Message& msg);
+    /// Receives a message through the proxy
     Message recv();
 
+    /// Subscribes to messages of the given topic through the proxy
     void subscribe(const Topic& topic);
+    /// Unsubscribes to messages of the given topic through the proxy
     void unsubscribe(const Topic& topic);
 
 private:
