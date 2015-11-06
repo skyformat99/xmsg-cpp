@@ -33,16 +33,35 @@ namespace xmsg {
 
 namespace proto {
 
+/**
+ * \class Registration
+ * \brief Information of a registered pub or sub actor.
+ *
+ * Objects of this class describe a registered pub or sub xMsg actor.
+ * The `name` identifies an actor that is publishing or subscribed to
+ * (`ownertype`) messages
+ * of the specified topic (`domain`, `subject` and `type`)
+ * on the proxy address (`host` and `port`).
+ */
+
+/// \cond HIDDEN_SYMBOLS
 struct CompareRegistration {
     bool operator()(const Registration& lhs, const Registration& rhs) const;
 };
+/// \endcond
 
 
+/**
+ * Gets the topic from the given %Registration data.
+ */
 inline Topic parse_topic(const Registration& reg)
 {
     return Topic::build(reg.domain(), reg.subject(), reg.type());
 }
 
+/**
+ * Gets the address from the given %Registration data.
+ */
 inline ProxyAddress parse_address(const Registration& reg)
 {
     return { reg.host(), reg.port() };
@@ -53,6 +72,9 @@ bool operator!=(const Registration& lhs, const Registration& rhs);
 
 } // end namespace proto
 
+/**
+ * The set of Registration objects that result of a discovery query.
+ */
 using RegDataSet = std::set<proto::Registration, proto::CompareRegistration>;
 
 } // end namespace xmsg

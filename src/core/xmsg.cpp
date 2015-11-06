@@ -40,6 +40,7 @@ std::uniform_int_distribution<int> gen{1, 100};
 
 namespace xmsg {
 
+/// \cond HIDDEN_SYMBOLS
 struct xMsg::Impl {
     Impl(const std::string& name,
          const ProxyAddress& proxy_addr,
@@ -56,6 +57,7 @@ struct xMsg::Impl {
     RegAddress default_reg_addr;
     std::shared_ptr<ConnectionPool> con_pool;
 };
+/// \endcond
 
 
 xMsg::xMsg(const std::string& name)

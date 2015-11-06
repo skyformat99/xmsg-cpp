@@ -36,6 +36,24 @@
 
 namespace xmsg {
 
+/**
+ * \class Subscription
+ *
+ * A subscription object uses a \ref Connection "connection" to receive
+ * \ref Message "messages" of the interested \ref Topic "topic",
+ * and calls a user action on every message.
+ *
+ * When the subscription is constructed, the connection will be subscribed to
+ * the topic, and a background thread will be started polling the connection for
+ * received messages. For every message, the user-provide callback will be
+ * executed.
+ *
+ * When the subscription is destroyed, the background thread will be stopped
+ * and the connection will be unsubscribed from the topic.
+ *
+ * Creation and destruction of subscriptions are controlled by the xMsg actor.
+ */
+
 Subscription::Subscription(const Topic& topic,
                            ConnectionWrapperPtr connection,
                            Callback handler)

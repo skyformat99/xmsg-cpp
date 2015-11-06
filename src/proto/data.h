@@ -34,6 +34,25 @@
 namespace xmsg {
 namespace proto {
 
+/**
+ * \class Data
+ * \brief Simple data for pub/sub communications
+ *        (simple types or array of simple types).
+ *
+ * On pub/sub communications, data is sent serialized.
+ * This class helps to publish simple types (integers, floats or strings),
+ * or arrays of simple types, by using protocol buffers serialization.
+ * For more information about the Protocol Buffer value types, check
+ * [here](https://developers.google.com/protocol-buffers/docs/proto#scalar).
+ * Use the proper accessor to set and access the required type(s).
+ *
+ * Normally, \ref make_message, or \ref make_data and
+ * \ref serialize_data should be used to construct messages with simple
+ * data. Manual creation of objects of this class should be rare.
+ * For more complex data types, the client should provide its own objects
+ * and serialization routines.
+ */
+
 namespace internal {
 
 template <typename T>
@@ -125,6 +144,19 @@ template<> inline std::string get_mimetype<std::vector<std::string>>()
 } // end namespace internal
 
 
+/**
+ * Creates a %Data object with a single value of type T.
+ * The proper field to be set will be deduced from the parameter type.
+ *
+ * The object should be serialized in order to create a Message.
+ * This is useful when more control is needed over the metadata.
+ * In that case, the data type should be set carefully.
+ * Otherwise, it is simpler to use \ref make_message.
+ *
+ * \tparam T a type that can be set on proto::Data objects
+ * \param data the value to be set in the created object
+ * \return the created %Data object with only the value of type T set
+ */
 template<typename T>
 inline Data make_data(T&& data)
 {
@@ -133,12 +165,32 @@ inline Data make_data(T&& data)
     return xdata;
 }
 
+/**
+ * Reads the value of type T from the given %Data object.
+ * The proper field will be deduced from the return type.
+ *
+ * With all probability \ref parse_message could be used instead of this.
+ *
+ * \tparam T a type that can be get from proto::Data objects
+ * \param data the protobuf object
+ * \return the value of type T in the data
+ */
 template<typename T>
 inline T parse_data(Data& data)
 {
     return internal::get_value<T>(data);
 }
 
+/**
+ * Serializes the given %Data into a buffer.
+ * The returned buffer should be used to create a Message,
+ * when more control is needed over the data and/or the metadata.
+ * In that case, the data type should be set carefully.
+ * Otherwise, it is simpler to use \ref make_message.
+ *
+ * \param data the protobuf object
+ * \return the serialized data
+ */
 inline std::vector<std::uint8_t> serialize_data(const Data& data)
 {
     auto buffer = std::vector<std::uint8_t>(data.ByteSize());
@@ -146,6 +198,15 @@ inline std::vector<std::uint8_t> serialize_data(const Data& data)
     return buffer;
 }
 
+/**
+ * Deserializes the %Data from the given buffer.
+ * Use this to get the %Data object when the buffer is not in a message
+ * for some reason.
+ * Otherwise, it is simpler to use \ref parse_message.
+ *
+ * \param buffer the serialized data
+ * \return the deserialized %Data object
+ */
 inline Data parse_data(const std::vector<std::uint8_t>& buffer)
 {
     auto xdata = Data{};

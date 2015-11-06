@@ -30,47 +30,48 @@
 namespace xmsg {
 
 /**
- * The main identification for xMsg pub/sub communications.
- * xMsg is a <b>topic-based</b> system, and messages are published to given
- * "topics", or named channels, defined by <i>publishers</i>.
- * <i>Subscribers</i> can received the messages published to the "topics" to
+ * The standard identification for %xMsg pub/sub communications.
+ *
+ * %xMsg is a **topic-based** system, and messages are published to given
+ * "topics", or named channels, defined by _publishers_.
+ * _Subscribers_ can received the messages published to the "topics" to
  * which they are interested, by subscribing to them.
- * <p>
- * In xMsg, a topic is composed of three parts: a <b>domain</b>, a
- * <b>subject</b> and a <b>type</b>. Each part is separated by a semicolon
+ *
+ * In %xMsg, a topic is composed of three parts: a *domain*, a
+ * *subject* and a *type*. Each part is separated by a semicolon
  * character. The subject and the type can be omitted. Thus, the following
  * topics are all valid:
- * <ul>
- * <li>{@code "domain"}
- * <li>{@code "domain:subject"}
- * <li>{@code "domain:subject:type"}
- * </ul>
- * The {@link #build} factory methods help to create a proper topic with the
+ *
+ * - \c "domain"
+ * - \c "domain:subject"
+ * - \c "domain:subject:type"
+ *
+ * The \ref #build factory methods help to create a proper topic with the
  * right format.
- * <p>
- * When an {@link xMsg} actor is subscribed to a given topic, it will only
- * receive messages published to that topic. To filter topics, the three  parts
+ *
+ * When an %xMsg actor is subscribed to a given topic, it will only
+ * receive messages published to that topic. To filter topics, the three parts
  * form a hierarchy, and all topics with the same prefix will be accepted.
- * <p>
+ *
  * In other words, a subscriber listening for an specific "domain" will receive
  * all messages whose topic starts with that domain, no matter the subject and
- * the type. For example, if the subscription topic is {@code "A"}, then all the
+ * the type. For example, if the subscription topic is \c "A", then all the
  * messages with the following topics will be received:
- * <ul>
- * <li>{@code "A"}
- * <li>{@code "A:B"}
- * <li>{@code "A:C"}
- * <li>{@code "A:B:1"}
- * <li>{@code "A:C:1"}
- * <li>{@code "A:C:2"}
- * <li>etc...
- * </ul>
+ *
+ * - \c "A"
+ * - \c "A:B"
+ * - \c "A:C"
+ * - \c "A:B:1"
+ * - \c "A:C:1"
+ * - \c "A:C:2"
+ * - etc...
+ *
  * More specific subscriptions will not receive messages that match only the
  * parent parts of the topic.
- * Thus, subscription to {@code "A:B"} will accept {@code "A:B"}, {@code
- * "A:B:1"}, {@code "A:B:2"}, etc, but will reject {@code "A"} or {@code "A:C"}.
- * Similarly, a subscription to {@code "A:B:1"} will only accept that exact
- * topic, rejecting {@code "A:B:2"}, {@code "A:C"}, {@code "A"}, etc.
+ * Thus, subscription to \c "A:B" will accept \c "A:B", \c "A:B:1",
+ * \c "A:B:2", etc, but will reject \c "A" or \c "A:C".
+ * Similarly, a subscription to \c "A:B:1" will only accept that exact
+ * topic, rejecting \c "A:B:2", \c "A:C", \c "A", etc.
  */
 class Topic final
 {
@@ -78,7 +79,7 @@ public:
     /**
      * Builds a new topic with only a domain part.
      *
-     * @param domain the domain of the topic
+     * \param domain the domain of the topic
      */
     static Topic build(const std::string& domain)
     {
@@ -88,8 +89,8 @@ public:
     /**
      * Builds a new topic with only domain and subject parts.
      *
-     * @param domain the domain of the topic
-     * @param subject the subject of the topic
+     * \param domain the domain of the topic
+     * \param subject the subject of the topic
      */
     static Topic build(const std::string& domain,
                        const std::string& subject)
@@ -100,22 +101,22 @@ public:
     /**
      * Builds a new full topic with domain, subject and type.
      *
-     * @param domain the domain of the topic
-     * @param subject the subject of the topic
-     * @param type the type of the subject
+     * \param domain the domain of the topic
+     * \param subject the subject of the topic
+     * \param type the type of the subject
      */
     static Topic build(const std::string& domain,
                        const std::string& subject,
                        const std::string& type);
 
     /**
-     * Use the given string as an xMsg topic.
+     * Use the given string as an %xMsg topic.
      * No validation is done to the string.
      * The caller must be sure it is a valid topic.
      * This factory method is provided for speed purposes.
      * It should be used with caution.
      *
-     * @param topic a valid xMsg topic string
+     * \param topic a valid %xMsg topic string
      */
     static Topic raw(const std::string& topic)
     {
@@ -123,13 +124,13 @@ public:
     }
 
     /**
-     * Use the given string as an xMsg topic.
+     * Use the given string as an %xMsg topic.
      * No validation is done to the string.
      * The caller must be sure it is a valid topic.
      * This factory method is provided for speed purposes.
      * It should be used with caution.
      *
-     * @param topic a valid xMsg topic string
+     * \param topic a valid %xMsg topic string
      */
     static Topic raw(std::string&& topic)
     {
@@ -141,19 +142,19 @@ public:
 
 public:
     /**
-     * Returns the type part of the topic.
+     * Returns the domain part of the topic.
      */
     std::string domain() const;
 
     /**
-     * Returns the type part of the topic. If the topic has no subject, then
-     * {@code "*"} is returned.
+     * Returns the subject part of the topic.
+     * If the topic has no subject, then \c "*" is returned.
      */
     std::string subject() const;
 
     /**
-     * Returns the type part of the topic. If the topic has no type, then
-     * {@code "*"} is returned.
+     * Returns the type part of the topic.
+     * If the topic has no type, then \c "*" is returned.
      */
     std::string type() const;
 
@@ -161,18 +162,18 @@ public:
      * Returns true if this topic is a parent of the given topic.
      * A parent topic is a prefix of other topic, or they are the same.
      * Examples:
-     * <ul>
-     * <li>{@code "A"} is a parent of {@code "A:B"} and {@code "A:C:1"}
-     * <li>{@code "A"} is NOT parent of {@code "W:B"} nor {@code "Z"}
-     * <li>{@code "A:C"} is a parent of {@code "A:C:1"} and {@code "A:C"}
-     * <li>{@code "A:C"} is NOT a parent of {@code "A:B"}
-     * </ul>
+     *
+     * - \c "A" is a parent of \c "A:B" and \c "A:C:1"
+     * - \c "A" is NOT parent of \c "W:B" nor \c "Z"
+     * - \c "A:C" is a parent of \c "A:C:1" and \c "A:C"
+     * - \c "A:C" is NOT a parent of \c "A:B"
+     *
      * A subscription to a parent topic will accept any children topic.
      * See the class documentation for more details about filtering messages by
      * topic.
      *
-     * @param other the topic to match as a children
-     * @return true if this topic is a parent of the other
+     * \param other the topic to match as a children
+     * \return true if this topic is a parent of the other
      */
     bool is_parent(const Topic& other) const;
 
@@ -186,7 +187,7 @@ public:
 
 private:
     /**
-     * Construct a topic from the given string.
+     * Constructs a topic from the given string.
      * The string must be a valid topic.
      */
     template <

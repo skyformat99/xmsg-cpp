@@ -30,34 +30,54 @@
 namespace xmsg {
 
 /**
- * xMsg proxy address.
+ * The network address of an %xMsg proxy.
+ * Proxies connect and dispatch messages between %xMsg actors running on
+ * a cloud of nodes. By default, proxies use localhost IP as its address,
+ * the \ref constants::default_port as the PUB port, and PUB+1 as the SUB
+ * port.
  */
 class ProxyAddress final
 {
 public:
+    /// Creates an address using localhost and default ports
     ProxyAddress();
+
+    /// Creates an address using provided host and default ports
     ProxyAddress(const std::string& host);
+
+    /// Creates an address using provided host and PUB port,
+    /// with default SUB port
     ProxyAddress(const std::string& host, int pub_port);
+
+    /// Creates an address using provided host and ports
     ProxyAddress(const std::string& host, int pub_port, int sub_port);
 
-    const std::string host;
-    const int pub_port;
-    const int sub_port;
+    const std::string host;     ///< The host IP of the proxy
+    const int pub_port;         ///< The publication port of the proxy
+    const int sub_port;         ///< The subscription port of the proxy
 };
 
 
 /**
- * xMsg registrar address.
+ * The network address of an %xMsg registrar service.
+ * Registration services allow discoverability of running %xMsg actors.
+ * By default, registrar services use localhost IP as its address,
+ * and \ref constants::registrar_port as the listening port.
  */
 class RegAddress final
 {
 public:
+    /// Creates an address using localhost and default port
     RegAddress();
+
+    /// Creates an address using provided host and default port
     RegAddress(const std::string& host);
+
+    /// Creates an address using provided host and port
     RegAddress(const std::string& host, int port);
 
-    const std::string host;
-    const int port;
+    const std::string host;     ///< The host IP of the registrar service
+    const int port;             ///< The listening port of the registrar service
 };
 
 
