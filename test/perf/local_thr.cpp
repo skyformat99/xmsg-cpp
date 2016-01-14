@@ -56,8 +56,6 @@ int main(int argc, char** argv)
         auto topic = xmsg::Topic::raw("thr_topic");
         auto cb = LocalCallback{};
 
-        xmsg::util::sleep(100);
-
         auto sub = subscriber.subscribe(topic, std::move(connection), cb);
 
         {

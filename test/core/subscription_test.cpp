@@ -34,6 +34,7 @@ TEST(Subscription, SuscribeReceivesAllMessages)
     struct Check {
         std::atomic_int counter{0};
         std::atomic_long sum{0};
+        std::atomic_bool ready{false};
 
         const int N = 10000;
         const long SUM_N = 49995000L;
@@ -55,8 +56,9 @@ TEST(Subscription, SuscribeReceivesAllMessages)
             };
 
             auto sub = actor.subscribe(topic, std::move(connection), cb);
+            check.ready = true;
             while (check.counter.load() < check.N) {
-                xmsg::util::sleep(100);
+                xmsg::util::sleep(10);
             }
             actor.unsubscribe(std::move(sub));
         } catch (std::exception& e) {
@@ -64,10 +66,11 @@ TEST(Subscription, SuscribeReceivesAllMessages)
         }
     }};
 
-    xmsg::util::sleep(100);
-
     auto pub_thread = std::thread{[&](){
         try {
+            while (!check.ready.load()) {
+                xmsg::util::sleep(10);
+            }
             auto actor = xmsg::xMsg{"test_publisher"};
             auto connection = actor.connect();
             auto topic = xmsg::Topic::raw("test_topic");
@@ -115,7 +118,6 @@ TEST(Subscription, syncPublishReceivesAllResponses)
             };
 
             auto sub = sub_actor.subscribe(sub_topic, std::move(sub_con), sub_cb);
-            xmsg::util::sleep(100);
 
             auto pub_actor = xmsg::xMsg{"test_publisher"};
             auto pub_con = pub_actor.connect();

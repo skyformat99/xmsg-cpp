@@ -66,7 +66,6 @@ Subscription::Subscription(const Topic& topic,
       is_alive_{false}
 {
     connection_->subscribe(topic_);
-    util::sleep(100);
     thread_ = std::thread{&Subscription::run, this};
     is_alive_.store(true);
 }

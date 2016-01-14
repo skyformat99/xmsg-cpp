@@ -114,8 +114,33 @@ Message Connection::recv()
 
 void Connection::subscribe(const Topic& topic)
 {
-    auto& str = topic.str();
-    con_->sub.setsockopt(ZMQ_SUBSCRIBE, str.data(), str.size());
+    const auto& ctrl = constants::ctrl_topic;
+    const auto& request = constants::ctrl_subscribe;
+    const auto& identity = topic.str();
+
+    con_->sub.setsockopt(ZMQ_SUBSCRIBE, identity.data(), identity.size());
+
+    auto poller = core::BasicPoller{con_->sub};
+    auto retry = 0;
+    while (retry <= 10) {
+        retry++;
+        try {
+            con_->pub.send(ctrl.data(), ctrl.size(), ZMQ_SNDMORE);
+            con_->pub.send(request.data(), request.size(), ZMQ_SNDMORE);
+            con_->pub.send(identity.data(), identity.size(), 0);
+
+            if (poller.poll(10)) {
+                auto response = core::recv_msg<2>(con_->sub);
+                break;
+            }
+        } catch (zmq::error_t& e) {
+            // TODO handle reconnect
+            std::cerr << e.what() << std::endl;
+        }
+    }
+    if (retry >= 10) {
+        throw std::runtime_error{"Could not subscribe to " + con_->addr.host};
+    }
 }
 
 
