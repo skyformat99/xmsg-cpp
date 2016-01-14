@@ -12,6 +12,7 @@ set(XMSG_FILES
   topic.cpp
   subscription.cpp
   util.cpp
+  zhelper.cpp
 )
 
 add_library(xmsg SHARED ${XMSG_FILES} $<TARGET_OBJECTS:xmsgproto>)

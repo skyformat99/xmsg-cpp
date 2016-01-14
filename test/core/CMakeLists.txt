@@ -16,6 +16,11 @@ add_dependencies(test_util googlemock)
 add_test(test_util test_util)
 target_link_libraries(test_util xmsg ${GMOCK_LIBRARIES})
 
+add_executable(test_helper zhelper_test.cpp)
+add_dependencies(test_helper googlemock)
+add_test(test_helper test_helper)
+target_link_libraries(test_helper xmsg ${GMOCK_LIBRARIES})
+
 add_executable(test_subscription subscription_test.cpp)
 add_dependencies(test_subscription googlemock)
 target_link_libraries(test_subscription xmsg ${GMOCK_LIBRARIES})

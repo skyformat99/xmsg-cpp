@@ -21,38 +21,32 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#ifndef XMSG_CORE_PRIVATE_H_
-#define XMSG_CORE_PRIVATE_H_
-
-#include "address.h"
-#include "connection.h"
-#include "connection_setup.h"
 #include "zhelper.h"
+#include "util.h"
 
-#include "zmq.hpp"
+#include <random>
+
+namespace {
+
+std::random_device rd;
+std::mt19937_64 rng{rd()};
+std::uniform_int_distribution<int> gen{0, 99999};
+
+// format is 9 digits: [ppp]2[ddddd]
+auto cpp_id = 2;
+auto ip_hash = std::hash<std::string>{}(xmsg::util::localhost());
+auto prefix = (ip_hash % 1000) * 1000000 + cpp_id * 100000;
+
+}
 
 namespace xmsg {
+namespace core {
 
-struct Connection::Impl {
-    Impl(zmq::context_t& ctx,
-         ProxyAddress addr,
-         std::shared_ptr<ConnectionSetup>&& setup)
-      : addr{addr},
-        setup{std::move(setup)},
-        pub{ctx, zmq::socket_type::pub},
-        sub{ctx, zmq::socket_type::sub},
-        control{ctx, zmq::socket_type::dealer},
-        id{core::get_random_id()}
-    { }
+std::string get_random_id()
+{
+    return std::to_string(prefix + gen(rng));
+}
 
-    ProxyAddress addr;
-    std::shared_ptr<ConnectionSetup> setup;
-    zmq::socket_t pub;
-    zmq::socket_t sub;
-    zmq::socket_t control;
-    std::string id;
-};
+} // end namespace util
 
 } // end namespace xmsg
-
-#endif // XMSG_CORE_PRIVATE_H_

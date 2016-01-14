@@ -99,6 +99,9 @@ std::vector<std::uint8_t> to_bytes(const zmq::message_t& msg)
     return {ptr, ptr + msg.size()};
 }
 
+
+std::string get_random_id();
+
 } // end namespace core
 } // end namespace xmsg
 
