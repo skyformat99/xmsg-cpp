@@ -21,8 +21,6 @@ int main(int argc, char** argv)
         auto publisher = xmsg::xMsg("thr_publisher");
         auto connection = publisher.connect(bind_to);
 
-        xmsg::util::sleep(100);
-
         auto topic = xmsg::Topic::raw("thr_topic");
         auto data = std::vector<std::uint8_t>(message_size);
         auto msg = xmsg::Message{topic, "data/binary", data};

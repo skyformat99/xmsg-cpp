@@ -45,7 +45,6 @@ TEST(Subscription, SuscribeReceivesAllMessages)
         try {
             auto actor = xmsg::xMsg{"test_subscriber"};
             auto connection = actor.connect();
-            xmsg::util::sleep(100);
 
             auto topic = xmsg::Topic::raw("test_topic");
             auto cb = [&] (xmsg::Message& msg) {
@@ -71,8 +70,6 @@ TEST(Subscription, SuscribeReceivesAllMessages)
         try {
             auto actor = xmsg::xMsg{"test_publisher"};
             auto connection = actor.connect();
-            xmsg::util::sleep(100);
-
             auto topic = xmsg::Topic::raw("test_topic");
             for (int i = 0; i < check.N; i++) {
                 auto msg = xmsg::make_message(topic, i);
@@ -108,7 +105,6 @@ TEST(Subscription, syncPublishReceivesAllResponses)
             auto sub_actor = xmsg::xMsg{"test_subscriber"};
             auto sub_con = sub_actor.connect();
             auto rep_con = sub_actor.connect();
-            xmsg::util::sleep(100);
 
             auto sub_topic = xmsg::Topic::raw("test_topic");
             auto sub_cb = [&] (xmsg::Message& m) {
@@ -123,8 +119,6 @@ TEST(Subscription, syncPublishReceivesAllResponses)
 
             auto pub_actor = xmsg::xMsg{"test_publisher"};
             auto pub_con = pub_actor.connect();
-            xmsg::util::sleep(100);
-
             auto pub_topic = xmsg::Topic::raw("test_topic");
             for (int i = 0; i < check.N; i++) {
                 auto msg = xmsg::make_message(pub_topic, i);

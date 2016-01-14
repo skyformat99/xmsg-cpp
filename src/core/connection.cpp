@@ -32,6 +32,7 @@
 #include "zhelper.h"
 
 #include <array>
+#include <iostream>
 
 namespace xmsg {
 
@@ -52,6 +53,35 @@ void Connection::connect()
 
     core::connect(con_->pub, con_->addr.host, con_->addr.pub_port);
     core::connect(con_->sub, con_->addr.host, con_->addr.sub_port);
+
+    const auto& topic = constants::ctrl_topic;
+    const auto& request = constants::ctrl_connect;
+    const auto& identity = con_->id;
+
+    con_->control.setsockopt(ZMQ_IDENTITY, identity.data(), identity.size());
+    core::connect(con_->control, con_->addr.host, con_->addr.sub_port + 1);
+
+    auto poller = core::BasicPoller{con_->control};
+    auto retry = 0;
+    while (retry <= 10) {
+        retry++;
+        try {
+            con_->pub.send(topic.data(), topic.size(), ZMQ_SNDMORE);
+            con_->pub.send(request.data(), request.size(), ZMQ_SNDMORE);
+            con_->pub.send(identity.data(), identity.size(), 0);
+
+            if (poller.poll(10)) {
+                auto response = core::recv_msg<1>(con_->control);
+                break;
+            }
+        } catch (zmq::error_t& e) {
+            // TODO handle reconnect
+            std::cerr << e.what() << std::endl;
+        }
+    }
+    if (retry >= 10) {
+        throw std::runtime_error{"Could not connect to " + con_->addr.host};
+    }
 
     con_->setup->post_connection();
 }
