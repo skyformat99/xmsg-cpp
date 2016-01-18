@@ -16,6 +16,8 @@ using namespace testing;
 
 TEST(Subscription, UnsubscribeStopsThread)
 {
+    xmsg::test::ProxyThread proxy_thread{};
+
     auto actor = xmsg::xMsg{"test"};
     auto con = actor.connect();
 
