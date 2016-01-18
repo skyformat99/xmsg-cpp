@@ -37,7 +37,7 @@ TEST(Subscription, SuscribeReceivesAllMessages)
         const long SUM_N = 49995000L;
     } check;
 
-    auto proxy_thread = xmsg::test::ProxyThread{};
+    xmsg::test::ProxyThread proxy_thread{};
 
     auto sub_thread = std::thread{[&](){
         try {
@@ -101,7 +101,7 @@ TEST(Subscription, syncPublishReceivesAllResponses)
         const long SUM_N = 4950L;
     } check;
 
-    auto proxy_thread = xmsg::test::ProxyThread{};
+    xmsg::test::ProxyThread proxy_thread{};
 
     auto syncpub_thread = std::thread{[&](){
         try {

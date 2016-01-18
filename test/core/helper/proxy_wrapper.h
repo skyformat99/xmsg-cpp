@@ -5,6 +5,7 @@
 #define XMSG_TEST_PROXY_THREAD_H_
 
 #include "constants.h"
+#include "proxy.h"
 #include "util.h"
 
 #include "zmq.hpp"
@@ -23,14 +24,7 @@ public:
     {
         thread_ = std::thread {[&]() {
             try {
-                auto port = constants::default_port;
-                auto in = create_socket(port, zmq::socket_type::xsub);
-                auto out = create_socket(port + 1, zmq::socket_type::xpub);
-                zmq::proxy((void*) in, (void*) out, NULL);
-            } catch (zmq::error_t& e) {
-                if (e.num() != ETERM) {
-                    std::cerr << e.what() << std::endl;
-                }
+                proxy_.start();
             } catch (std::exception& e) {
                 std::cerr << e.what() << std::endl;
             }
@@ -40,26 +34,14 @@ public:
 
     void stop()
     {
-        ctx_.close();
+        proxy_.stop();
         thread_.join();
     }
 
 private:
-    zmq::socket_t create_socket(int port, zmq::socket_type type)
-    {
-        auto out = zmq::socket_t{ctx_, type};
-        out.setsockopt(ZMQ_RCVHWM, 0);
-        out.setsockopt(ZMQ_SNDHWM, 0);
-        out.bind("tcp://*:" + std::to_string(port));
-        return out;
-    }
-
-private:
-    zmq::context_t ctx_{};
+    xmsg::sys::Proxy proxy_{{}};
     std::thread thread_{};
-
 };
-
 
 } // end namespace test
 } // end namespace xmsg
