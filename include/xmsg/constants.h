@@ -65,6 +65,11 @@ const std::string no_result = "none";
 /// \cond HIDDEN_SYMBOLS
 const std::string bind = "bind";
 const std::string connect = "connect";
+
+const std::string ctrl_topic = "xmsg:control";
+const std::string ctrl_connect = "pub";
+const std::string ctrl_subscribe = "sub";
+const std::string ctrl_reply = "rep";
 /// \endcond
 
 const int default_port = 7771;      ///< Default publication port for proxies

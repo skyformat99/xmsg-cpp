@@ -23,6 +23,7 @@
 
 #include "proxy.h"
 
+#include "constants.h"
 #include "zhelper.h"
 
 #include <iostream>
@@ -64,6 +65,8 @@ Proxy::~Proxy()
 void Proxy::start()
 {
     is_alive_ = true;
+    ctrl_ = std::thread{&Proxy::control, this};
+
     try {
         auto in = create_socket(ctx_, zmq::socket_type::xsub);
         auto out = create_socket(ctx_, zmq::socket_type::xpub);
@@ -82,10 +85,53 @@ void Proxy::start()
 }
 
 
+void Proxy::control()
+{
+    auto control = create_socket(ctx_, zmq::socket_type::sub);
+    auto publisher = create_socket(ctx_, zmq::socket_type::pub);
+    auto router = create_socket(ctx_, zmq::socket_type::router);
+
+    core::connect(control, addr_.host, addr_.sub_port);
+    core::connect(publisher, addr_.host, addr_.pub_port);
+    core::bind(router, addr_.pub_port + 2);
+
+    auto ctrl = constants::ctrl_topic;
+    control.setsockopt(ZMQ_SUBSCRIBE, ctrl.data(), ctrl.size());
+    router.setsockopt(ZMQ_ROUTER_HANDOVER, 1);
+
+    while (is_alive_.load()) {
+        try {
+            auto in_msg = core::recv_msg<3>(control);
+
+            auto type = core::to_string(in_msg[1]);
+            auto id = core::to_string(in_msg[2]);
+
+            if (type == constants::ctrl_connect) {
+                router.send(id.data(), id.size(), ZMQ_SNDMORE);
+                router.send(type.data(), type.size(), 0);
+            } else if (type == constants::ctrl_subscribe) {
+                publisher.send(id.data(), id.size(), ZMQ_SNDMORE);
+                publisher.send(type.data(), type.size(), 0);
+            } else if (type == constants::ctrl_reply) {
+                router.send(id.data(), id.size(), ZMQ_SNDMORE);
+                router.send(type.data(), type.size(), 0);
+            }
+        } catch (const zmq::error_t& ex) {
+            if (ex.num() != ETERM) {
+                std::cerr << ex.what() << std::endl;
+            }
+        } catch (const std::exception& e) {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+}
+
+
 void Proxy::stop()
 {
     is_alive_ = false;
     ctx_.close();
+    ctrl_.join();
 }
 
 } // end namespace sys
