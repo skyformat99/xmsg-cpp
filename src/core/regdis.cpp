@@ -101,9 +101,9 @@ Request::Request(std::string topic, std::string sender, std::string text)
 
 
 Request::Request(const RequestMsg& msg)
-  : topic_  {msg[0].data<const char>(), msg[0].size()},
-    sender_ {msg[1].data<const char>(), msg[1].size()},
-    data_   {msg[2].data<const char>(), msg[2].size()}
+  : topic_  {core::to_string(msg[0])},
+    sender_ {core::to_string(msg[1])},
+    data_   {core::to_string(msg[2])}
 {
   // nothing
 }
@@ -157,14 +157,14 @@ Response::Response(std::string topic, std::string sender, std::string error_msg)
 
 
 Response::Response(const ResponseMsg& msg)
-  : topic_  {msg[0].data<const char>(), msg[0].size()},
-    sender_ {msg[1].data<const char>(), msg[1].size()},
-    status_ {msg[2].data<const char>(), msg[2].size()}
+  : topic_  {core::to_string(msg[0])},
+    sender_ {core::to_string(msg[1])},
+    status_ {core::to_string(msg[2])}
 {
     using ZFrame = const zmq::message_t;
     std::for_each(msg.begin() + n_fields, msg.end(), [=](ZFrame& f) {
         auto reg = proto::Registration{};
-        reg.ParseFromString({f.data<const char>(), f.size()});
+        reg.ParseFromArray(f.data(), f.size());
         data_.insert(reg);
     });
 }

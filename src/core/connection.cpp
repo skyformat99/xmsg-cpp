@@ -73,16 +73,12 @@ Message Connection::recv()
 {
     auto multi_msg = core::recv_msg<3>(con_->sub);
 
-    auto topic = Topic::raw(multi_msg[0].data<const char>());
-
+    auto topic = core::to_string(multi_msg[0]);
     auto meta = proto::make_meta();
     meta->ParseFromArray(multi_msg[1].data(), multi_msg[1].size());
+    auto data = core::to_bytes(multi_msg[2]);
 
-    auto data_ptr = multi_msg[2].data<std::uint8_t>();
-    auto data_size = multi_msg[2].size();
-    auto data = std::vector<std::uint8_t>(data_ptr, data_ptr + data_size);
-
-    return {topic, std::move(meta), std::move(data)};
+    return {Topic::raw(topic), std::move(meta), std::move(data)};
 }
 
 

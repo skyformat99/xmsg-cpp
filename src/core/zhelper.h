@@ -84,6 +84,21 @@ RawMessage<N> recv_msg(zmq::socket_t& socket)
     return multi_msg;
 }
 
+
+inline
+std::string to_string(const zmq::message_t& msg)
+{
+    return {msg.data<const char>(), msg.size()};
+}
+
+
+inline
+std::vector<std::uint8_t> to_bytes(const zmq::message_t& msg)
+{
+    auto ptr = msg.data<std::uint8_t>();
+    return {ptr, ptr + msg.size()};
+}
+
 } // end namespace core
 } // end namespace xmsg
 
