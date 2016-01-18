@@ -49,6 +49,28 @@ private:
     Items items_;
 };
 
+
+template<size_t N>
+using RawMessage = std::array<zmq::message_t, N>;
+
+template<size_t N>
+RawMessage<N> recv_msg(zmq::socket_t& socket)
+{
+    auto multi_msg = RawMessage<N>{};
+    auto counter = size_t{0};
+    for (auto& msg : multi_msg) {
+        socket.recv(&msg);
+        ++counter;
+        if (!msg.more()) {
+            break;
+        }
+    }
+    if (counter != N || multi_msg.end()->more()) {
+        throw std::runtime_error{"Invalid multi-part message"};
+    }
+    return multi_msg;
+}
+
 } // end namespace core
 } // end namespace xmsg
 

@@ -29,6 +29,7 @@
 #include "util.h"
 
 #include "zmq.hpp"
+#include "zhelper.h"
 
 #include <array>
 
@@ -73,20 +74,7 @@ void Connection::send(Message& msg)
 
 Message Connection::recv()
 {
-    using MultiMessage = std::array<zmq::message_t, 3>;
-
-    auto multi_msg = MultiMessage{};
-    auto counter = size_t{0};
-    for (auto& msg : multi_msg) {
-        con_->sub.recv(&msg);
-        ++counter;
-        if (!msg.more()) {
-            break;
-        }
-    }
-    if (counter != multi_msg.size() || multi_msg.end()->more()) {
-        throw std::runtime_error{"Invalid multi-part message"};
-    }
+    auto multi_msg = core::recv_msg<3>(con_->sub);
 
     auto topic = Topic::raw(multi_msg[0].data<const char>());
 
