@@ -30,6 +30,8 @@
 
 #include "meta.pb.h"
 
+#include "zhelper.h"
+
 #include <array>
 #include <iostream>
 #include <vector>
@@ -80,23 +82,14 @@ Subscription::~Subscription()
 
 void Subscription::run()
 {
-    using Items = std::array<zmq::pollitem_t, 1>;
-
-    auto & sub = connection_->con_->sub;
-    auto items = Items{ {(void*) sub, 0, ZMQ_POLLIN, 0} };
-
+    auto poller = core::BasicPoller{connection_->con_->sub};
     const int timeout = 100;
-
     while (is_alive_.load()) {
         try {
-            zmq::poll(items.data(), 1, timeout);
-            if (items[0].revents & ZMQ_POLLIN) {
+            if (poller.poll(timeout)) {
                 auto msg = connection_->recv();
                 handler_(msg);
             }
-        } catch (zmq::error_t& e) {
-            // TODO handle reconnect
-            std::cerr << e.what() << std::endl;
         } catch (std::exception& e) {
             std::cerr << e.what() << std::endl;
         }

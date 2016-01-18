@@ -24,6 +24,7 @@
 #include "regdis.h"
 
 #include "constants.h"
+#include "zhelper.h"
 
 #include <iostream>
 #include <tuple>
@@ -233,16 +234,13 @@ RegDataSet Driver::find(const proto::Registration& data, bool is_publisher)
 
 Response Driver::request(Request& req, int timeout)
 {
-    using Items = std::array<zmq::pollitem_t, 1>;
-
     auto out_msg = req.msg();
     socket_.send(out_msg[0], ZMQ_SNDMORE);
     socket_.send(out_msg[1], ZMQ_SNDMORE);
     socket_.send(out_msg[2], 0);
 
-    auto items = Items{ {(void*) socket_, 0, ZMQ_POLLIN, 0} };
-    zmq::poll(items.data(), 1, timeout);
-    if (items[0].revents & ZMQ_POLLIN) {
+    auto poller = core::BasicPoller{socket_};
+    if (poller.poll(timeout)) {
         auto in_msg = ResponseMsg{};
         while (true) {
             in_msg.emplace_back();
