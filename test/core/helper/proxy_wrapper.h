@@ -32,7 +32,7 @@ public:
         xmsg::util::sleep(100);
     }
 
-    void stop()
+    ~ProxyThread()
     {
         proxy_.stop();
         thread_.join();

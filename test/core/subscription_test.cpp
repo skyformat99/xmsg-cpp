@@ -84,8 +84,6 @@ TEST(Subscription, SuscribeReceivesAllMessages)
     sub_thread.join();
     pub_thread.join();
 
-    proxy_thread.stop();
-
     ASSERT_THAT(check.counter.load(), Eq(check.N));
     ASSERT_THAT(check.sum.load(), Eq(check.SUM_N));
 }
@@ -141,7 +139,6 @@ TEST(Subscription, syncPublishReceivesAllResponses)
     }};
 
     syncpub_thread.join();
-    proxy_thread.stop();
 
     ASSERT_THAT(check.counter.load(), Eq(check.N));
     ASSERT_THAT(check.sum.load(), Eq(check.SUM_N));
