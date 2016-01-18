@@ -192,7 +192,7 @@ Driver::Driver(zmq::context_t& ctx, RegAddress addr)
 {
     socket_.setsockopt(ZMQ_RCVHWM, 0);
     socket_.setsockopt(ZMQ_SNDHWM, 0);
-    socket_.connect("tcp://" + addr_.host + ":" + std::to_string(addr_.port));
+    core::connect(socket_, addr_.host, addr_.port);
 }
 
 

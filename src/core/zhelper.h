@@ -27,6 +27,7 @@
 #include "zmq.hpp"
 
 #include <array>
+#include <string>
 
 namespace xmsg {
 namespace core {
@@ -48,6 +49,18 @@ private:
     using Items = std::array<zmq::pollitem_t, 1>;
     Items items_;
 };
+
+
+inline void bind(zmq::socket_t& socket, int port)
+{
+    socket.bind("tcp://*:" + std::to_string(port));
+}
+
+
+inline void connect(zmq::socket_t& socket, const std::string& host, int port)
+{
+    socket.connect("tcp://" + host + ":" + std::to_string(port));
+}
 
 
 template<size_t N>

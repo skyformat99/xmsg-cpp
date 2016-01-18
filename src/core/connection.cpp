@@ -50,11 +50,8 @@ void Connection::connect()
     con_->setup->pre_connection(con_->pub);
     con_->setup->pre_connection(con_->sub);
 
-    auto pub_port = std::to_string(con_->addr.pub_port);
-    auto sub_port = std::to_string(con_->addr.sub_port);
-
-    con_->pub.connect("tcp://" + con_->addr.host + ":" + pub_port);
-    con_->sub.connect("tcp://" + con_->addr.host + ":" + sub_port);
+    core::connect(con_->pub, con_->addr.host, con_->addr.pub_port);
+    core::connect(con_->sub, con_->addr.host, con_->addr.sub_port);
 
     con_->setup->post_connection();
 }

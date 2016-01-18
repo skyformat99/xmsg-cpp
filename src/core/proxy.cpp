@@ -23,16 +23,17 @@
 
 #include "proxy.h"
 
+#include "zhelper.h"
+
 #include <iostream>
 
 namespace {
 
-zmq::socket_t create_socket(zmq::context_t& ctx, int port, zmq::socket_type type)
+zmq::socket_t create_socket(zmq::context_t& ctx, zmq::socket_type type)
 {
     auto out = zmq::socket_t{ctx, type};
     out.setsockopt(ZMQ_RCVHWM, 0);
     out.setsockopt(ZMQ_SNDHWM, 0);
-    out.bind("tcp://*:" + std::to_string(port));
     return out;
 }
 
@@ -64,8 +65,12 @@ void Proxy::start()
 {
     is_alive_ = true;
     try {
-        auto in = create_socket(ctx_, addr_.pub_port, zmq::socket_type::xsub);
-        auto out = create_socket(ctx_, addr_.sub_port, zmq::socket_type::xpub);
+        auto in = create_socket(ctx_, zmq::socket_type::xsub);
+        auto out = create_socket(ctx_, zmq::socket_type::xpub);
+
+        core::bind(in, addr_.pub_port);
+        core::bind(out, addr_.sub_port);
+
         zmq::proxy((void*) in, (void*) out, NULL);
     } catch (const zmq::error_t& e) {
         if (e.num() != ETERM) {
