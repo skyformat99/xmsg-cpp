@@ -100,8 +100,8 @@ void Subscription::run()
 void Subscription::stop()
 {
     is_alive_ = false;
-    connection_->unsubscribe(topic_);
     thread_.join();
+    connection_->unsubscribe(topic_);
 }
 
 } // end namespace xmsg
