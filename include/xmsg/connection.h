@@ -72,6 +72,7 @@ private:
     friend class ConnectionPool;
     friend class xMsg;
     friend class Subscription;
+    friend class ScopedSubscription;
 };
 
 } // end namespace xmsg

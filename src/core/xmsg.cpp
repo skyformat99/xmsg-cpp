@@ -23,10 +23,12 @@
 
 #include "xmsg.h"
 
+#include "connection_impl.h"
 #include "connection_setup.h"
 #include "connection_pool.h"
 #include "regdis.h"
 #include "util.h"
+#include "zhelper.h"
 
 #include <random>
 
@@ -56,6 +58,33 @@ struct xMsg::Impl {
     ProxyAddress default_proxy_addr;
     RegAddress default_reg_addr;
     std::shared_ptr<ConnectionPool> con_pool;
+};
+
+
+class ScopedSubscription final
+{
+public:
+    ScopedSubscription(Connection& connection, const Topic& topic)
+      : connection_{connection}, topic_{topic}, poller_{connection_.con_->sub}
+    {
+        connection_.subscribe(topic_);
+        util::sleep(100);
+    }
+
+    ~ScopedSubscription()
+    {
+        connection_.unsubscribe(topic_);
+    }
+
+    bool poll(int timeout)
+    {
+        return poller_.poll(timeout);
+    }
+
+private:
+    Connection& connection_;
+    Topic topic_;
+    core::BasicPoller poller_;
 };
 /// \endcond
 
@@ -127,34 +156,24 @@ Message xMsg::sync_publish(std::unique_ptr<Connection>& connection,
                            Message& msg,
                            int timeout)
 {
-    using ConnectionView = Subscription::ConnectionWrapperPtr;
-
     auto return_addr = "return:" + std::to_string(gen(rng));
     msg.meta_->set_replyto(return_addr);
 
-    std::atomic_bool response{false};
-    auto rmsg = Message{Topic::raw(""), "", std::vector<std::uint8_t>{}};
-
-    auto cb = [&](Message& m) {
-        rmsg = std::move(m);
-        response.store(true);
-    };
-    auto ptr = ConnectionView(connection.get(), [](Connection* c){});
-
-    auto sub = std::unique_ptr<Subscription>{
-            new Subscription{Topic::raw(return_addr), std::move(ptr), cb}
-    };
+    auto sub = ScopedSubscription{*connection, Topic::raw(return_addr)};
     connection->send(msg);
 
+    const auto dt = 10;
     auto t = 0;
-    while (t <= timeout && !response.load()) {
-        ++t;
-        util::sleep(1);
+    while (t <= timeout) {
+        if (sub.poll(dt)) {
+            auto msg = connection->recv();
+            return msg;
+        }
+        t += dt;
     }
-    if (t >= timeout) {
-        throw std::runtime_error("xMsg-Error: no response for time_out = " + std::to_string(timeout) + " milli sec.");
-    }
-    return rmsg;
+
+    throw std::runtime_error("xMsg-Error: no response for time_out = " +
+                             std::to_string(timeout) + " milli sec.");
 }
 
 
