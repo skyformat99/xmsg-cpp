@@ -7,6 +7,7 @@ set(XMSG_FILES
   connection.cpp
   connection_pool.cpp
   connection_setup.cpp
+  proxy.cpp
   regdis.cpp
   topic.cpp
   subscription.cpp

@@ -21,34 +21,67 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "constants.h"
-#include "util.h"
-#include "zmq.hpp"
+#include "proxy.h"
 
-#include <cstdlib>
 #include <iostream>
-#include <string>
 
-int main(int argc, char** argv)
+namespace {
+
+zmq::socket_t create_socket(zmq::context_t& ctx, int port, zmq::socket_type type)
 {
-    try {
-        auto port = xmsg::constants::default_port;
-        auto ctx = zmq::context_t{};
+    auto out = zmq::socket_t{ctx, type};
+    out.setsockopt(ZMQ_RCVHWM, 0);
+    out.setsockopt(ZMQ_SNDHWM, 0);
+    out.bind("tcp://*:" + std::to_string(port));
+    return out;
+}
 
-        auto in = zmq::socket_t{ctx, zmq::socket_type::xsub};
-        in.setsockopt(ZMQ_RCVHWM, 0);
-        in.setsockopt(ZMQ_SNDHWM, 0);
-        in.bind("tcp://*:" + std::to_string(port));
+}
 
-        auto out = zmq::socket_t{ctx, zmq::socket_type::xpub};
-        out.setsockopt(ZMQ_RCVHWM, 0);
-        out.setsockopt(ZMQ_SNDHWM, 0);
-        out.bind("tcp://*:" + std::to_string(port + 1));
 
-        zmq::proxy((void*) in, (void*) out, NULL);
+namespace xmsg {
+namespace sys {
 
-    } catch (std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return EXIT_FAILURE;
+Proxy::Proxy(zmq::context_t&& ctx, const ProxyAddress& addr)
+  : ctx_{std::move(ctx)}, addr_{addr}, is_alive_{false}
+{ }
+
+
+Proxy::Proxy(const ProxyAddress& addr)
+    : Proxy({}, addr)
+{ }
+
+
+Proxy::~Proxy()
+{
+    if (is_alive_.load()) {
+        stop();
     }
 }
+
+
+void Proxy::start()
+{
+    is_alive_ = true;
+    try {
+        auto in = create_socket(ctx_, addr_.pub_port, zmq::socket_type::xsub);
+        auto out = create_socket(ctx_, addr_.sub_port, zmq::socket_type::xpub);
+        zmq::proxy((void*) in, (void*) out, NULL);
+    } catch (const zmq::error_t& e) {
+        if (e.num() != ETERM) {
+            std::cerr << e.what() << std::endl;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+
+void Proxy::stop()
+{
+    is_alive_ = false;
+    ctx_.close();
+}
+
+} // end namespace sys
+} // end namespace xmsg
