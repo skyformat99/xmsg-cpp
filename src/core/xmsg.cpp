@@ -68,7 +68,7 @@ public:
       : connection_{connection}, topic_{topic}, poller_{connection_.con_->sub}
     {
         connection_.subscribe(topic_);
-        util::sleep(100);
+        util::sleep(10);
     }
 
     ~ScopedSubscription()
