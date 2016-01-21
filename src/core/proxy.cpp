@@ -38,6 +38,8 @@ zmq::socket_t create_socket(zmq::context_t& ctx, zmq::socket_type type)
     return out;
 }
 
+std::mutex mtx;
+
 }
 
 
@@ -77,9 +79,11 @@ void Proxy::start()
         zmq::proxy((void*) in, (void*) out, NULL);
     } catch (const zmq::error_t& e) {
         if (e.num() != ETERM) {
+            std::lock_guard<std::mutex> lock(mtx);
             std::cerr << "Proxy sockets: " << e.what() << std::endl;
         }
     } catch (const std::exception& e) {
+        std::lock_guard<std::mutex> lock(mtx);
         std::cerr << e.what() << std::endl;
     }
 }
@@ -96,6 +100,7 @@ void Proxy::control()
         core::connect(publisher, addr_.host, addr_.pub_port);
         core::bind(router, addr_.pub_port + 2);
     } catch (const zmq::error_t& e) {
+        std::lock_guard<std::mutex> lock(mtx);
         std::cerr << "Control socket: " << e.what() << std::endl;
         return;
     }
@@ -123,9 +128,11 @@ void Proxy::control()
             }
         } catch (const zmq::error_t& ex) {
             if (ex.num() != ETERM) {
+                std::lock_guard<std::mutex> lock(mtx);
                 std::cerr << ex.what() << std::endl;
             }
         } catch (const std::exception& e) {
+            std::lock_guard<std::mutex> lock(mtx);
             std::cerr << e.what() << std::endl;
         }
     }
