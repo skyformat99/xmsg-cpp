@@ -164,7 +164,7 @@ Message xMsg::sync_publish(std::unique_ptr<Connection>& connection,
 
     const auto dt = 10;
     auto t = 0;
-    while (t <= timeout) {
+    while (t < timeout) {
         if (sub.poll(dt)) {
             auto msg = connection->recv();
             return msg;
