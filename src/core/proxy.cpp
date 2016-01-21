@@ -77,7 +77,7 @@ void Proxy::start()
         zmq::proxy((void*) in, (void*) out, NULL);
     } catch (const zmq::error_t& e) {
         if (e.num() != ETERM) {
-            std::cerr << e.what() << std::endl;
+            std::cerr << "Proxy sockets: " << e.what() << std::endl;
         }
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -91,9 +91,14 @@ void Proxy::control()
     auto publisher = create_socket(ctx_, zmq::socket_type::pub);
     auto router = create_socket(ctx_, zmq::socket_type::router);
 
-    core::connect(control, addr_.host, addr_.sub_port);
-    core::connect(publisher, addr_.host, addr_.pub_port);
-    core::bind(router, addr_.pub_port + 2);
+    try {
+        core::connect(control, addr_.host, addr_.sub_port);
+        core::connect(publisher, addr_.host, addr_.pub_port);
+        core::bind(router, addr_.pub_port + 2);
+    } catch (const zmq::error_t& e) {
+        std::cerr << "Control socket: " << e.what() << std::endl;
+        return;
+    }
 
     auto ctrl = constants::ctrl_topic;
     control.setsockopt(ZMQ_SUBSCRIBE, ctrl.data(), ctrl.size());
