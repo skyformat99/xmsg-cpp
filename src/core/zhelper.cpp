@@ -30,12 +30,14 @@ namespace {
 
 std::random_device rd;
 std::mt19937_64 rng{rd()};
-std::uniform_int_distribution<int> gen{0, 99999};
 
-// format is 9 digits: [ppp]2[ddddd]
-auto cpp_id = 2;
-auto ip_hash = std::hash<std::string>{}(xmsg::util::localhost());
-auto prefix = (ip_hash % 1000) * 1000000 + cpp_id * 100000;
+// language identifier (Java:1, C++:2, Python:3)
+const auto cpp_id = 2;
+
+// ID generation: format is 9 digits: [ppp]2[ddddd]
+auto id_gen = std::uniform_int_distribution<int>{0, 99};
+const auto ip_hash = std::hash<std::string>{}(xmsg::util::localhost());
+const auto id_prefix = (ip_hash % 1000) * 1'000'000 + cpp_id * 100'000;
 
 }
 
@@ -44,7 +46,7 @@ namespace core {
 
 std::string get_random_id()
 {
-    return std::to_string(prefix + gen(rng));
+    return std::to_string(id_prefix + id_gen(rng));
 }
 
 } // end namespace util
