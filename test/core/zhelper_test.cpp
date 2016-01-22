@@ -6,9 +6,56 @@
 #include "gmock/gmock.h"
 
 #include <iostream>
+#include <limits>
+#include <thread>
 
 using namespace testing;
 using namespace xmsg;
+
+TEST(UniqueReplyTo, GenerateUniqueReplyTo)
+{
+    core::set_unique_replyto(-1);
+
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000000"));
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000001"));
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000002"));
+
+    auto t1 = std::thread{[](){
+            for (int i = 3; i < 900000; i++) {
+                core::get_unique_replyto("id");
+            }
+    }};
+
+    auto t2 = std::thread{[](){
+            for (int i = 0; i < 90000; i++) {
+                core::get_unique_replyto("id");
+            }
+    }};
+
+    t1.join();
+    t2.join();
+
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2990000"));
+
+    for (int i = 1; i < 10000; i++) {
+        core::get_unique_replyto("id");
+    }
+
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000000"));
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000001"));
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000002"));
+}
+
+
+TEST(UniqueReplyTo, OverflowUniqueReplyTo)
+{
+    core::set_unique_replyto(std::numeric_limits<std::uint32_t>::max());
+
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000000"));
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000001"));
+    ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000002"));
+}
+
 
 TEST(UniqueReplyTo, EncodeIdentity) {
     auto encode = core::encode_identity("10.2.9.1", "test_actor");

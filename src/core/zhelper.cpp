@@ -24,6 +24,7 @@
 #include "zhelper.h"
 #include "util.h"
 
+#include <atomic>
 #include <random>
 #include <sstream>
 
@@ -35,6 +36,12 @@ std::mt19937_64 rng{rd()};
 // language identifier (Java:1, C++:2, Python:3)
 const auto cpp_id = 2;
 
+// replyTo generation: format is "ret:<id>:2[dddddd]"
+const auto rt_seq_size = 1'000'000;
+const auto rt_seq_base = cpp_id * rt_seq_size;
+auto rt_gen = std::uniform_int_distribution<std::uint32_t>{0, 999'999};
+std::atomic_uint_fast32_t rt_seq{rt_gen(rng)};
+
 // ID generation: format is 9 digits: [ppp]2[ddddd]
 auto id_gen = std::uniform_int_distribution<int>{0, 99};
 const auto ip_hash = std::hash<std::string>{}(xmsg::util::localhost());
@@ -42,8 +49,22 @@ const auto id_prefix = (ip_hash % 1000) * 1'000'000 + cpp_id * 100'000;
 
 }
 
+
 namespace xmsg {
 namespace core {
+
+std::string get_unique_replyto(const std::string& subject)
+{
+    auto id = ++rt_seq % rt_seq_size + rt_seq_base;
+    return "ret:" + subject + ":" + std::to_string(id);
+}
+
+
+void set_unique_replyto(std::uint32_t value)
+{
+    rt_seq = value;
+}
+
 
 std::string encode_identity(const std::string& address, const std::string& name)
 {

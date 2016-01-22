@@ -32,14 +32,6 @@
 
 #include <random>
 
-namespace {
-
-std::random_device rd;
-std::mt19937_64 rng{rd()};
-std::uniform_int_distribution<int> gen{1, 100};
-
-}
-
 namespace xmsg {
 
 /// \cond HIDDEN_SYMBOLS
@@ -158,7 +150,7 @@ Message xMsg::sync_publish(std::unique_ptr<Connection>& connection,
                            Message& msg,
                            int timeout)
 {
-    auto return_addr = "return:" + std::to_string(gen(rng));
+    auto return_addr = core::get_unique_replyto(xmsg_->id);
     msg.meta_->set_replyto(return_addr);
 
     auto sub = ScopedSubscription{*connection, Topic::raw(return_addr)};
