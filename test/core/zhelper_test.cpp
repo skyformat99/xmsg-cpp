@@ -16,9 +16,9 @@ TEST(RandomControlId, NineDigitsLong) {
     auto id2 = core::get_random_id();
     auto id3 = core::get_random_id();
 
-    ASSERT_EQ(id1.size(), 9u);
-    ASSERT_EQ(id2.size(), 9u);
-    ASSERT_EQ(id3.size(), 9u);
+    ASSERT_EQ(9u, id1.size());
+    ASSERT_EQ(9u, id2.size());
+    ASSERT_EQ(9u, id3.size());
 }
 
 
@@ -37,9 +37,9 @@ TEST(RandomControlId, FourthDigitIsCppIdentifier) {
     auto id2 = core::get_random_id();
     auto id3 = core::get_random_id();
 
-    ASSERT_EQ(id1[3], '2');
-    ASSERT_EQ(id2[3], '2');
-    ASSERT_EQ(id3[3], '2');
+    ASSERT_EQ('2', id1[3]);
+    ASSERT_EQ('2', id2[3]);
+    ASSERT_EQ('2', id3[3]);
 }
 
 
