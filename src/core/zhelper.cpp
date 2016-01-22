@@ -25,6 +25,7 @@
 #include "util.h"
 
 #include <random>
+#include <sstream>
 
 namespace {
 
@@ -43,6 +44,16 @@ const auto id_prefix = (ip_hash % 1000) * 1'000'000 + cpp_id * 100'000;
 
 namespace xmsg {
 namespace core {
+
+std::string encode_identity(const std::string& address, const std::string& name)
+{
+    std::uniform_int_distribution<int> hash_gen{0, 99};
+    std::string id = address + "#" + name + "#" + std::to_string(hash_gen(rng));
+    std::stringstream ss;
+    ss << std::hex << std::hash<std::string>{}(id);
+    return ss.str().substr(0, 8);
+}
+
 
 std::string get_random_id()
 {

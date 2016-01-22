@@ -49,12 +49,14 @@ struct xMsg::Impl {
          const RegAddress& reg_addr,
          std::shared_ptr<ConnectionPool> con_pool)
       : name{name},
+        id{core::encode_identity(proxy_addr.host, name)},
         default_proxy_addr{proxy_addr},
         default_reg_addr{reg_addr},
         con_pool{std::move(con_pool)}
     { }
 
     std::string name;
+    std::string id;
     ProxyAddress default_proxy_addr;
     RegAddress default_reg_addr;
     std::shared_ptr<ConnectionPool> con_pool;

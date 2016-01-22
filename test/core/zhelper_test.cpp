@@ -10,6 +10,12 @@
 using namespace testing;
 using namespace xmsg;
 
+TEST(UniqueReplyTo, EncodeIdentity) {
+    auto encode = core::encode_identity("10.2.9.1", "test_actor");
+
+    ASSERT_EQ(8u, encode.size());
+}
+
 
 TEST(RandomControlId, NineDigitsLong) {
     auto id1 = core::get_random_id();
