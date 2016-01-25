@@ -292,7 +292,7 @@ public:
      *
      * \param topic the topic to which messages were published
      */
-    void remove_as_publisher(const Topic& topic);
+    void deregister_as_publisher(const Topic& topic);
 
     /**
      * Removes this actor as a publisher of the specified topic,
@@ -301,7 +301,7 @@ public:
      * \param addr the address to the registrar service
      * \param topic the topic to which messages were published
      */
-    void remove_as_publisher(const RegAddress& addr, const Topic& topic);
+    void deregister_as_publisher(const RegAddress& addr, const Topic& topic);
 
     /**
      * Removes this actor as a subscriber of the specified topic,
@@ -309,7 +309,7 @@ public:
      *
      * \param topic the topic of the subscription
      */
-    void remove_as_subscriber(const Topic& topic);
+    void deregister_as_subscriber(const Topic& topic);
 
     /**
      * Removes this actor as a subscriber of the specified topic,
@@ -318,7 +318,7 @@ public:
      * \param addr the address to the registrar service
      * \param topic the topic of the subscription
      */
-    void remove_as_subscriber(const RegAddress& addr, const Topic& topic);
+    void deregister_as_subscriber(const RegAddress& addr, const Topic& topic);
 
     /**
      * Finds all publishers of the specified topic

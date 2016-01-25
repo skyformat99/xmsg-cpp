@@ -232,13 +232,13 @@ void xMsg::register_as_subscriber(const RegAddress& addr,
 }
 
 
-void xMsg::remove_as_publisher(const Topic& topic)
+void xMsg::deregister_as_publisher(const Topic& topic)
 {
-    remove_as_publisher(xmsg_->default_reg_addr, topic);
+    deregister_as_publisher(xmsg_->default_reg_addr, topic);
 }
 
 
-void xMsg::remove_as_publisher(const RegAddress& addr, const Topic& topic)
+void xMsg::deregister_as_publisher(const RegAddress& addr, const Topic& topic)
 {
     auto driver = xmsg_->con_pool->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
@@ -250,13 +250,13 @@ void xMsg::remove_as_publisher(const RegAddress& addr, const Topic& topic)
 
 
 
-void xMsg::remove_as_subscriber(const Topic& topic)
+void xMsg::deregister_as_subscriber(const Topic& topic)
 {
-    remove_as_subscriber(xmsg_->default_reg_addr, topic);
+    deregister_as_subscriber(xmsg_->default_reg_addr, topic);
 }
 
 
-void xMsg::remove_as_subscriber(const RegAddress& addr, const Topic& topic)
+void xMsg::deregister_as_subscriber(const RegAddress& addr, const Topic& topic)
 {
     auto driver = xmsg_->con_pool->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
