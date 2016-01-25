@@ -79,7 +79,7 @@ message Meta {
     optional string datTypeDescription = 15;
 
     // Sync request reply_to address
-    optional string replyTo = 16 [default = "undefined"];
+    optional string replyTo = 16;
 
     // Byte ordering in case data
     // sub-type is T_BYTES/T_BYTESA
