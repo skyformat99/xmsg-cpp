@@ -207,7 +207,7 @@ public:
      *
      * \param connection the connection to the proxy
      * \param msg the message to be published
-     * \param timeout the lenght of time to wait a response, in milliseconds
+     * \param timeout the length of time to wait a response, in milliseconds
      * \return the response message
      */
     Message sync_publish(std::unique_ptr<Connection>&, Message& msg, int timeout);
