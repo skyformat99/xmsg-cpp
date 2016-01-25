@@ -71,7 +71,7 @@ message Meta {
 
     // ... Data section ...
     // Type of the data
-    required string dataType = 14 [default = "native"];
+    required string dataType = 14;
 
     // description of the type, for e.g. If data
     // type = J_Object then this can be used to
