@@ -63,14 +63,14 @@ void Connection::connect()
 
     auto poller = core::BasicPoller{con_->control};
     auto retry = 0;
-    while (retry <= 10) {
+    while (retry < 10) {
         retry++;
         try {
             con_->pub.send(topic.data(), topic.size(), ZMQ_SNDMORE);
             con_->pub.send(request.data(), request.size(), ZMQ_SNDMORE);
             con_->pub.send(identity.data(), identity.size(), 0);
 
-            if (poller.poll(10)) {
+            if (poller.poll(100)) {
                 auto response = core::recv_msg<1>(con_->control);
                 break;
             }
