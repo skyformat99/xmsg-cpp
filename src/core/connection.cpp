@@ -125,14 +125,14 @@ void Connection::subscribe(const Topic& topic)
 
     auto poller = core::BasicPoller{con_->sub};
     auto retry = 0;
-    while (retry <= 10) {
+    while (retry < 10) {
         retry++;
         try {
             con_->pub.send(ctrl.data(), ctrl.size(), ZMQ_SNDMORE);
             con_->pub.send(request.data(), request.size(), ZMQ_SNDMORE);
             con_->pub.send(identity.data(), identity.size(), 0);
 
-            if (poller.poll(10)) {
+            if (poller.poll(100)) {
                 auto response = core::recv_msg<2>(con_->sub);
                 break;
             }
