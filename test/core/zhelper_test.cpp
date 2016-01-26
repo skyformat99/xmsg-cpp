@@ -76,9 +76,9 @@ TEST(RandomControlId, NineDigitsLong) {
 
 
 TEST(RandomControlId, SameThreeDigitsPrefix) {
-    auto pre1 = core::get_random_id().substr(0, 3);
-    auto pre2 = core::get_random_id().substr(0, 3);
-    auto pre3 = core::get_random_id().substr(0, 3);
+    auto pre1 = core::get_random_id().substr(1, 4);
+    auto pre2 = core::get_random_id().substr(1, 4);
+    auto pre3 = core::get_random_id().substr(1, 4);
 
     ASSERT_EQ(pre1, pre2);
     ASSERT_EQ(pre2, pre3);
@@ -90,9 +90,9 @@ TEST(RandomControlId, FourthDigitIsCppIdentifier) {
     auto id2 = core::get_random_id();
     auto id3 = core::get_random_id();
 
-    ASSERT_EQ('2', id1[3]);
-    ASSERT_EQ('2', id2[3]);
-    ASSERT_EQ('2', id3[3]);
+    ASSERT_EQ('2', id1[0]);
+    ASSERT_EQ('2', id2[0]);
+    ASSERT_EQ('2', id3[0]);
 }
 
 

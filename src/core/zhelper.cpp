@@ -42,10 +42,10 @@ const auto rt_seq_base = cpp_id * rt_seq_size;
 auto rt_gen = std::uniform_int_distribution<std::uint32_t>{0, 999'999};
 std::atomic_uint_fast32_t rt_seq{rt_gen(rng)};
 
-// ID generation: format is 9 digits: [ppp]2[ddddd]
+// ID generation: format is 9 digits: 2[ppp][ddddd]
 auto id_gen = std::uniform_int_distribution<int>{0, 99};
 const auto ip_hash = std::hash<std::string>{}(xmsg::util::localhost());
-const auto id_prefix = (ip_hash % 1000) * 1'000'000 + cpp_id * 100'000;
+const auto id_prefix = cpp_id * 100'000'000 + (ip_hash % 1000) * 100'000;
 
 }
 
