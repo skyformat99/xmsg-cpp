@@ -125,7 +125,7 @@ TEST(Message, CreateWithIntegerData)
     auto result = xmsg::parse_message<std::int32_t>(msg);
 
     EXPECT_THAT(result, Eq(42));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_sint32));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::single_sfixed32));
 }
 
 
@@ -158,7 +158,7 @@ TEST(Message, CreateWithIntegerArray)
     auto result = xmsg::parse_message<std::vector<std::int64_t>>(msg);
 
     EXPECT_THAT(result, ContainerEq(data));
-    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_sint64));
+    EXPECT_THAT(msg.meta()->datatype(), StrEq(mt::array_sfixed64));
 }
 
 

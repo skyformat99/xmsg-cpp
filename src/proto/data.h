@@ -118,9 +118,9 @@ inline std::string get_mimetype()
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return ""; }
 
 template<> inline std::string get_mimetype<std::int32_t>()
-        { return mimetype::single_sint32; }
+        { return mimetype::single_sfixed32; }
 template<> inline std::string get_mimetype<std::int64_t>()
-        { return mimetype::single_sint64; }
+        { return mimetype::single_sfixed64; }
 template<> inline std::string get_mimetype<float>()
         { return mimetype::single_float; }
 template<> inline std::string get_mimetype<double>()
@@ -131,9 +131,9 @@ template<> inline std::string get_mimetype<const char*>()
         { return mimetype::single_string; }
 
 template<> inline std::string get_mimetype<std::vector<std::int32_t>>()
-        { return mimetype::array_sint32; }
+        { return mimetype::array_sfixed32; }
 template<> inline std::string get_mimetype<std::vector<std::int64_t>>()
-        { return mimetype::array_sint64; }
+        { return mimetype::array_sfixed64; }
 template<> inline std::string get_mimetype<std::vector<float>>()
         { return mimetype::array_float; }
 template<> inline std::string get_mimetype<std::vector<double>>()
