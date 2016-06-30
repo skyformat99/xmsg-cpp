@@ -88,7 +88,7 @@ ConnectionPtr ConnectionPool::create_connection(const ProxyAddress& addr,
     auto con_imp = std::make_unique<Connection::Impl>(*ctx_, addr, std::move(setup));
     auto con = ConnectionPtr{new Connection{std::move(con_imp)}};
     con->connect();
-    return std::move(con);
+    return con;
 }
 
 
