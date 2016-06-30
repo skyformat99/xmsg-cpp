@@ -88,29 +88,29 @@ inline void set_value(Data& data, const std::vector<std::string>& value)
         { set_repeated(data.mutable_stringa(), value); }
 
 template <typename T>
-inline T get_value(Data& data)
+inline T get_value(const Data& data)
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
 
-template<> inline std::int32_t get_value(Data& data)
+template<> inline std::int32_t get_value(const Data& data)
         { return data.flsint32(); }
-template<> inline std::int64_t get_value(Data& data)
+template<> inline std::int64_t get_value(const Data& data)
         { return data.flsint64(); }
-template<> inline float get_value(Data& data)
+template<> inline float get_value(const Data& data)
         { return data.float_(); }
-template<> inline double get_value(Data& data)
+template<> inline double get_value(const Data& data)
         { return data.double_(); }
-template<> inline std::string get_value(Data& data)
+template<> inline std::string get_value(const Data& data)
         { return data.string(); }
 
-template<> inline std::vector<std::int32_t> get_value(Data& data)
+template<> inline std::vector<std::int32_t> get_value(const Data& data)
         { auto& a = data.flsint32a(); return {a.begin(), a.end()}; }
-template<> inline std::vector<std::int64_t> get_value(Data& data)
+template<> inline std::vector<std::int64_t> get_value(const Data& data)
         { auto& a = data.flsint64a(); return {a.begin(), a.end()}; }
-template<> inline std::vector<float> get_value(Data& data)
+template<> inline std::vector<float> get_value(const Data& data)
         { auto& a = data.floata(); return {a.begin(), a.end()}; }
-template<> inline std::vector<double> get_value(Data& data)
+template<> inline std::vector<double> get_value(const Data& data)
         { auto& a = data.doublea(); return {a.begin(), a.end()}; }
-template<> inline std::vector<std::string> get_value(Data& data)
+template<> inline std::vector<std::string> get_value(const Data& data)
         { auto& a = data.stringa(); return {a.begin(), a.end()}; }
 
 template <typename T>
@@ -176,7 +176,7 @@ inline Data make_data(T&& data)
  * \return the value of type T in the data
  */
 template<typename T>
-inline T parse_data(Data& data)
+inline T parse_data(const Data& data)
 {
     return internal::get_value<T>(data);
 }
