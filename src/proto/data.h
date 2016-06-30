@@ -61,7 +61,7 @@ inline void set_value(Data& data, const T& value)
 
 inline void set_value(Data& data, std::int32_t value)
         { data.set_flsint32(value); }
-inline void set_value(Data& data, std::int64_t &value)
+inline void set_value(Data& data, std::int64_t value)
         { data.set_flsint64(value); }
 inline void set_value(Data& data, float value)
         { data.set_float_(value); }
