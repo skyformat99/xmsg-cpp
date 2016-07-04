@@ -29,8 +29,8 @@ mark_as_advanced(CMAKE_INSTALL_SHAREDIR)
 mark_as_advanced(CMAKE_INSTALL_INCLUDEDIR)
 
 
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-missing-braces -std=c++14")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-missing-braces -std=c++14")
 
 find_package(Protobuf REQUIRED)
 find_package(zmq REQUIRED)
