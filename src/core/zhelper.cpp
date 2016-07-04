@@ -39,7 +39,7 @@ const auto cpp_id = 2;
 // replyTo generation: format is "ret:<id>:2[dddddd]"
 const auto rt_seq_size = 1'000'000;
 const auto rt_seq_base = cpp_id * rt_seq_size;
-auto rt_gen = std::uniform_int_distribution<std::uint32_t>{0, 999'999};
+auto rt_gen = std::uniform_int_distribution<std::uint_fast32_t>{0, 999'999};
 std::atomic_uint_fast32_t rt_seq{rt_gen(rng)};
 
 // ID generation: format is 9 digits: 2[ppp][ddddd]
@@ -60,7 +60,7 @@ std::string get_unique_replyto(const std::string& subject)
 }
 
 
-void set_unique_replyto(std::uint32_t value)
+void set_unique_replyto(std::uint_fast32_t value)
 {
     rt_seq = value;
 }

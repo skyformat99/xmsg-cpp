@@ -102,7 +102,7 @@ std::vector<std::uint8_t> to_bytes(const zmq::message_t& msg)
 
 std::string get_unique_replyto(const std::string& subject);
 
-void set_unique_replyto(std::uint32_t value);
+void set_unique_replyto(std::uint_fast32_t value);
 
 std::string encode_identity(const std::string& address, const std::string& name);
 

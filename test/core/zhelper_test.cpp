@@ -49,7 +49,7 @@ TEST(UniqueReplyTo, GenerateUniqueReplyTo)
 
 TEST(UniqueReplyTo, OverflowUniqueReplyTo)
 {
-    core::set_unique_replyto(std::numeric_limits<std::uint32_t>::max());
+    core::set_unique_replyto(std::numeric_limits<std::uint_fast32_t>::max());
 
     ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000000"));
     ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000001"));
