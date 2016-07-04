@@ -20,14 +20,15 @@ TEST(UniqueReplyTo, GenerateUniqueReplyTo)
     ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000001"));
     ASSERT_THAT(core::get_unique_replyto("id"), StrEq("ret:id:2000002"));
 
+    core::set_unique_replyto(900000);
+
     auto t1 = std::thread{[](){
-            for (int i = 3; i < 900000; i++) {
+            for (int i = 1; i < 50000; i++) {
                 core::get_unique_replyto("id");
             }
     }};
-
     auto t2 = std::thread{[](){
-            for (int i = 0; i < 90000; i++) {
+            for (int i = 0; i < 40000; i++) {
                 core::get_unique_replyto("id");
             }
     }};
