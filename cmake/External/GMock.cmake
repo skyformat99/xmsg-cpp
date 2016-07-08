@@ -13,11 +13,33 @@ ExternalProject_Add(
 )
 
 find_package(Threads)
+
 ExternalProject_Get_Property(googlemock SOURCE_DIR)
 ExternalProject_Get_Property(googlemock BINARY_DIR)
-SET(GMOCK_INCLUDE_DIRS "${SOURCE_DIR}/include" "${SOURCE_DIR}/gtest/include")
-SET(GMOCK_LIBRARIES
-  "${BINARY_DIR}/${CMAKE_FIND_LIBRARY_PREFIXES}gmock.a"
-  "${BINARY_DIR}/gtest/${CMAKE_FIND_LIBRARY_PREFIXES}gtest.a"
-  ${CMAKE_THREAD_LIBS_INIT}
+
+# avoid error with set_target_properties
+file(MAKE_DIRECTORY "${SOURCE_DIR}/include")
+file(MAKE_DIRECTORY "${SOURCE_DIR}/gtest/include")
+
+add_library(gmock IMPORTED STATIC IMPORTED)
+add_library(gtest IMPORTED STATIC IMPORTED)
+
+set_target_properties(gtest PROPERTIES
+  IMPORTED_LOCATION
+    "${BINARY_DIR}/gtest/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
+  INTERFACE_INCLUDE_DIRECTORIES
+    "${SOURCE_DIR}/gtest/include"
+  IMPORTED_LINK_INTERFACE_LIBRARIES
+    "${CMAKE_THREAD_LIBS_INIT}"
 )
+
+set_target_properties(gmock PROPERTIES
+  IMPORTED_LOCATION
+    "${BINARY_DIR}/${CMAKE_FIND_LIBRARY_PREFIXES}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+  INTERFACE_INCLUDE_DIRECTORIES
+    "${SOURCE_DIR}/include"
+  IMPORTED_LINK_INTERFACE_LIBRARIES
+    gtest
+)
+
+add_dependencies(gmock googlemock)
