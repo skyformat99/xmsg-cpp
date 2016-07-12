@@ -21,8 +21,9 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "topic.h"
-#include "constants.h"
+#include <xmsg/topic.h>
+
+#include <xmsg/constants.h>
 
 #include <iostream>
 #include <string>

@@ -24,9 +24,9 @@
 #ifndef XMSG_CORE_MESSAGE_HPP_
 #define XMSG_CORE_MESSAGE_HPP_
 
-#include "topic.h"
-#include "proto/meta.h"
-#include "proto/data.h"
+#include <xmsg/topic.h>
+#include <xmsg/proto/meta.h>
+#include <xmsg/proto/data.h>
 
 #include <cstdint>
 #include <memory>

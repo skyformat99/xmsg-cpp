@@ -24,9 +24,11 @@
 #ifndef XMSG_CORE_PRIVATE_H_
 #define XMSG_CORE_PRIVATE_H_
 
-#include "address.h"
-#include "connection.h"
-#include "connection_setup.h"
+#include <xmsg/connection.h>
+
+#include <xmsg/address.h>
+#include <xmsg/connection_setup.h>
+
 #include "zhelper.h"
 
 #include "zmq.hpp"

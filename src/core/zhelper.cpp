@@ -22,7 +22,8 @@
  */
 
 #include "zhelper.h"
-#include "util.h"
+
+#include <xmsg/util.h>
 
 #include <atomic>
 #include <random>

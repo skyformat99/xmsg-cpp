@@ -4,9 +4,9 @@
 #ifndef XMSG_TEST_PROXY_THREAD_H_
 #define XMSG_TEST_PROXY_THREAD_H_
 
-#include "constants.h"
-#include "proxy.h"
-#include "util.h"
+#include <xmsg/constants.h>
+#include <xmsg/proxy.h>
+#include <xmsg/util.h>
 
 #include "zmq.hpp"
 

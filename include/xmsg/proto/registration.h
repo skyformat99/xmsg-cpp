@@ -26,8 +26,8 @@
 
 #include "registration.pb.h"
 
-#include "address.h"
-#include "topic.h"
+#include <xmsg/address.h>
+#include <xmsg/topic.h>
 
 namespace xmsg {
 

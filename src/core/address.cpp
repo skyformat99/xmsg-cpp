@@ -21,10 +21,10 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "address.h"
+#include <xmsg/address.h>
 
-#include "constants.h"
-#include "util.h"
+#include <xmsg/constants.h>
+#include <xmsg/util.h>
 
 #include <cstdint>
 #include <sstream>

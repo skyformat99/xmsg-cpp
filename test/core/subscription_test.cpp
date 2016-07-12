@@ -1,13 +1,13 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /* vim: set ts=8 sts=4 et sw=4 tw=80: */
 
-#include "xmsg.h"
-#include "util.h"
+#include <xmsg/xmsg.h>
+#include <xmsg/util.h>
 
 #include "helper/proxy_wrapper.h"
+#include "zmq.hpp"
 
 #include "gmock/gmock.h"
-#include "zmq.hpp"
 
 #include <atomic>
 

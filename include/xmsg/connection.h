@@ -24,7 +24,7 @@
 #ifndef XMSG_CORE_CONNECTION_H_
 #define XMSG_CORE_CONNECTION_H_
 
-#include "message.h"
+#include <xmsg/message.h>
 
 #include <memory>
 

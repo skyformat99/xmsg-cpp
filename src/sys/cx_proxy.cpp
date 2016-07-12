@@ -21,7 +21,7 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "proxy.h"
+#include <xmsg/proxy.h>
 
 #include <cstdlib>
 #include <iostream>

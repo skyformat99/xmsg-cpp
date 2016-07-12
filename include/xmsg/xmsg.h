@@ -24,12 +24,12 @@
 #ifndef XMSG_CORE_XMSG_H_
 #define XMSG_CORE_XMSG_H_
 
-#include "address.h"
-#include "connection.h"
-#include "message.h"
-#include "proto/registration.h"
-#include "subscription.h"
-#include "topic.h"
+#include <xmsg/address.h>
+#include <xmsg/connection.h>
+#include <xmsg/message.h>
+#include <xmsg/proto/registration.h>
+#include <xmsg/subscription.h>
+#include <xmsg/topic.h>
 
 #include <functional>
 #include <memory>

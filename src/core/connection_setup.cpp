@@ -21,7 +21,7 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "connection_setup.h"
+#include <xmsg/connection_setup.h>
 
 #include "zmq.hpp"
 

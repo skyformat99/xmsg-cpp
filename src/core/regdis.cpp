@@ -23,7 +23,8 @@
 
 #include "regdis.h"
 
-#include "constants.h"
+#include <xmsg/constants.h>
+
 #include "zhelper.h"
 
 #include <iostream>

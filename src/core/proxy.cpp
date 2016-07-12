@@ -21,9 +21,10 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "proxy.h"
+#include <xmsg/proxy.h>
 
-#include "constants.h"
+#include <xmsg/constants.h>
+
 #include "zhelper.h"
 
 #include <iostream>

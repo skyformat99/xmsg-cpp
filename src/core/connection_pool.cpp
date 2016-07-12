@@ -21,13 +21,10 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "connection_pool.h"
+#include <xmsg/connection_pool.h>
 
-#include "address.h"
 #include "connection_impl.h"
 #include "regdis.h"
-
-#include "zmq.hpp"
 
 namespace xmsg {
 

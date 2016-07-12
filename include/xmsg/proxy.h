@@ -24,7 +24,7 @@
 #ifndef XMSG_CORE_PROXY_H_
 #define XMSG_CORE_PROXY_H_
 
-#include "address.h"
+#include <xmsg/address.h>
 
 #include "zmq.hpp"
 

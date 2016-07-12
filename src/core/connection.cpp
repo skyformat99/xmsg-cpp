@@ -21,15 +21,10 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "connection.h"
-
-#include "address.h"
-#include "constants.h"
 #include "connection_impl.h"
-#include "util.h"
 
-#include "zmq.hpp"
-#include "zhelper.h"
+#include <xmsg/constants.h>
+#include <xmsg/util.h>
 
 #include <array>
 #include <iostream>

@@ -24,9 +24,9 @@
 #ifndef XMSG_CORE_REG_HPP_
 #define XMSG_CORE_REG_HPP_
 
-#include "address.h"
-#include "proto/registration.h"
-#include "topic.h"
+#include <xmsg/address.h>
+#include <xmsg/proto/registration.h>
+#include <xmsg/topic.h>
 
 #include "zmq.hpp"
 

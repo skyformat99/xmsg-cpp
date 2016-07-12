@@ -25,7 +25,8 @@
 #define XMSG_PROTO_DATA_H_
 
 #include "data.pb.h"
-#include "constants.h"
+
+#include <xmsg/constants.h>
 
 #include <cstdint>
 #include <memory>

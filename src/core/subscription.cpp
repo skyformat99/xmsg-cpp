@@ -21,20 +21,15 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "subscription.h"
+#include <xmsg/subscription.h>
 
-#include "connection.h"
 #include "connection_impl.h"
-#include "message.h"
-#include "util.h"
 
-#include "meta.pb.h"
-
-#include "zhelper.h"
+#include <xmsg/message.h>
+#include <xmsg/util.h>
 
 #include <array>
 #include <iostream>
-#include <vector>
 
 namespace xmsg {
 

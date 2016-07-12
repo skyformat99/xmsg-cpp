@@ -21,14 +21,13 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "xmsg.h"
+#include <xmsg/xmsg.h>
+
+#include <xmsg/connection_pool.h>
+#include <xmsg/util.h>
 
 #include "connection_impl.h"
-#include "connection_setup.h"
-#include "connection_pool.h"
 #include "regdis.h"
-#include "util.h"
-#include "zhelper.h"
 
 #include <random>
 

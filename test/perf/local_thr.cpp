@@ -1,5 +1,5 @@
-#include "xmsg.h"
-#include "util.h"
+#include <xmsg/xmsg.h>
+#include <xmsg/util.h>
 
 #include <chrono>
 #include <condition_variable>

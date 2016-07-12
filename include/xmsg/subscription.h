@@ -24,7 +24,7 @@
 #ifndef XMSG_CORE_SUBSCRIPTION_H_
 #define XMSG_CORE_SUBSCRIPTION_H_
 
-#include "topic.h"
+#include <xmsg/topic.h>
 
 #include <atomic>
 #include <functional>

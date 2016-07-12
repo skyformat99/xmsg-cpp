@@ -21,7 +21,7 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "util.h"
+#include <xmsg/util.h>
 
 #include <arpa/inet.h>
 #include <ifaddrs.h>
