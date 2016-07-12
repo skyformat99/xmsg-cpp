@@ -5,7 +5,7 @@
 
 #include "helper/utils.h"
 
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
 
 using namespace testing;
 

@@ -3,7 +3,7 @@
 
 #include <xmsg/topic.h>
 
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
 
 using namespace testing;
 using namespace xmsg;

@@ -3,7 +3,7 @@
 
 #include <xmsg/util.h>
 
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
 
 #include <iostream>
 

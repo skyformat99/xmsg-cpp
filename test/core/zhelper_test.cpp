@@ -3,7 +3,7 @@
 
 #include "zhelper.h"
 
-#include "gmock/gmock.h"
+#include <gmock/gmock.h>
 
 #include <iostream>
 #include <limits>
