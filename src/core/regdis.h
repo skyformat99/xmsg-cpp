@@ -25,7 +25,7 @@
 #define XMSG_CORE_REG_HPP_
 
 #include "address.h"
-#include "registration.h"
+#include "proto/registration.h"
 #include "topic.h"
 
 #include "zmq.hpp"

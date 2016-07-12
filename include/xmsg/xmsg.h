@@ -27,7 +27,7 @@
 #include "address.h"
 #include "connection.h"
 #include "message.h"
-#include "registration.h"
+#include "proto/registration.h"
 #include "subscription.h"
 #include "topic.h"
 
