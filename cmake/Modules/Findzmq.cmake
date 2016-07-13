@@ -39,26 +39,16 @@ find_path(ZMQ_INCLUDE_DIR
   PATH_SUFFIXES
   include include/zmq)
 
-find_path(ZMQ_CPP_INCLUDE_DIR
-  NAMES
-  zmq.hpp
-  HINTS
-  "${_libdir}/.."
-  PATHS
-  "${ZMQ}"
-  PATH_SUFFIXES
-  include include/zmq)
-
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(zmq
   DEFAULT_MSG
   ZMQ_LIBRARY
   ZMQ_INCLUDE_DIR
-  ZMQ_CPP_INCLUDE_DIR)
+)
 
 if(ZMQ_FOUND)
   set(ZMQ_LIBRARIES ${ZMQ_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
-  set(ZMQ_INCLUDE_DIRS ${ZMQ_INCLUDE_DIR} ${ZMQ_CPP_INCLUDE_DIR})
+  set(ZMQ_INCLUDE_DIRS ${ZMQ_INCLUDE_DIR})
   mark_as_advanced(ZMQ)
 endif()
 

@@ -5,7 +5,6 @@
 #include <xmsg/util.h>
 
 #include "helper/proxy_wrapper.h"
-#include "zmq.hpp"
 
 #include <gmock/gmock.h>
 

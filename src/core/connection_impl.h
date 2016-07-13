@@ -31,8 +31,6 @@
 
 #include "zhelper.h"
 
-#include "zmq.hpp"
-
 namespace xmsg {
 
 struct Connection::Impl {

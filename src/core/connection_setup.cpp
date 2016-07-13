@@ -23,7 +23,7 @@
 
 #include <xmsg/connection_setup.h>
 
-#include "zmq.hpp"
+#include <xmsg/third_party/zmq.hpp>
 
 namespace xmsg {
 

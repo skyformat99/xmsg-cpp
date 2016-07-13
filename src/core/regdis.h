@@ -28,7 +28,7 @@
 #include <xmsg/proto/registration.h>
 #include <xmsg/topic.h>
 
-#include "zmq.hpp"
+#include <xmsg/third_party/zmq.hpp>
 
 #include <array>
 #include <memory>

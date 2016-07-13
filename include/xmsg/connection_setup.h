@@ -24,7 +24,7 @@
 #ifndef XMSG_CORE_ADVANCED_H_
 #define XMSG_CORE_ADVANCED_H_
 
-#include "zmq.hpp"
+#include <xmsg/third_party/zmq.hpp>
 
 namespace xmsg {
 

@@ -26,7 +26,7 @@
 
 #include <xmsg/address.h>
 
-#include "zmq.hpp"
+#include <xmsg/third_party/zmq.hpp>
 
 #include <atomic>
 #include <thread>

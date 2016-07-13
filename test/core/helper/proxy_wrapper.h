@@ -8,7 +8,7 @@
 #include <xmsg/proxy.h>
 #include <xmsg/util.h>
 
-#include "zmq.hpp"
+#include <xmsg/third_party/zmq.hpp>
 
 #include <iostream>
 #include <string>
