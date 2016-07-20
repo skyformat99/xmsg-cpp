@@ -1,6 +1,7 @@
 set(XMSG_FILES
   xmsg.cpp
   address.cpp
+  context.cpp
   connection.cpp
   connection_pool.cpp
   connection_setup.cpp

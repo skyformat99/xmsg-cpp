@@ -1,5 +1,9 @@
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 
+add_executable(test_context context_test.cpp)
+add_test(test_context test_context)
+target_link_libraries(test_context xmsg gmock)
+
 add_executable(test_message message_test.cpp)
 add_test(test_message test_message)
 target_link_libraries(test_message xmsg gmock)
