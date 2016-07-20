@@ -96,16 +96,8 @@ xMsg::xMsg(const std::string& name,
 xMsg::xMsg(const std::string& name,
            const ProxyAddress& default_proxy,
            const RegAddress& default_registrar)
-  : xMsg{name, default_proxy, default_registrar,
-         std::make_shared<ConnectionPool>()}
-{ }
-
-xMsg::xMsg(const std::string& name,
-           const ProxyAddress& default_proxy,
-           const RegAddress& default_registrar,
-           std::shared_ptr<ConnectionPool> connection_pool)
   : xmsg_{new Impl{name, default_proxy, default_registrar,
-                   std::move(connection_pool)}}
+                   std::make_shared<ConnectionPool>()}}
 { }
 
 

@@ -41,7 +41,6 @@
  */
 namespace xmsg {
 
-class ConnectionPool;
 class ConnectionSetup;
 
 
@@ -135,18 +134,6 @@ public:
     explicit xMsg(const std::string& name,
                   const ProxyAddress& default_proxy,
                   const RegAddress& default_registrar);
-
-    /**
-     * Creates an actor specifying the default proxy and registrar to be used.
-     *
-     * \param name the name of this actor
-     * \param default_proxy the address to the default proxy
-     * \param default_registrar the address to the default registrar
-     */
-    explicit xMsg(const std::string& name,
-                  const ProxyAddress& default_proxy,
-                  const RegAddress& default_registrar,
-                  std::shared_ptr<ConnectionPool> connection_pool);
 
     xMsg(const xMsg&) = delete;
     xMsg& operator=(const xMsg&) = delete;
