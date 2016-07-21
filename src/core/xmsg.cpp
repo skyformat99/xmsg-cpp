@@ -23,11 +23,15 @@
 
 #include <xmsg/xmsg.h>
 
+#include <xmsg/context.h>
 #include <xmsg/connection_pool.h>
 #include <xmsg/util.h>
 
 #include "connection_impl.h"
 #include "regdis.h"
+#ifdef __APPLE__
+#include "thread_local.h"
+#endif
 
 #include <random>
 
@@ -35,22 +39,31 @@ namespace xmsg {
 
 /// \cond HIDDEN_SYMBOLS
 struct xMsg::Impl {
+
     Impl(const std::string& name,
          const ProxyAddress& proxy_addr,
-         const RegAddress& reg_addr,
-         std::shared_ptr<ConnectionPool> con_pool)
+         const RegAddress& reg_addr)
       : name{name},
         id{core::encode_identity(proxy_addr.host, name)},
         default_proxy_addr{proxy_addr},
-        default_reg_addr{reg_addr},
-        con_pool{std::move(con_pool)}
+        default_reg_addr{reg_addr}
     { }
+
+    ConnectionPool* con_pool()
+    {
+#ifdef __APPLE__
+        using tls = internal::ThreadLocal<ConnectionPool>;
+        return tls::getThreadInstance();
+#else
+        static thread_local ConnectionPool pool{};
+        return &pool;
+#endif
+    }
 
     std::string name;
     std::string id;
     ProxyAddress default_proxy_addr;
     RegAddress default_reg_addr;
-    std::shared_ptr<ConnectionPool> con_pool;
 };
 
 
@@ -96,8 +109,7 @@ xMsg::xMsg(const std::string& name,
 xMsg::xMsg(const std::string& name,
            const ProxyAddress& default_proxy,
            const RegAddress& default_registrar)
-  : xmsg_{new Impl{name, default_proxy, default_registrar,
-                   std::make_shared<ConnectionPool>()}}
+  : xmsg_{new Impl{name, default_proxy, default_registrar}}
 { }
 
 
@@ -109,25 +121,25 @@ xMsg::~xMsg() = default;
 
 std::unique_ptr<Connection> xMsg::connect()
 {
-    return xmsg_->con_pool->get_connection(xmsg_->default_proxy_addr);
+    return xmsg_->con_pool()->get_connection(xmsg_->default_proxy_addr);
 }
 
 
 std::unique_ptr<Connection> xMsg::connect(const ProxyAddress& addr)
 {
-    return xmsg_->con_pool->get_connection(addr);
+    return xmsg_->con_pool()->get_connection(addr);
 }
 
 
 void xMsg::set_connection_setup(std::unique_ptr<ConnectionSetup> setup)
 {
-    return xmsg_->con_pool->set_default_setup(std::move(setup));
+    return xmsg_->con_pool()->set_default_setup(std::move(setup));
 }
 
 
 void xMsg::release(std::unique_ptr<Connection>&& connection)
 {
-    xmsg_->con_pool->release_connection(std::move(connection));
+    xmsg_->con_pool()->release_connection(std::move(connection));
 }
 
 
@@ -190,7 +202,7 @@ void xMsg::register_as_publisher(const RegAddress& addr,
                                  const Topic& topic,
                                  const std::string& description)
 {
-    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, description,
                                      proxy.host, proxy.pub_port,
@@ -212,7 +224,7 @@ void xMsg::register_as_subscriber(const RegAddress& addr,
                                   const Topic& topic,
                                   const std::string& description)
 {
-    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, description,
                                      proxy.host, proxy.sub_port,
@@ -231,7 +243,7 @@ void xMsg::deregister_as_publisher(const Topic& topic)
 
 void xMsg::deregister_as_publisher(const RegAddress& addr, const Topic& topic)
 {
-    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, "",
                                      proxy.host, proxy.pub_port,
@@ -249,7 +261,7 @@ void xMsg::deregister_as_subscriber(const Topic& topic)
 
 void xMsg::deregister_as_subscriber(const RegAddress& addr, const Topic& topic)
 {
-    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, "",
                                      proxy.host, proxy.sub_port,
@@ -266,7 +278,7 @@ RegDataSet xMsg::find_publishers(const Topic& topic)
 
 RegDataSet xMsg::find_publishers(const RegAddress& addr, const Topic& topic)
 {
-    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, "",
                                      proxy.host, proxy.pub_port,
@@ -283,7 +295,7 @@ RegDataSet xMsg::find_subscribers(const Topic& topic)
 
 RegDataSet xMsg::find_subscribers(const RegAddress& addr, const Topic& topic)
 {
-    auto driver = xmsg_->con_pool->get_connection(addr);
+    auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, "",
                                      proxy.host, proxy.sub_port,
