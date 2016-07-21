@@ -41,7 +41,6 @@ namespace registration {
 class Driver;
 }
 
-using ContextPtr = std::unique_ptr<zmq::context_t>;
 using ConnectionPtr = std::unique_ptr<Connection>;
 using DriverPtr = std::unique_ptr<registration::Driver>;
 
@@ -51,7 +50,7 @@ using SetupSharedPtr = std::shared_ptr<ConnectionSetup>;
 class ConnectionPool {
 public:
     ConnectionPool();
-    ConnectionPool(ContextPtr ctx);
+    ConnectionPool(std::shared_ptr<zmq::context_t> ctx);
 
 public:
     ConnectionPtr get_connection(const ProxyAddress& addr);
@@ -69,7 +68,7 @@ private:
     DriverPtr create_connection(const RegAddress& addr);
 
 private:
-    ContextPtr ctx_;
+    std::shared_ptr<zmq::context_t> ctx_;
     SetupSharedPtr default_setup_;
 };
 

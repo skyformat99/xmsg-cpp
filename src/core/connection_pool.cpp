@@ -29,12 +29,12 @@
 namespace xmsg {
 
 ConnectionPool::ConnectionPool()
-  : ctx_{std::make_unique<zmq::context_t>()},
+  : ctx_{std::make_shared<zmq::context_t>()},
     default_setup_{std::make_shared<ConnectionSetup>()}
 { }
 
 
-ConnectionPool::ConnectionPool(ContextPtr ctx)
+ConnectionPool::ConnectionPool(std::shared_ptr<zmq::context_t> ctx)
   : ctx_{std::move(ctx)},
     default_setup_{std::make_shared<ConnectionSetup>()}
 { }
