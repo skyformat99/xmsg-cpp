@@ -23,13 +23,15 @@
 
 #include <xmsg/connection_pool.h>
 
+#include <xmsg/context.h>
+
 #include "connection_impl.h"
 #include "regdis.h"
 
 namespace xmsg {
 
 ConnectionPool::ConnectionPool()
-  : ctx_{std::make_shared<zmq::context_t>()},
+  : ctx_{Context::instance()->ctx_},
     default_setup_{std::make_shared<ConnectionSetup>()}
 { }
 
