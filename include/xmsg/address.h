@@ -24,6 +24,7 @@
 #ifndef XMSG_CORE_ADDRESS_H_
 #define XMSG_CORE_ADDRESS_H_
 
+#include <functional>
 #include <string>
 #include <tuple>
 
@@ -124,5 +125,33 @@ inline bool operator!=(const RegAddress& lhs, const RegAddress& rhs)
 }
 
 } // end namespace xmsg
+
+
+namespace std {
+
+template <>
+struct hash<xmsg::ProxyAddress>
+{
+    std::size_t operator()(const xmsg::ProxyAddress& k) const
+    {
+        using std::hash;
+        using std::string;
+
+        return hash<std::string>()(k.host()) ^ (hash<int>()(k.pub_port()) << 1);
+    }
+};
+
+template <>
+struct hash<xmsg::RegAddress>
+{
+    std::size_t operator()(const xmsg::RegAddress& k) const
+    {
+        using std::hash;
+
+        return hash<std::string>()(k.host()) ^ (hash<int>()(k.port()) << 1);
+    }
+};
+
+} // end namespace std
 
 #endif // XMSG_CORE_ADDRESS_H_
