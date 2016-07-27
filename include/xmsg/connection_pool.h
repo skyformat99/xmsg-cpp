@@ -24,6 +24,8 @@
 #ifndef XMSG_CORE_CONNECTION_POOL_H_
 #define XMSG_CORE_CONNECTION_POOL_H_
 
+#include <xmsg/connection.h>
+
 #include <memory>
 
 namespace zmq {
@@ -32,17 +34,7 @@ class context_t;
 
 namespace xmsg {
 
-class Connection;
 class ConnectionSetup;
-class ProxyAddress;
-class RegAddress;
-
-namespace registration {
-class Driver;
-}
-
-using ConnectionPtr = std::unique_ptr<Connection>;
-using DriverPtr = std::unique_ptr<registration::Driver>;
 
 using SetupPtr = std::unique_ptr<ConnectionSetup>;
 using SetupSharedPtr = std::shared_ptr<ConnectionSetup>;
@@ -53,19 +45,19 @@ public:
     ConnectionPool(std::shared_ptr<zmq::context_t> ctx);
 
 public:
-    ConnectionPtr get_connection(const ProxyAddress& addr);
-    ConnectionPtr get_connection(const ProxyAddress& addr, SetupPtr&& setup);
+    ProxyConnection get_connection(const ProxyAddress& addr);
+    ProxyConnection get_connection(const ProxyAddress& addr, SetupPtr&& setup);
     void set_default_setup(SetupPtr&& setup);
 
-    DriverPtr get_connection(const RegAddress& addr);
+    RegConnection get_connection(const RegAddress& addr);
 
-    void release_connection(ConnectionPtr&& con);
-    void release_connection(DriverPtr&& con);
+    void release_connection(ProxyConnection&& con);
+    void release_connection(RegConnection&& con);
 
 private:
-    ConnectionPtr create_connection(const ProxyAddress& addr,
-                                    SetupSharedPtr&& setup);
-    DriverPtr create_connection(const RegAddress& addr);
+    detail::ProxyDriverPtr create_connection(const ProxyAddress& addr,
+                                             SetupSharedPtr&& setup);
+    detail::RegDriverPtr create_connection(const RegAddress& addr);
 
 private:
     std::shared_ptr<zmq::context_t> ctx_;

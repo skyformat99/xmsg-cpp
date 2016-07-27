@@ -148,7 +148,7 @@ public:
      * Obtains a connection to the default proxy.
      * If there is no available connection, a new one will be created.
      */
-    std::unique_ptr<Connection> connect();
+    ProxyConnection connect();
 
     /**
      * Obtains a connection to the specified proxy.
@@ -156,7 +156,7 @@ public:
      *
      * \param addr the address of the proxy
      */
-    std::unique_ptr<Connection> connect(const ProxyAddress& addr);
+    ProxyConnection connect(const ProxyAddress& addr);
 
     /**
      * Changes the setup of all created connections.
@@ -171,7 +171,7 @@ public:
      *
      * \param connection the returned connection
      */
-    void release(std::unique_ptr<Connection>&& connection);
+    void release(ProxyConnection&& connection);
 
 public:
     /**
@@ -180,7 +180,7 @@ public:
      * \param connection the connection to the proxy
      * \param msg the message to be published
      */
-    void publish(std::unique_ptr<Connection>& connection, Message& msg);
+    void publish(ProxyConnection& connection, Message& msg);
 
     /**
      * Publishes a message through the specified proxy connection and blocks
@@ -197,7 +197,7 @@ public:
      * \param timeout the length of time to wait a response, in milliseconds
      * \return the response message
      */
-    Message sync_publish(std::unique_ptr<Connection>&, Message& msg, int timeout);
+    Message sync_publish(ProxyConnection&, Message& msg, int timeout);
 
     /**
      * Subscribes to a topic of interest through the specified proxy
@@ -210,7 +210,7 @@ public:
      */
     std::unique_ptr<Subscription>
     subscribe(const Topic& topic,
-              std::unique_ptr<Connection> connection,
+              ProxyConnection&& connection,
               std::function<void(Message&)> callback);
 
     /**

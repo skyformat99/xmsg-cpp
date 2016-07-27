@@ -24,13 +24,12 @@
 #ifndef XMSG_CORE_CONNECTION_H_
 #define XMSG_CORE_CONNECTION_H_
 
+#include <xmsg/address.h>
 #include <xmsg/message.h>
 
 #include <memory>
 
 namespace xmsg {
-
-class ProxyAddress;
 
 /**
  * The standard pub/sub connection to an %xMsg proxy.
@@ -74,6 +73,104 @@ private:
     friend class Subscription;
     friend class ScopedSubscription;
 };
+
+
+namespace registration {
+class Driver;
+}
+
+namespace detail {
+
+using ProxyDriver = Connection;
+using RegDriver = registration::Driver;
+
+struct ProxyDriverDeleter
+{
+    void operator()(ProxyDriver *p);
+};
+
+struct RegDriverDeleter
+{
+    void operator()(RegDriver *p);
+};
+
+using ProxyDriverPtr = std::unique_ptr<ProxyDriver, ProxyDriverDeleter>;
+using RegDriverPtr = std::unique_ptr<RegDriver, RegDriverDeleter>;
+
+
+} // end namespace detail
+
+class ConnectionPool;
+
+
+template<typename A, typename U>
+class ScopedConnection
+{
+public:
+    using pointer = typename U::pointer;
+    using element_type = typename U::element_type;
+
+private:
+    ScopedConnection(const A& addr, U&& con)
+        : addr_{addr},
+          con_{std::move(con)}
+    {
+        // nop
+    }
+
+public:
+    ScopedConnection(const ScopedConnection&) = delete;
+    ScopedConnection& operator=(const ScopedConnection&) = delete;
+
+    ScopedConnection(ScopedConnection&&) = default;
+    ScopedConnection& operator=(ScopedConnection&&) = default;
+
+    ~ScopedConnection() = default;
+
+public:
+    const A& address() const
+    {
+        return addr_;
+    }
+
+    pointer get() const
+    {
+        return con_.get();
+    }
+
+    void close()
+    {
+        con_.reset();
+    }
+
+private:
+    typename std::add_lvalue_reference<element_type>::type
+    operator*() const
+    {
+        return *con_;
+    }
+
+    pointer operator->() const
+    {
+        return get();
+    }
+
+    U release()
+    {
+        auto con = std::move(con_);
+        return con;
+    }
+
+private:
+    friend ConnectionPool;
+    friend xMsg;
+
+    A addr_;
+    U con_;
+};
+
+using ProxyConnection = ScopedConnection<ProxyAddress, detail::ProxyDriverPtr>;
+using RegConnection = ScopedConnection<RegAddress, detail::RegDriverPtr>;
 
 } // end namespace xmsg
 

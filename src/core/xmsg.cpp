@@ -119,13 +119,13 @@ xMsg& xMsg::operator=(xMsg &&) = default;
 xMsg::~xMsg() = default;
 
 
-std::unique_ptr<Connection> xMsg::connect()
+ProxyConnection xMsg::connect()
 {
     return xmsg_->con_pool()->get_connection(xmsg_->default_proxy_addr);
 }
 
 
-std::unique_ptr<Connection> xMsg::connect(const ProxyAddress& addr)
+ProxyConnection xMsg::connect(const ProxyAddress& addr)
 {
     return xmsg_->con_pool()->get_connection(addr);
 }
@@ -137,19 +137,19 @@ void xMsg::set_connection_setup(std::unique_ptr<ConnectionSetup> setup)
 }
 
 
-void xMsg::release(std::unique_ptr<Connection>&& connection)
+void xMsg::release(ProxyConnection&& connection)
 {
     xmsg_->con_pool()->release_connection(std::move(connection));
 }
 
 
-void xMsg::publish(std::unique_ptr<Connection>& connection, Message& msg)
+void xMsg::publish(ProxyConnection& connection, Message& msg)
 {
     connection->send(msg);
 }
 
 
-Message xMsg::sync_publish(std::unique_ptr<Connection>& connection,
+Message xMsg::sync_publish(ProxyConnection& connection,
                            Message& msg,
                            int timeout)
 {
@@ -176,11 +176,11 @@ Message xMsg::sync_publish(std::unique_ptr<Connection>& connection,
 
 std::unique_ptr<Subscription>
 xMsg::subscribe(const Topic& topic,
-                std::unique_ptr<Connection> connection,
+                ProxyConnection&& connection,
                 std::function<void(Message&)> callback)
 {
     return std::unique_ptr<Subscription>{
-            new Subscription{topic, std::move(connection), std::move(callback)}
+            new Subscription{topic, connection.release(), std::move(callback)}
     };
 }
 

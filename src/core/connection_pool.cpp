@@ -30,6 +30,22 @@
 
 namespace xmsg {
 
+namespace detail {
+
+void ProxyDriverDeleter::operator()(ProxyDriver *p)
+{
+    delete p;
+}
+
+void RegDriverDeleter::operator()(RegDriver *p)
+{
+    delete p;
+}
+
+} // end namespace detail
+
+
+
 ConnectionPool::ConnectionPool()
   : ctx_{Context::instance()->ctx_},
     default_setup_{std::make_shared<ConnectionSetup>()}
@@ -42,16 +58,18 @@ ConnectionPool::ConnectionPool(std::shared_ptr<zmq::context_t> ctx)
 { }
 
 
-ConnectionPtr ConnectionPool::get_connection(const ProxyAddress& addr)
+ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr)
 {
-    return create_connection(addr, SetupSharedPtr{default_setup_});
+    auto con = create_connection(addr, SetupSharedPtr{default_setup_});
+    return { ProxyAddress{addr}, std::move(con) };
 }
 
 
-ConnectionPtr ConnectionPool::get_connection(const ProxyAddress& addr,
+ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr,
                                              SetupPtr&& setup)
 {
-    return create_connection(addr, SetupSharedPtr{std::move(setup)});
+    auto con = create_connection(addr, SetupSharedPtr{std::move(setup)});
+    return { ProxyAddress{addr}, std::move(con) };
 }
 
 
@@ -61,39 +79,40 @@ void ConnectionPool::set_default_setup(SetupPtr&& setup)
 }
 
 
-DriverPtr ConnectionPool::get_connection(const RegAddress& addr)
+RegConnection ConnectionPool::get_connection(const RegAddress& addr)
 {
-    return create_connection(addr);
+    auto&& con = create_connection(addr);
+    return { RegAddress{addr}, std::move(con) };
 }
 
 
-void ConnectionPool::release_connection(ConnectionPtr&& con)
-{
-    // TODO: put back in pool instead of destroy
-    auto c = std::move(con);
-}
-
-
-void ConnectionPool::release_connection(DriverPtr&& con)
+void ConnectionPool::release_connection(ProxyConnection&& con)
 {
     // TODO: put back in pool instead of destroy
-    auto c = std::move(con);
+    con.close();
 }
 
 
-ConnectionPtr ConnectionPool::create_connection(const ProxyAddress& addr,
-                                                SetupSharedPtr&& setup)
+void ConnectionPool::release_connection(RegConnection&& con)
+{
+    // TODO: put back in pool instead of destroy
+    con.close();
+}
+
+
+detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& addr,
+                                                         SetupSharedPtr&& setup)
 {
     auto con_imp = std::make_unique<Connection::Impl>(*ctx_, addr, std::move(setup));
-    auto con = ConnectionPtr{new Connection{std::move(con_imp)}};
+    auto con = detail::ProxyDriverPtr{new Connection{std::move(con_imp)}};
     con->connect();
     return con;
 }
 
 
-DriverPtr ConnectionPool::create_connection(const RegAddress& addr)
+detail::RegDriverPtr ConnectionPool::create_connection(const RegAddress& addr)
 {
-    return std::make_unique<registration::Driver>(*ctx_, addr);
+    return detail::RegDriverPtr{new registration::Driver(*ctx_, addr)};
 }
 
 } // end namespace xmsg
