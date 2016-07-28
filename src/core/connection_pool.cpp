@@ -28,6 +28,10 @@
 #include "connection_driver.h"
 #include "registration_driver.h"
 
+#include <queue>
+#include <unordered_map>
+
+
 namespace xmsg {
 
 namespace detail {
@@ -45,22 +49,68 @@ void RegDriverDeleter::operator()(RegDriver *p)
 } // end namespace detail
 
 
+template <typename A, typename U>
+class ConnectionPool::ConnectionCache {
+    using ConnectionQueue = std::queue<U>;
+    using ConnectionMap = std::unordered_map<A, ConnectionQueue>;
+
+public:
+    U get(const A& addr)
+    {
+        U up;
+        auto it = cache_.find(addr);
+        if (it != cache_.end()) {
+            auto& q = it->second;
+            if (!q.empty()) {
+                up = std::move(q.front());
+                q.pop();
+            }
+        }
+        return up;
+    }
+
+    void set(const A& addr, U&& con)
+    {
+        auto it = cache_.find(addr);
+        if (it == cache_.end()) {
+            auto qp = cache_.emplace(addr, ConnectionQueue{});
+            it = qp.first;
+        }
+        it->second.push(std::move(con));
+    }
+
+private:
+    ConnectionMap cache_;
+};
+
 
 ConnectionPool::ConnectionPool()
   : ctx_{Context::instance()->ctx_},
-    default_setup_{std::make_shared<ConnectionSetup>()}
+    default_setup_{std::make_shared<ConnectionSetup>()},
+    proxy_cache_{std::make_unique<ProxyDriverCache>()},
+    reg_cache_{std::make_unique<RegDriverCache>()}
 { }
 
 
 ConnectionPool::ConnectionPool(std::shared_ptr<zmq::context_t> ctx)
   : ctx_{std::move(ctx)},
-    default_setup_{std::make_shared<ConnectionSetup>()}
+    default_setup_{std::make_shared<ConnectionSetup>()},
+    proxy_cache_{std::make_unique<ProxyDriverCache>()},
+    reg_cache_{std::make_unique<RegDriverCache>()}
 { }
+
+ConnectionPool::ConnectionPool(ConnectionPool&&) = default;
+ConnectionPool& ConnectionPool::operator=(ConnectionPool&&) = default;
+
+ConnectionPool::~ConnectionPool() = default;
 
 
 ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr)
 {
-    auto con = create_connection(addr, SetupSharedPtr{default_setup_});
+    auto con = proxy_cache_->get(addr);
+    if (!con) {
+        con = create_connection(addr, SetupSharedPtr{default_setup_});
+    }
     return { ProxyAddress{addr}, std::move(con) };
 }
 
@@ -68,7 +118,10 @@ ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr)
 ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr,
                                              SetupPtr&& setup)
 {
-    auto con = create_connection(addr, SetupSharedPtr{std::move(setup)});
+    auto con = proxy_cache_->get(addr);
+    if (!con) {
+        con = create_connection(addr, SetupSharedPtr{std::move(setup)});
+    }
     return { ProxyAddress{addr}, std::move(con) };
 }
 
@@ -81,22 +134,23 @@ void ConnectionPool::set_default_setup(SetupPtr&& setup)
 
 RegConnection ConnectionPool::get_connection(const RegAddress& addr)
 {
-    auto&& con = create_connection(addr);
+    auto con = reg_cache_->get(addr);
+    if (!con) {
+        con = create_connection(addr);
+    }
     return { RegAddress{addr}, std::move(con) };
 }
 
 
 void ConnectionPool::release_connection(ProxyConnection&& con)
 {
-    // TODO: put back in pool instead of destroy
-    con.close();
+    proxy_cache_->set(con.address(), con.release());
 }
 
 
 void ConnectionPool::release_connection(RegConnection&& con)
 {
-    // TODO: put back in pool instead of destroy
-    con.close();
+    reg_cache_->set(con.address(), con.release());
 }
 
 

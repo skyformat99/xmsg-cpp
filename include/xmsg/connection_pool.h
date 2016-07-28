@@ -44,6 +44,14 @@ public:
     ConnectionPool();
     ConnectionPool(std::shared_ptr<zmq::context_t> ctx);
 
+    ConnectionPool(const ConnectionPool&) = delete;
+    ConnectionPool& operator=(const ConnectionPool&) = delete;
+
+    ConnectionPool(ConnectionPool&&);
+    ConnectionPool& operator=(ConnectionPool&&);
+
+    virtual ~ConnectionPool();
+
 public:
     ProxyConnection get_connection(const ProxyAddress& addr);
     ProxyConnection get_connection(const ProxyAddress& addr, SetupPtr&& setup);
@@ -55,13 +63,22 @@ public:
     void release_connection(RegConnection&& con);
 
 private:
-    detail::ProxyDriverPtr create_connection(const ProxyAddress& addr,
-                                             SetupSharedPtr&& setup);
-    detail::RegDriverPtr create_connection(const RegAddress& addr);
+    virtual detail::ProxyDriverPtr create_connection(const ProxyAddress& addr,
+                                                     SetupSharedPtr&& setup);
+    virtual detail::RegDriverPtr create_connection(const RegAddress& addr);
 
 private:
     std::shared_ptr<zmq::context_t> ctx_;
     SetupSharedPtr default_setup_;
+
+    template<typename A, typename U>
+    class ConnectionCache;
+
+    using ProxyDriverCache = ConnectionCache<ProxyAddress, detail::ProxyDriverPtr>;
+    using RegDriverCache = ConnectionCache<RegAddress, detail::RegDriverPtr>;
+
+    std::unique_ptr<ProxyDriverCache> proxy_cache_;
+    std::unique_ptr<RegDriverCache> reg_cache_;
 };
 
 } // end namespace xmsg

@@ -4,6 +4,10 @@ add_executable(test_context context_test.cpp)
 add_test(test_context test_context)
 target_link_libraries(test_context xmsg gmock)
 
+add_executable(test_connection_pool connection_pool_test.cpp)
+add_test(test_connection_pool test_connection_pool)
+target_link_libraries(test_connection_pool xmsg gmock)
+
 add_executable(test_message message_test.cpp)
 add_test(test_message test_message)
 target_link_libraries(test_message xmsg gmock)
