@@ -166,13 +166,6 @@ public:
      */
     void set_connection_setup(std::unique_ptr<ConnectionSetup> setup);
 
-    /**
-     * Returns the given connection into the pool of available connections.
-     *
-     * \param connection the returned connection
-     */
-    void release(ProxyConnection&& connection);
-
 public:
     /**
      * Publishes a message through the specified proxy connection.

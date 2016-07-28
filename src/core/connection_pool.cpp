@@ -111,7 +111,10 @@ ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr)
     if (!con) {
         con = create_connection(addr, SetupSharedPtr{default_setup_});
     }
-    return { ProxyAddress{addr}, std::move(con) };
+    auto del = [this](detail::ProxyDriverPtr&& c) {
+        proxy_cache_->set(c->address(), std::move(c));
+    };
+    return { ProxyAddress{addr}, std::move(con), std::move(del) };
 }
 
 
@@ -122,7 +125,10 @@ ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr,
     if (!con) {
         con = create_connection(addr, SetupSharedPtr{std::move(setup)});
     }
-    return { ProxyAddress{addr}, std::move(con) };
+    auto del = [this](detail::ProxyDriverPtr&& c) {
+        proxy_cache_->set(c->address(), std::move(c));
+    };
+    return { ProxyAddress{addr}, std::move(con), std::move(del) };
 }
 
 
@@ -138,19 +144,10 @@ RegConnection ConnectionPool::get_connection(const RegAddress& addr)
     if (!con) {
         con = create_connection(addr);
     }
-    return { RegAddress{addr}, std::move(con) };
-}
-
-
-void ConnectionPool::release_connection(ProxyConnection&& con)
-{
-    proxy_cache_->set(con.address(), con.release());
-}
-
-
-void ConnectionPool::release_connection(RegConnection&& con)
-{
-    reg_cache_->set(con.address(), con.release());
+    auto del = [this](detail::RegDriverPtr&& c) {
+        reg_cache_->set(c->address(), std::move(c));
+    };
+    return { RegAddress{addr}, std::move(con), std::move(del) };
 }
 
 

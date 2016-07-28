@@ -59,9 +59,6 @@ public:
 
     RegConnection get_connection(const RegAddress& addr);
 
-    void release_connection(ProxyConnection&& con);
-    void release_connection(RegConnection&& con);
-
 private:
     virtual detail::ProxyDriverPtr create_connection(const ProxyAddress& addr,
                                                      SetupSharedPtr&& setup);

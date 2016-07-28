@@ -137,12 +137,6 @@ void xMsg::set_connection_setup(std::unique_ptr<ConnectionSetup> setup)
 }
 
 
-void xMsg::release(ProxyConnection&& connection)
-{
-    xmsg_->con_pool()->release_connection(std::move(connection));
-}
-
-
 void xMsg::publish(ProxyConnection& connection, Message& msg)
 {
     connection->send(msg);

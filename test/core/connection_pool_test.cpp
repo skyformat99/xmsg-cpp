@@ -40,14 +40,14 @@ private:
 };
 
 
-template<typename T>
+template<typename A, typename U>
 class ConnectionPoolTest : public Test
 {
 public:
     void create_connection()
     {
-        auto addr1 = T{"10.2.9.1"};
-        auto addr2 = T{"10.2.9.2"};
+        auto addr1 = A{"10.2.9.1"};
+        auto addr2 = A{"10.2.9.2"};
 
         auto c1 = pool->get_connection(addr1);
         auto c2 = pool->get_connection(addr2);
@@ -67,24 +67,25 @@ public:
 
     void reuse_connection()
     {
-        auto addr1 = T{"10.2.9.1"};
-        auto addr2 = T{"10.2.9.2"};
+        auto addr1 = A{"10.2.9.1"};
+        auto addr2 = A{"10.2.9.2"};
 
-        auto cc1 = pool->get_connection(addr1);
-        auto cc2 = pool->get_connection(addr2);
-        auto cc3 = pool->get_connection(addr2);
+        typename U::pointer pc1;
+        typename U::pointer pc2;
+        typename U::pointer pc3;
+        {
+            U cc1 = pool->get_connection(addr1);
+            U cc2 = pool->get_connection(addr2);
+            U cc3 = pool->get_connection(addr2);
 
-        auto pc1 = cc1.get();
-        auto pc2 = cc2.get();
-        auto pc3 = cc3.get();
+            pc1 = cc1.get();
+            pc2 = cc2.get();
+            pc3 = cc3.get();
+        }
 
-        pool->release_connection(std::move(cc1));
-        pool->release_connection(std::move(cc2));
-        pool->release_connection(std::move(cc3));
-
-        auto c1 = pool->get_connection(addr1);
-        auto c2 = pool->get_connection(addr2);
         auto c3 = pool->get_connection(addr2);
+        auto c2 = pool->get_connection(addr2);
+        auto c1 = pool->get_connection(addr1);
 
         EXPECT_THAT(pool->new_connections, Eq(3));
 
@@ -98,8 +99,8 @@ private:
 };
 
 
-using ProxyConnectionTest = ConnectionPoolTest<ProxyAddress>;
-using RegConnectionTest = ConnectionPoolTest<ProxyAddress>;
+using ProxyConnectionTest = ConnectionPoolTest<ProxyAddress, ProxyConnection>;
+using RegConnectionTest = ConnectionPoolTest<RegAddress, RegConnection>;
 
 
 TEST_F(ProxyConnectionTest, GetConnection)

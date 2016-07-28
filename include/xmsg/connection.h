@@ -61,11 +61,13 @@ class ScopedConnection
 public:
     using pointer = typename U::pointer;
     using element_type = typename U::element_type;
+    using deleter = std::function<void(U&&)>;
 
 private:
-    ScopedConnection(const A& addr, U&& con)
+    ScopedConnection(const A& addr, U&& con, deleter&& del)
         : addr_{addr},
-          con_{std::move(con)}
+          con_{std::move(con)},
+          del_{std::move(del)}
     {
         // nop
     }
@@ -77,7 +79,12 @@ public:
     ScopedConnection(ScopedConnection&&) = default;
     ScopedConnection& operator=(ScopedConnection&&) = default;
 
-    ~ScopedConnection() = default;
+    ~ScopedConnection()
+    {
+        if (con_) {
+            del_(std::move(con_));
+        }
+    };
 
 public:
     const A& address() const
@@ -119,6 +126,7 @@ private:
 
     A addr_;
     U con_;
+    deleter del_;
 };
 
 using ProxyConnection = ScopedConnection<ProxyAddress, detail::ProxyDriverPtr>;
