@@ -21,7 +21,7 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "regdis.h"
+#include "registration_driver.h"
 
 #include <xmsg/constants.h>
 

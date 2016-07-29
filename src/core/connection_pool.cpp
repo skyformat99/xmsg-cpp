@@ -26,7 +26,7 @@
 #include <xmsg/context.h>
 
 #include "connection_impl.h"
-#include "regdis.h"
+#include "registration_driver.h"
 
 namespace xmsg {
 

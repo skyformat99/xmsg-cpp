@@ -4,7 +4,7 @@
 #include <xmsg/constants.h>
 #include <xmsg/topic.h>
 
-#include "regdis.h"
+#include "registration_driver.h"
 
 #include <random>
 #include <string>

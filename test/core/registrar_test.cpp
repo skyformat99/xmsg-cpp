@@ -3,7 +3,6 @@
 
 #include <xmsg/topic.h>
 
-#include "regdis.h"
 #include "helper/registration.h"
 
 #include <cstdio>

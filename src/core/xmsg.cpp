@@ -28,7 +28,7 @@
 #include <xmsg/util.h>
 
 #include "connection_impl.h"
-#include "regdis.h"
+#include "registration_driver.h"
 #ifdef __APPLE__
 #include "thread_local.h"
 #endif

@@ -812,8 +812,8 @@ RECURSIVE              = NO
 EXCLUDE                = "@CMAKE_SOURCE_DIR@/include/xmsg/connection_pool.h" \
                          "@CMAKE_SOURCE_DIR@/src/core/connection_impl.h" \
                          "@CMAKE_SOURCE_DIR@/src/core/connection_pool.cpp" \
-                         "@CMAKE_SOURCE_DIR@/src/core/regdis.cpp" \
-                         "@CMAKE_SOURCE_DIR@/src/core/regdis.h"
+                         "@CMAKE_SOURCE_DIR@/src/core/registration_driver.cpp" \
+                         "@CMAKE_SOURCE_DIR@/src/core/registration_driver.h"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
