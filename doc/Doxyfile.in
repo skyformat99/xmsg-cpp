@@ -810,7 +810,7 @@ RECURSIVE              = NO
 # run.
 
 EXCLUDE                = "@CMAKE_SOURCE_DIR@/include/xmsg/connection_pool.h" \
-                         "@CMAKE_SOURCE_DIR@/src/core/connection_impl.h" \
+                         "@CMAKE_SOURCE_DIR@/src/core/connection_driver.h" \
                          "@CMAKE_SOURCE_DIR@/src/core/connection_pool.cpp" \
                          "@CMAKE_SOURCE_DIR@/src/core/registration_driver.cpp" \
                          "@CMAKE_SOURCE_DIR@/src/core/registration_driver.h"

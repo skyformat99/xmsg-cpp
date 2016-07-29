@@ -23,7 +23,7 @@
 
 #include <xmsg/subscription.h>
 
-#include "connection_impl.h"
+#include "connection_driver.h"
 
 #include <xmsg/message.h>
 #include <xmsg/util.h>
@@ -76,7 +76,7 @@ Subscription::~Subscription()
 
 void Subscription::run()
 {
-    auto poller = core::BasicPoller{connection_->con_->sub};
+    auto poller = core::BasicPoller{connection_->sub_socket()};
     const int timeout = 100;
     while (is_alive_.load()) {
         try {

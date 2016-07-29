@@ -25,16 +25,14 @@
 #define XMSG_DETAIL_CONNECTION_DRIVER_H_
 
 #include <xmsg/address.h>
+#include <xmsg/connection_setup.h>
 #include <xmsg/message.h>
+
+#include "zhelper.h"
 
 #include <memory>
 
 namespace xmsg {
-
-class ConnectionPool;
-class xMsg;
-class Subscription;
-class ScopedSubscription;
 
 namespace detail {
 
@@ -45,18 +43,22 @@ namespace detail {
  */
 class ProxyDriver final {
 public:
+    ProxyDriver(zmq::context_t& ctx,
+                const ProxyAddress& addr,
+                std::shared_ptr<ConnectionSetup>&& setup);
+
     ProxyDriver(const ProxyDriver&) = delete;
     ProxyDriver& operator=(const ProxyDriver&) = delete;
 
-    ProxyDriver(ProxyDriver&&);
-    ProxyDriver& operator=(ProxyDriver&&);
-    ~ProxyDriver();
+    ProxyDriver(ProxyDriver&&) = default;
+    ProxyDriver& operator=(ProxyDriver&&) = default;
+
+    ~ProxyDriver() = default;
 
 public:
     /// Returns the address of the connected proxy
     const ProxyAddress& address();
 
-private:
     /// Connects the internal sockets to the proxy
     void connect();
 
@@ -70,15 +72,18 @@ private:
     /// Unsubscribes to messages of the given topic through the proxy
     void unsubscribe(const Topic& topic);
 
-private:
-    struct Impl;
-    std::unique_ptr<Impl> con_;
-    ProxyDriver(std::unique_ptr<Impl>&&);
+public:
+    zmq::socket_t& pub_socket() { return pub_; }
 
-    friend class xmsg::ConnectionPool;
-    friend class xmsg::xMsg;
-    friend class xmsg::Subscription;
-    friend class xmsg::ScopedSubscription;
+    zmq::socket_t& sub_socket() { return sub_; }
+
+private:
+    ProxyAddress addr_;
+    std::shared_ptr<ConnectionSetup> setup_;
+    zmq::socket_t pub_;
+    zmq::socket_t sub_;
+    zmq::socket_t control_;
+    std::string id_;
 };
 
 } // end namespace detail

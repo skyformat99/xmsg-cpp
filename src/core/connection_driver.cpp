@@ -21,7 +21,7 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "connection_impl.h"
+#include "connection_driver.h"
 
 #include <xmsg/constants.h>
 #include <xmsg/util.h>
@@ -32,42 +32,46 @@
 namespace xmsg {
 namespace detail {
 
-ProxyDriver::ProxyDriver(std::unique_ptr<ProxyDriver::Impl>&& impl)
-  : con_{std::move(impl)}
-{ }
-
-ProxyDriver::ProxyDriver(ProxyDriver&&) = default;
-ProxyDriver& ProxyDriver::operator=(ProxyDriver&&) = default;
-
-ProxyDriver::~ProxyDriver() = default;
+ProxyDriver::ProxyDriver(zmq::context_t& ctx,
+                         const ProxyAddress& addr,
+                         std::shared_ptr<ConnectionSetup>&& setup)
+  : addr_{addr},
+    setup_{std::move(setup)},
+    pub_{ctx, zmq::socket_type::pub},
+    sub_{ctx, zmq::socket_type::sub},
+    control_{ctx, zmq::socket_type::dealer},
+    id_{core::get_random_id()}
+{
+    // nop
+}
 
 
 void ProxyDriver::connect()
 {
-    con_->setup->pre_connection(con_->pub);
-    con_->setup->pre_connection(con_->sub);
+    setup_->pre_connection(pub_);
+    setup_->pre_connection(sub_);
 
-    core::connect(con_->pub, con_->addr.host(), con_->addr.pub_port());
-    core::connect(con_->sub, con_->addr.host(), con_->addr.sub_port());
+    core::connect(pub_, addr_.host(), addr_.pub_port());
+    core::connect(sub_, addr_.host(), addr_.sub_port());
 
     const auto& topic = constants::ctrl_topic;
     const auto& request = constants::ctrl_connect;
-    const auto& identity = con_->id;
+    const auto& identity = id_;
 
-    con_->control.setsockopt(ZMQ_IDENTITY, identity.data(), identity.size());
-    core::connect(con_->control, con_->addr.host(), con_->addr.sub_port() + 1);
+    control_.setsockopt(ZMQ_IDENTITY, identity.data(), identity.size());
+    core::connect(control_, addr_.host(), addr_.sub_port() + 1);
 
-    auto poller = core::BasicPoller{con_->control};
+    auto poller = core::BasicPoller{control_};
     auto retry = 0;
     while (retry < 10) {
         retry++;
         try {
-            con_->pub.send(topic.data(), topic.size(), ZMQ_SNDMORE);
-            con_->pub.send(request.data(), request.size(), ZMQ_SNDMORE);
-            con_->pub.send(identity.data(), identity.size(), 0);
+            pub_.send(topic.data(), topic.size(), ZMQ_SNDMORE);
+            pub_.send(request.data(), request.size(), ZMQ_SNDMORE);
+            pub_.send(identity.data(), identity.size(), 0);
 
             if (poller.poll(100)) {
-                auto response = core::recv_msg<1>(con_->control);
+                auto response = core::recv_msg<1>(control_);
                 break;
             }
         } catch (zmq::error_t& e) {
@@ -76,10 +80,10 @@ void ProxyDriver::connect()
         }
     }
     if (retry >= 10) {
-        throw std::runtime_error{"Could not connect to " + con_->addr.host()};
+        throw std::runtime_error{"Could not connect to " + addr_.host()};
     }
 
-    con_->setup->post_connection();
+    setup_->post_connection();
 }
 
 
@@ -89,15 +93,15 @@ void ProxyDriver::send(Message& msg)
     const auto& m = msg.meta()->SerializeAsString();
     const auto& d = msg.data();
 
-    con_->pub.send(t.data(), t.size(), ZMQ_SNDMORE);
-    con_->pub.send(m.data(), m.size(), ZMQ_SNDMORE);
-    con_->pub.send(d.data(), d.size(), 0);
+    pub_.send(t.data(), t.size(), ZMQ_SNDMORE);
+    pub_.send(m.data(), m.size(), ZMQ_SNDMORE);
+    pub_.send(d.data(), d.size(), 0);
 }
 
 
 Message ProxyDriver::recv()
 {
-    auto multi_msg = core::recv_msg<3>(con_->sub);
+    auto multi_msg = core::recv_msg<3>(sub_);
 
     auto topic = core::to_string(multi_msg[0]);
     auto meta = proto::make_meta();
@@ -117,19 +121,19 @@ void ProxyDriver::subscribe(const Topic& topic)
     const auto& request = constants::ctrl_subscribe;
     const auto& identity = topic.str();
 
-    con_->sub.setsockopt(ZMQ_SUBSCRIBE, identity.data(), identity.size());
+    sub_.setsockopt(ZMQ_SUBSCRIBE, identity.data(), identity.size());
 
-    auto poller = core::BasicPoller{con_->sub};
+    auto poller = core::BasicPoller{sub_};
     auto retry = 0;
     while (retry < 10) {
         retry++;
         try {
-            con_->pub.send(ctrl.data(), ctrl.size(), ZMQ_SNDMORE);
-            con_->pub.send(request.data(), request.size(), ZMQ_SNDMORE);
-            con_->pub.send(identity.data(), identity.size(), 0);
+            pub_.send(ctrl.data(), ctrl.size(), ZMQ_SNDMORE);
+            pub_.send(request.data(), request.size(), ZMQ_SNDMORE);
+            pub_.send(identity.data(), identity.size(), 0);
 
             if (poller.poll(100)) {
-                auto response = core::recv_msg<2>(con_->sub);
+                auto response = core::recv_msg<2>(sub_);
                 break;
             }
         } catch (zmq::error_t& e) {
@@ -138,7 +142,7 @@ void ProxyDriver::subscribe(const Topic& topic)
         }
     }
     if (retry >= 10) {
-        throw std::runtime_error{"Could not subscribe to " + con_->addr.host()};
+        throw std::runtime_error{"Could not subscribe to " + addr_.host()};
     }
 }
 
@@ -146,13 +150,13 @@ void ProxyDriver::subscribe(const Topic& topic)
 void ProxyDriver::unsubscribe(const Topic& topic)
 {
     auto& str = topic.str();
-    con_->sub.setsockopt(ZMQ_UNSUBSCRIBE, str.data(), str.size());
+    sub_.setsockopt(ZMQ_UNSUBSCRIBE, str.data(), str.size());
 }
 
 
 const ProxyAddress& ProxyDriver::address()
 {
-    return con_->addr;
+    return addr_;
 }
 
 } // end namespace detail

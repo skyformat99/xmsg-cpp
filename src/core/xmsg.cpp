@@ -27,7 +27,7 @@
 #include <xmsg/connection_pool.h>
 #include <xmsg/util.h>
 
-#include "connection_impl.h"
+#include "connection_driver.h"
 #include "registration_driver.h"
 #ifdef __APPLE__
 #include "thread_local.h"
@@ -71,7 +71,7 @@ class ScopedSubscription final
 {
 public:
     ScopedSubscription(detail::ProxyDriver& connection, const Topic& topic)
-      : connection_{connection}, topic_{topic}, poller_{connection_.con_->sub}
+      : connection_{connection}, topic_{topic}, poller_{connection_.sub_socket()}
     {
         connection_.subscribe(topic_);
         util::sleep(10);

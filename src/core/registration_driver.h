@@ -120,6 +120,8 @@ public:
 
     RegDataSet find(const proto::Registration& data, bool is_publisher);
 
+    const RegAddress& address() const { return addr_; }
+
 private:
     virtual Response request(Request&, int);
 

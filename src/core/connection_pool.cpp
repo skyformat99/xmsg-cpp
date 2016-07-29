@@ -25,7 +25,7 @@
 
 #include <xmsg/context.h>
 
-#include "connection_impl.h"
+#include "connection_driver.h"
 #include "registration_driver.h"
 
 namespace xmsg {
@@ -103,8 +103,7 @@ void ConnectionPool::release_connection(RegConnection&& con)
 detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& addr,
                                                          SetupSharedPtr&& setup)
 {
-    auto con_imp = std::make_unique<detail::ProxyDriver::Impl>(*ctx_, addr, std::move(setup));
-    auto con = detail::ProxyDriverPtr{new detail::ProxyDriver{std::move(con_imp)}};
+    auto con = detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx_, addr, std::move(setup))};
     con->connect();
     return con;
 }
