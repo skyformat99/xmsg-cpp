@@ -70,7 +70,7 @@ struct xMsg::Impl {
 class ScopedSubscription final
 {
 public:
-    ScopedSubscription(Connection& connection, const Topic& topic)
+    ScopedSubscription(detail::ProxyDriver& connection, const Topic& topic)
       : connection_{connection}, topic_{topic}, poller_{connection_.con_->sub}
     {
         connection_.subscribe(topic_);
@@ -88,7 +88,7 @@ public:
     }
 
 private:
-    Connection& connection_;
+    detail::ProxyDriver& connection_;
     Topic topic_;
     core::BasicPoller poller_;
 };

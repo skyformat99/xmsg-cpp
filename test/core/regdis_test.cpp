@@ -10,8 +10,8 @@
 using namespace testing;
 
 using namespace xmsg;
-using namespace xmsg::registration;
-using namespace xmsg::registration::test;
+using namespace xmsg::detail;
+using namespace xmsg::test;
 
 
 TEST(Request, CreateDataRequest)
@@ -82,11 +82,11 @@ class MockContext : public zmq::context_t
 {
 };
 
-class MockDriver : public Driver
+class MockDriver : public RegDriver
 {
     friend struct DriverTest;
 
-    MockDriver(MockContext& ctx) : Driver{ctx, {}} {};
+    MockDriver(MockContext& ctx) : RegDriver{ctx, {}} {};
 
     MOCK_METHOD2(request, Response(Request&, int));
 };

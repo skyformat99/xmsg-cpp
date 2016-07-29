@@ -103,8 +103,8 @@ void ConnectionPool::release_connection(RegConnection&& con)
 detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& addr,
                                                          SetupSharedPtr&& setup)
 {
-    auto con_imp = std::make_unique<Connection::Impl>(*ctx_, addr, std::move(setup));
-    auto con = detail::ProxyDriverPtr{new Connection{std::move(con_imp)}};
+    auto con_imp = std::make_unique<detail::ProxyDriver::Impl>(*ctx_, addr, std::move(setup));
+    auto con = detail::ProxyDriverPtr{new detail::ProxyDriver{std::move(con_imp)}};
     con->connect();
     return con;
 }
@@ -112,7 +112,7 @@ detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& add
 
 detail::RegDriverPtr ConnectionPool::create_connection(const RegAddress& addr)
 {
-    return detail::RegDriverPtr{new registration::Driver(*ctx_, addr)};
+    return detail::RegDriverPtr{new detail::RegDriver(*ctx_, addr)};
 }
 
 } // end namespace xmsg

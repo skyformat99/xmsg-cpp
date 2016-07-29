@@ -24,16 +24,16 @@
 #ifndef XMSG_CORE_PRIVATE_H_
 #define XMSG_CORE_PRIVATE_H_
 
-#include <xmsg/connection.h>
+#include "connection_driver.h"
 
-#include <xmsg/address.h>
 #include <xmsg/connection_setup.h>
 
 #include "zhelper.h"
 
 namespace xmsg {
+namespace detail {
 
-struct Connection::Impl {
+struct ProxyDriver::Impl {
     Impl(zmq::context_t& ctx,
          ProxyAddress addr,
          std::shared_ptr<ConnectionSetup>&& setup)
@@ -53,6 +53,7 @@ struct Connection::Impl {
     std::string id;
 };
 
+} // end namespace detail
 } // end namespace xmsg
 
 #endif // XMSG_CORE_PRIVATE_H_

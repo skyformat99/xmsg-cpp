@@ -34,7 +34,10 @@
 
 namespace xmsg {
 
-class Connection;
+namespace detail {
+class ProxyDriver;
+}
+
 class Message;
 class xMsg;
 
@@ -54,8 +57,8 @@ public:
 
 private:
     using Callback = std::function<void(Message&)>;
-    using ConnectionDeleter = std::function<void(Connection*)>;
-    using ConnectionWrapperPtr = std::unique_ptr<Connection, ConnectionDeleter>;
+    using ConnectionDeleter = std::function<void(detail::ProxyDriver*)>;
+    using ConnectionWrapperPtr = std::unique_ptr<detail::ProxyDriver, ConnectionDeleter>;
 
     Subscription(const Topic& topic,
                  ConnectionWrapperPtr connection,

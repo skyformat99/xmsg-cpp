@@ -31,58 +31,10 @@
 
 namespace xmsg {
 
-/**
- * The standard pub/sub connection to an %xMsg proxy.
- * Contains ProxyAddress object and two 0MQ sockets for publishing and
- * subscribing %xMsg messages respectfully.
- */
-class Connection final {
-public:
-    Connection(const Connection&) = delete;
-    Connection& operator=(const Connection&) = delete;
-
-    Connection(Connection&&);
-    Connection& operator=(Connection&&);
-    ~Connection();
-
-public:
-    /// Returns the address of the connected proxy
-    const ProxyAddress& address();
-
-private:
-    /// Connects the internal sockets to the proxy
-    void connect();
-
-    /// Sends the message through the proxy
-    void send(Message& msg);
-    /// Receives a message through the proxy
-    Message recv();
-
-    /// Subscribes to messages of the given topic through the proxy
-    void subscribe(const Topic& topic);
-    /// Unsubscribes to messages of the given topic through the proxy
-    void unsubscribe(const Topic& topic);
-
-private:
-    struct Impl;
-    std::unique_ptr<Impl> con_;
-    Connection(std::unique_ptr<Impl>&&);
-
-    friend class ConnectionPool;
-    friend class xMsg;
-    friend class Subscription;
-    friend class ScopedSubscription;
-};
-
-
-namespace registration {
-class Driver;
-}
-
 namespace detail {
 
-using ProxyDriver = Connection;
-using RegDriver = registration::Driver;
+class ProxyDriver;
+class RegDriver;
 
 struct ProxyDriverDeleter
 {

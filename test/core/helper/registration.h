@@ -10,7 +10,6 @@
 #include <string>
 
 namespace xmsg {
-namespace registration {
 namespace test {
 
 using DataArray = std::vector<std::string>;
@@ -65,9 +64,9 @@ proto::Registration new_registration(const std::string& name,
                                      const std::string& topic,
                                      bool is_publisher)
 {
-    return create(name, name + "test data",
-                  host, constants::default_port,
-                  Topic::raw(topic), is_publisher);
+    return registration::create(name, name + "test data",
+                                host, constants::default_port,
+                                Topic::raw(topic), is_publisher);
 }
 
 
@@ -88,5 +87,4 @@ proto::Registration random_registration()
 }
 
 } // end namespace test
-} // end namespace registration
 } // end namespace xmsg

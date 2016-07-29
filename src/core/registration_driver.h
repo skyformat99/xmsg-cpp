@@ -39,7 +39,7 @@
 
 namespace xmsg {
 
-namespace registration {
+namespace detail {
 
 using RequestMsg = std::array<zmq::message_t, 3>;
 using ResponseMsg = std::vector<zmq::message_t>;
@@ -107,11 +107,11 @@ private:
 };
 
 
-class Driver
+class RegDriver
 {
 public:
-    Driver(zmq::context_t& ctx, RegAddress addr);
-    virtual ~Driver() = default;
+    RegDriver(zmq::context_t& ctx, RegAddress addr);
+    virtual ~RegDriver() = default;
 
     void add(const proto::Registration& data, bool is_publisher);
 
@@ -136,6 +136,10 @@ bool operator!=(const Request& lhs, const Request& rhs);
 bool operator==(const Response& lhs, const Response& rhs);
 bool operator!=(const Response& lhs, const Response& rhs);
 
+} // end namespace detail
+
+
+namespace registration {
 
 proto::Registration create(const std::string& name,
                            const std::string& description,

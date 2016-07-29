@@ -10,7 +10,7 @@
 #include <string>
 
 using namespace xmsg;
-using namespace xmsg::registration;
+using namespace xmsg::detail;
 using namespace xmsg::proto;
 
 void test_registration_database(void);
@@ -26,7 +26,7 @@ RegDataSet find(const std::string&, bool);
 bool check_publisher(const Registration&);
 
 zmq::context_t ctx;
-Driver driver{ctx, {}};
+RegDriver driver{ctx, {}};
 
 RegDataSet reg_data;
 std::string name = "registrat_test";

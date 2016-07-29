@@ -79,7 +79,7 @@ bool operator!=(const Registration& lhs, const Registration& rhs)
 
 
 
-namespace registration {
+namespace detail {
 
 Request::Request(std::string topic,
                  std::string sender,
@@ -186,7 +186,7 @@ ResponseMsg Response::msg()
 }
 
 
-Driver::Driver(zmq::context_t& ctx, RegAddress addr)
+RegDriver::RegDriver(zmq::context_t& ctx, RegAddress addr)
   : ctx_{ctx},
     addr_{addr},
     socket_{ctx_, zmq::socket_type::req}
@@ -197,7 +197,7 @@ Driver::Driver(zmq::context_t& ctx, RegAddress addr)
 }
 
 
-void Driver::add(const proto::Registration& data, bool is_publisher)
+void RegDriver::add(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::register_publisher
                               : constants::register_subscriber;
@@ -206,7 +206,7 @@ void Driver::add(const proto::Registration& data, bool is_publisher)
 }
 
 
-void Driver::remove(const proto::Registration& data, bool is_publisher)
+void RegDriver::remove(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::remove_publisher
                               : constants::remove_subscriber;
@@ -215,15 +215,14 @@ void Driver::remove(const proto::Registration& data, bool is_publisher)
 }
 
 
-void Driver::remove_all(const std::string& sender,
-                        const std::string& host)
+void RegDriver::remove_all(const std::string& sender, const std::string& host)
 {
     auto reg_req = Request{constants::remove_all_registration, sender, host};
     request(reg_req, constants::remove_request_timeout);
 }
 
 
-RegDataSet Driver::find(const proto::Registration& data, bool is_publisher)
+RegDataSet RegDriver::find(const proto::Registration& data, bool is_publisher)
 {
     auto topic = is_publisher ? constants::find_publisher
                               : constants::find_subscriber;
@@ -233,7 +232,7 @@ RegDataSet Driver::find(const proto::Registration& data, bool is_publisher)
 }
 
 
-Response Driver::request(Request& req, int timeout)
+Response RegDriver::request(Request& req, int timeout)
 {
     auto out_msg = req.msg();
     socket_.send(out_msg[0], ZMQ_SNDMORE);
@@ -284,6 +283,10 @@ bool operator!=(const Response& lhs, const Response& rhs)
     return !(lhs == rhs);
 }
 
+} // end namespace detail
+
+
+namespace registration {
 
 proto::Registration create(const std::string& name,
                            const std::string& description,

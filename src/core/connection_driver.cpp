@@ -30,18 +30,19 @@
 #include <iostream>
 
 namespace xmsg {
+namespace detail {
 
-Connection::Connection(std::unique_ptr<Connection::Impl>&& impl)
+ProxyDriver::ProxyDriver(std::unique_ptr<ProxyDriver::Impl>&& impl)
   : con_{std::move(impl)}
 { }
 
-Connection::Connection(Connection&&) = default;
-Connection& Connection::operator=(Connection&&) = default;
+ProxyDriver::ProxyDriver(ProxyDriver&&) = default;
+ProxyDriver& ProxyDriver::operator=(ProxyDriver&&) = default;
 
-Connection::~Connection() = default;
+ProxyDriver::~ProxyDriver() = default;
 
 
-void Connection::connect()
+void ProxyDriver::connect()
 {
     con_->setup->pre_connection(con_->pub);
     con_->setup->pre_connection(con_->sub);
@@ -82,7 +83,7 @@ void Connection::connect()
 }
 
 
-void Connection::send(Message& msg)
+void ProxyDriver::send(Message& msg)
 {
     const auto& t = msg.topic().str();
     const auto& m = msg.meta()->SerializeAsString();
@@ -94,7 +95,7 @@ void Connection::send(Message& msg)
 }
 
 
-Message Connection::recv()
+Message ProxyDriver::recv()
 {
     auto multi_msg = core::recv_msg<3>(con_->sub);
 
@@ -110,7 +111,7 @@ Message Connection::recv()
 }
 
 
-void Connection::subscribe(const Topic& topic)
+void ProxyDriver::subscribe(const Topic& topic)
 {
     const auto& ctrl = constants::ctrl_topic;
     const auto& request = constants::ctrl_subscribe;
@@ -142,16 +143,17 @@ void Connection::subscribe(const Topic& topic)
 }
 
 
-void Connection::unsubscribe(const Topic& topic)
+void ProxyDriver::unsubscribe(const Topic& topic)
 {
     auto& str = topic.str();
     con_->sub.setsockopt(ZMQ_UNSUBSCRIBE, str.data(), str.size());
 }
 
 
-const ProxyAddress& Connection::address()
+const ProxyAddress& ProxyDriver::address()
 {
     return con_->addr;
 }
 
+} // end namespace detail
 } // end namespace xmsg
