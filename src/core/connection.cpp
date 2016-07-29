@@ -46,15 +46,15 @@ void Connection::connect()
     con_->setup->pre_connection(con_->pub);
     con_->setup->pre_connection(con_->sub);
 
-    core::connect(con_->pub, con_->addr.host, con_->addr.pub_port);
-    core::connect(con_->sub, con_->addr.host, con_->addr.sub_port);
+    core::connect(con_->pub, con_->addr.host(), con_->addr.pub_port());
+    core::connect(con_->sub, con_->addr.host(), con_->addr.sub_port());
 
     const auto& topic = constants::ctrl_topic;
     const auto& request = constants::ctrl_connect;
     const auto& identity = con_->id;
 
     con_->control.setsockopt(ZMQ_IDENTITY, identity.data(), identity.size());
-    core::connect(con_->control, con_->addr.host, con_->addr.sub_port + 1);
+    core::connect(con_->control, con_->addr.host(), con_->addr.sub_port() + 1);
 
     auto poller = core::BasicPoller{con_->control};
     auto retry = 0;
@@ -75,7 +75,7 @@ void Connection::connect()
         }
     }
     if (retry >= 10) {
-        throw std::runtime_error{"Could not connect to " + con_->addr.host};
+        throw std::runtime_error{"Could not connect to " + con_->addr.host()};
     }
 
     con_->setup->post_connection();
@@ -137,7 +137,7 @@ void Connection::subscribe(const Topic& topic)
         }
     }
     if (retry >= 10) {
-        throw std::runtime_error{"Could not subscribe to " + con_->addr.host};
+        throw std::runtime_error{"Could not subscribe to " + con_->addr.host()};
     }
 }
 

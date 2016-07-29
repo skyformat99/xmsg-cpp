@@ -49,12 +49,22 @@ public:
     /// with default SUB port
     ProxyAddress(const std::string& host, int pub_port);
 
-    /// Creates an address using provided host and ports
-    ProxyAddress(const std::string& host, int pub_port, int sub_port);
+public:
+     /// The host IP of the proxy
+    const std::string& host() const { return host_; }
 
-    const std::string host;     ///< The host IP of the proxy
-    const int pub_port;         ///< The publication port of the proxy
-    const int sub_port;         ///< The subscription port of the proxy
+     /// The publication port of the proxy
+    int pub_port() const { return pub_port_; }
+
+     /// The subscription port of the proxy
+    int sub_port() const { return sub_port_; }
+
+private:
+    std::string host_;
+    int pub_port_;
+    int sub_port_;
+
+    friend bool operator==(const ProxyAddress&, const ProxyAddress&);
 };
 
 
@@ -76,15 +86,25 @@ public:
     /// Creates an address using provided host and port
     RegAddress(const std::string& host, int port);
 
-    const std::string host;     ///< The host IP of the registrar service
-    const int port;             ///< The listening port of the registrar service
+public:
+     /// The host IP of the registrar service
+    const std::string& host() const { return host_; }
+
+     /// The listening port of the registrar service
+    int port() const { return port_; }
+
+private:
+    std::string host_;
+    int port_;
+
+    friend bool operator==(const RegAddress&, const RegAddress&);
 };
 
 
 inline bool operator==(const ProxyAddress& lhs, const ProxyAddress& rhs)
 {
-    return std::tie(lhs.host, lhs.pub_port, lhs.sub_port)
-        == std::tie(rhs.host, rhs.pub_port, rhs.sub_port);
+    return std::tie(lhs.host_, lhs.pub_port_, lhs.sub_port_)
+        == std::tie(rhs.host_, rhs.pub_port_, rhs.sub_port_);
 }
 
 inline bool operator!=(const ProxyAddress& lhs, const ProxyAddress& rhs)
@@ -95,7 +115,7 @@ inline bool operator!=(const ProxyAddress& lhs, const ProxyAddress& rhs)
 
 inline bool operator==(const RegAddress& lhs, const RegAddress& rhs)
 {
-    return std::tie(lhs.host, lhs.port) == std::tie(rhs.host, rhs.port);
+    return std::tie(lhs.host_, lhs.port_) == std::tie(rhs.host_, rhs.port_);
 }
 
 inline bool operator!=(const RegAddress& lhs, const RegAddress& rhs)

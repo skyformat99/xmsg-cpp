@@ -44,7 +44,7 @@ struct xMsg::Impl {
          const ProxyAddress& proxy_addr,
          const RegAddress& reg_addr)
       : name{name},
-        id{core::encode_identity(proxy_addr.host, name)},
+        id{core::encode_identity(proxy_addr.host(), name)},
         default_proxy_addr{proxy_addr},
         default_reg_addr{reg_addr}
     { }
@@ -205,7 +205,7 @@ void xMsg::register_as_publisher(const RegAddress& addr,
     auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, description,
-                                     proxy.host, proxy.pub_port,
+                                     proxy.host(), proxy.pub_port(),
                                      topic, true);
     data.set_description(description);
 
@@ -227,7 +227,7 @@ void xMsg::register_as_subscriber(const RegAddress& addr,
     auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, description,
-                                     proxy.host, proxy.sub_port,
+                                     proxy.host(), proxy.sub_port(),
                                      topic, false);
     data.set_description(description);
 
@@ -246,7 +246,7 @@ void xMsg::deregister_as_publisher(const RegAddress& addr, const Topic& topic)
     auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, "",
-                                     proxy.host, proxy.pub_port,
+                                     proxy.host(), proxy.pub_port(),
                                      topic, true);
     driver->remove(data, true);
 }
@@ -264,7 +264,7 @@ void xMsg::deregister_as_subscriber(const RegAddress& addr, const Topic& topic)
     auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, "",
-                                     proxy.host, proxy.sub_port,
+                                     proxy.host(), proxy.sub_port(),
                                      topic, false);
     driver->remove(data, false);
 }
@@ -281,7 +281,7 @@ RegDataSet xMsg::find_publishers(const RegAddress& addr, const Topic& topic)
     auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, "",
-                                     proxy.host, proxy.pub_port,
+                                     proxy.host(), proxy.pub_port(),
                                      topic, true);
     return driver->find(data, true);
 }
@@ -298,7 +298,7 @@ RegDataSet xMsg::find_subscribers(const RegAddress& addr, const Topic& topic)
     auto driver = xmsg_->con_pool()->get_connection(addr);
     auto proxy = xmsg_->default_proxy_addr;
     auto data = registration::create(xmsg_->name, "",
-                                     proxy.host, proxy.sub_port,
+                                     proxy.host(), proxy.sub_port(),
                                      topic, false);
     return driver->find(data, false);
 }

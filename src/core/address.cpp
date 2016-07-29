@@ -59,20 +59,15 @@ ProxyAddress::ProxyAddress(const std::string& host)
 
 
 ProxyAddress::ProxyAddress(const std::string& host, int pub_port)
-  : ProxyAddress(host, pub_port, default_sub_port(pub_port))
-{ }
-
-
-ProxyAddress::ProxyAddress(const std::string& host, int pub_port, int sub_port)
-    : host{util::to_host_addr(host)},
-      pub_port{pub_port},
-      sub_port{sub_port}
+  : host_{util::to_host_addr(host)},
+    pub_port_{pub_port},
+    sub_port_{default_sub_port(pub_port)}
 {
-    if (invalid_port(pub_port)) {
-        throw std::invalid_argument{"invalid pub port: " + std::to_string(pub_port)};
+    if (invalid_port(pub_port_)) {
+        throw std::invalid_argument{"invalid pub port: " + std::to_string(pub_port_)};
     };
-    if (invalid_port(sub_port)) {
-        throw std::invalid_argument{"invalid sub port: " + std::to_string(sub_port)};
+    if (invalid_port(sub_port_)) {
+        throw std::invalid_argument{"invalid sub port: " + std::to_string(sub_port_)};
     };
 }
 
@@ -88,11 +83,11 @@ RegAddress::RegAddress(const std::string& host)
 
 
 RegAddress::RegAddress(const std::string& host, int port)
-  : host{util::to_host_addr(host)},
-    port{port}
+  : host_{util::to_host_addr(host)},
+    port_{port}
 {
-    if (invalid_port(port)) {
-        throw std::invalid_argument{"invalid reg port: " + std::to_string(port)};
+    if (invalid_port(port_)) {
+        throw std::invalid_argument{"invalid reg port: " + std::to_string(port_)};
     };
 }
 
