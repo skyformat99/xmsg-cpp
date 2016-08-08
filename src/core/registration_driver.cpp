@@ -125,7 +125,7 @@ proto::Registration Request::data() const
     proto::Registration rd;
     rd.ParseFromString(data_);
     return rd;
-};
+}
 
 
 
@@ -302,7 +302,7 @@ proto::Registration create(const std::string& name,
     data.set_name(name);
     data.set_host(host);
     data.set_description(description);
-    data.set_port(constants::default_port);
+    data.set_port(port);
     data.set_domain(topic.domain());
     data.set_subject(topic.subject());
     data.set_type(topic.type());

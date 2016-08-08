@@ -29,7 +29,7 @@ private:
                                              SetupSharedPtr&& setup) override
     {
         new_connections++;
-        return detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx, addr, nullptr)};
+        return detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx, addr, std::move(setup))};
     }
 
     detail::RegDriverPtr create_connection(const RegAddress& addr) override

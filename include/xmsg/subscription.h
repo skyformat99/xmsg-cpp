@@ -78,6 +78,6 @@ private:
     std::atomic_bool is_alive_;
 };
 
-}; // end namespace xmsg
+} // end namespace xmsg
 
 #endif // XMSG_CORE_SUBSCRIPTION_H_

@@ -31,7 +31,7 @@ RegDriver driver{ctx, {}};
 RegDataSet reg_data;
 std::string name = "registrat_test";
 
-int main(int argc, char *argv[])
+int main()
 {
     using Time = std::chrono::high_resolution_clock;
     using s = std::chrono::duration<float>;
