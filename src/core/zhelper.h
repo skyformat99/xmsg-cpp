@@ -69,7 +69,7 @@ using RawMessage = std::array<zmq::message_t, N>;
 template<size_t N>
 RawMessage<N> recv_msg(zmq::socket_t& socket)
 {
-    auto multi_msg = RawMessage<N>{};
+    auto multi_msg = RawMessage<N>{{}};
     auto counter = size_t{0};
     for (auto& msg : multi_msg) {
         socket.recv(&msg);
