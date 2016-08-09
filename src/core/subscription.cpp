@@ -36,7 +36,7 @@ namespace xmsg {
 /**
  * \class Subscription
  *
- * A subscription object uses a \ref Connection "connection" to receive
+ * A subscription object uses a \ref ProxyConnection "connection" to receive
  * \ref Message "messages" of the interested \ref Topic "topic",
  * and calls a user action on every message.
  *
