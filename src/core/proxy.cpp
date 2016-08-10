@@ -109,7 +109,9 @@ void Proxy::control()
 
     auto ctrl = constants::ctrl_topic;
     control.setsockopt(ZMQ_SUBSCRIBE, ctrl.data(), ctrl.size());
+#if ZMQ_VERSION >= ZMQ_MAKE_VERSION(4, 1, 0)
     router.setsockopt(ZMQ_ROUTER_HANDOVER, 1);
+#endif
 
     while (is_alive_.load()) {
         try {

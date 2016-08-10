@@ -29,6 +29,8 @@
 #include <xmsg/address.h>
 #include <xmsg/topic.h>
 
+#include <set>
+
 namespace xmsg {
 
 namespace proto {
