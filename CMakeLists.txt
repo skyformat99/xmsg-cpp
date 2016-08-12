@@ -52,7 +52,7 @@ if(APPLE)
 endif()
 
 
-find_package(Protobuf REQUIRED)
+find_package(Protobuf 2.6 REQUIRED)
 find_package(zmq 4.0 REQUIRED)
 
 
