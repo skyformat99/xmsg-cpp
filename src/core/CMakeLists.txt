@@ -18,5 +18,6 @@ target_link_libraries(xmsg xmsgproto_headers ${ZMQ_LIBRARIES})
 target_include_directories(xmsg PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(xmsg SYSTEM PUBLIC ${ZMQ_INCLUDE_DIRS})
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/xmsg/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/xmsg)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/xmsg/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/xmsg)
 install(TARGETS xmsg DESTINATION ${CMAKE_INSTALL_LIBDIR})
