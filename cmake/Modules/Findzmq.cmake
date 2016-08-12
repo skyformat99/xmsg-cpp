@@ -39,6 +39,17 @@ find_path(ZMQ_INCLUDE_DIR
   PATH_SUFFIXES
   include include/zmq)
 
+if(DEFINED ZMQ_INCLUDE_DIR)
+  file(READ "${ZMQ_INCLUDE_DIR}/zmq.h" _ZMQ_VERSION_H_CONTENTS)
+  string(REGEX MATCH "#define ZMQ_VERSION_MAJOR ([0-9])" _MATCH "${_ZMQ_VERSION_H_CONTENTS}")
+  set(ZMQ_VERSION_MAJOR ${CMAKE_MATCH_1})
+  string(REGEX MATCH "#define ZMQ_VERSION_MINOR ([0-9])" _MATCH "${_ZMQ_VERSION_H_CONTENTS}")
+  set(ZMQ_VERSION_MINOR ${CMAKE_MATCH_1})
+  string(REGEX MATCH "#define ZMQ_VERSION_PATCH ([0-9])" _MATCH "${_ZMQ_VERSION_H_CONTENTS}")
+  set(ZMQ_VERSION_PATCH ${CMAKE_MATCH_1})
+  set (ZMQ_VERSION "${ZMQ_VERSION_MAJOR}.${ZMQ_VERSION_MINOR}.${ZMQ_VERSION_PATCH}")
+endif()
+
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(zmq
   DEFAULT_MSG
