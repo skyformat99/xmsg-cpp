@@ -52,9 +52,9 @@ endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(zmq
-  DEFAULT_MSG
-  ZMQ_LIBRARY
-  ZMQ_INCLUDE_DIR
+  REQUIRED_VARS ZMQ_LIBRARY ZMQ_INCLUDE_DIR
+  VERSION_VAR ZMQ_VERSION
+  FAIL_MESSAGE DEFAULT_MSG
 )
 
 if(ZMQ_FOUND)

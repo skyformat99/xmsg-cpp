@@ -53,7 +53,7 @@ endif()
 
 
 find_package(Protobuf REQUIRED)
-find_package(zmq REQUIRED)
+find_package(zmq 4.0 REQUIRED)
 
 
 option(XMSG_BUILD_TESTS "Build tests" ON)
