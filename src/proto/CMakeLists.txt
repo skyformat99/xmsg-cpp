@@ -1,4 +1,4 @@
-include_directories(${PROTOBUF_INCLUDE_DIRS})
+include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIRS})
 
 set(PROTO_FILES
   data.proto
@@ -16,9 +16,6 @@ add_library(xmsgproto_headers INTERFACE)
 target_link_libraries(xmsgproto_headers INTERFACE ${PROTOBUF_LIBRARIES})
 target_include_directories(xmsgproto_headers INTERFACE
   ${CMAKE_CURRENT_BINARY_DIR}
-)
-target_include_directories(xmsgproto_headers SYSTEM INTERFACE
-  ${PROTOBUF_INCLUDE_DIRS}
 )
 
 install(FILES ${PROTO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/xmsg/proto)
