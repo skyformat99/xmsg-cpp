@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+
+set_and_check(XMSG_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+include("${CMAKE_CURRENT_LIST_DIR}/xmsg-targets.cmake")
+set(XMSG_LIBRARIES xmsg)

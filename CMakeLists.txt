@@ -23,11 +23,17 @@ if(NOT CMAKE_INSTALL_INCLUDEDIR)
   set(CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "header files (include)")
 endif()
 
+if(NOT CMAKE_INSTALL_CONFIGDIR)
+  set(CMAKE_INSTALL_CONFIGDIR "${CMAKE_INSTALL_LIBDIR}/cmake/xmsg"
+    CACHE PATH "CMake project files (${CMAKE_INSTALL_LIBDIR}/cmake/xmsg")
+endif()
+
 mark_as_advanced(
   CMAKE_INSTALL_BINDIR
   CMAKE_INSTALL_LIBDIR
   CMAKE_INSTALL_SHAREDIR
   CMAKE_INSTALL_INCLUDEDIR
+  CMAKE_INSTALL_CONFIGDIR
 )
 
 
@@ -71,6 +77,21 @@ if(XMSG_BUILD_TESTS)
   add_subdirectory("test/core")
   add_subdirectory("test/perf")
 endif()
+
+
+# export targets
+include(CMakePackageConfigHelpers)
+configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/xmsg-config.cmake.in
+  ${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/xmsg-config.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_CONFIGDIR}
+  PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
+
+install(EXPORT xMsgTargets
+  FILE xmsg-targets.cmake
+  DESTINATION ${CMAKE_INSTALL_CONFIGDIR})
+
+install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/xmsg-config.cmake
+  DESTINATION ${CMAKE_INSTALL_CONFIGDIR})
 
 
 # uninstall target
