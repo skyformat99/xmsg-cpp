@@ -8,7 +8,7 @@ set(PROTO_FILES
 
 PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS ${PROTO_FILES})
 
-add_library(xmsgproto OBJECT ${PROTO_SOURCES} ${PROTO_HEADERS})
+add_library(xmsgproto OBJECT ${PROTO_SOURCES})
 target_compile_options(xmsgproto PRIVATE -Wno-extra)
 set_property(TARGET xmsgproto PROPERTY COMPILE_FLAGS "-fPIC")
 
