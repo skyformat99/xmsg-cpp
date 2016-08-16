@@ -88,6 +88,7 @@ configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/xmsg-config.cmake.in
 
 install(EXPORT xMsgTargets
   FILE xmsg-targets.cmake
+  NAMESPACE xMsg::
   DESTINATION ${CMAKE_INSTALL_CONFIGDIR})
 
 install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/xmsg-config.cmake
