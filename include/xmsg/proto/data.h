@@ -54,7 +54,7 @@ namespace proto {
  * and serialization routines.
  */
 
-namespace internal {
+namespace detail {
 
 template <typename T>
 inline void set_value(Data&, const T&)
@@ -142,7 +142,7 @@ template<> inline std::string get_mimetype<std::vector<double>>()
 template<> inline std::string get_mimetype<std::vector<std::string>>()
         { return mimetype::array_string; }
 
-} // end namespace internal
+} // end namespace detail
 
 
 /**
@@ -162,7 +162,7 @@ template<typename T>
 inline Data make_data(T&& data)
 {
     auto xdata = Data{};
-    internal::set_value(xdata, std::forward<T>(data));
+    detail::set_value(xdata, std::forward<T>(data));
     return xdata;
 }
 
@@ -179,7 +179,7 @@ inline Data make_data(T&& data)
 template<typename T>
 inline T parse_data(const Data& data)
 {
-    return internal::get_value<T>(data);
+    return detail::get_value<T>(data);
 }
 
 /**

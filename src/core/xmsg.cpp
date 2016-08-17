@@ -52,7 +52,7 @@ struct xMsg::Impl {
     ConnectionPool* con_pool()
     {
 #ifdef __APPLE__
-        using tls = internal::ThreadLocal<ConnectionPool>;
+        using tls = detail::ThreadLocal<ConnectionPool>;
         return tls::getThreadInstance();
 #else
         static thread_local ConnectionPool pool{};

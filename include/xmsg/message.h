@@ -117,7 +117,7 @@ public:
         meta_{proto::make_meta()},
         data_{std::forward<V>(data)}
     {
-        proto::internal::set_datatype(*meta_, mimetype);
+        proto::detail::set_datatype(*meta_, mimetype);
     }
 
     Message(const Message& other)
@@ -209,7 +209,7 @@ inline Message make_message(T&& topic, D&& data)
 {
     auto xdata = proto::make_data(std::forward<D>(data));
     return {std::forward<T>(topic),
-            proto::internal::get_mimetype<std::decay_t<D>>(),
+            proto::detail::get_mimetype<std::decay_t<D>>(),
             proto::serialize_data(xdata)};
 }
 

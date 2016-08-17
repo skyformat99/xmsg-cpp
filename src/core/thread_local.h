@@ -12,7 +12,7 @@
 #include <pthread.h>
 
 namespace xmsg {
-namespace internal {
+namespace detail {
 
 template <class T>
 class ThreadLocal
@@ -55,7 +55,7 @@ pthread_key_t ThreadLocal<T>::key;
 template <class T>
 pthread_once_t ThreadLocal<T>::once_control = PTHREAD_ONCE_INIT;
 
-} // end namespace internal
+} // end namespace detail
 } // end namespace xmsg
 
 #endif  // XMSG_INTERNAL_THREAD_LOCAL_H

@@ -60,7 +60,7 @@ namespace proto {
  * should be set by higher-level layers.
  */
 
-namespace internal {
+namespace detail {
 
 inline void set_datatype(Meta& meta, const char* datatype)
 {
@@ -76,7 +76,7 @@ inline void set_datatype(Meta& meta, const std::string& datatype)
     meta.set_datatype(datatype);
 }
 
-} // end namespace internal
+} // end namespace detail
 
 
 /**
