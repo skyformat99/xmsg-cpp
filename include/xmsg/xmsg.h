@@ -346,17 +346,17 @@ public:
     /**
      * Returns the name of this actor
      */
-    const std::string& name();
+    const std::string& name() const;
 
     /**
      * Returns the address of the default registrar service used by this actor
      */
-    const RegAddress& default_registrar();
+    const RegAddress& default_registrar() const;
 
     /**
      * Returns the address of the default proxy used by this actor
      */
-    const ProxyAddress& default_proxy();
+    const ProxyAddress& default_proxy() const;
 
 private:
     struct Impl;

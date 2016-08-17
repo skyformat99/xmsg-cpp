@@ -298,19 +298,19 @@ RegDataSet xMsg::find_subscribers(const RegAddress& addr, const Topic& topic)
 }
 
 
-const std::string& xMsg::name()
+const std::string& xMsg::name() const
 {
     return xmsg_->name;
 }
 
 
-const RegAddress& xMsg::default_registrar()
+const RegAddress& xMsg::default_registrar() const
 {
     return xmsg_->default_reg_addr;
 }
 
 
-const ProxyAddress& xMsg::default_proxy()
+const ProxyAddress& xMsg::default_proxy() const
 {
     return xmsg_->default_proxy_addr;
 }
