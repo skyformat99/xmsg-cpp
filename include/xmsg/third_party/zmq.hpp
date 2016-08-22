@@ -351,6 +351,14 @@ namespace zmq
             return static_cast<T const*>( data() );
         }
 
+        inline bool equal(const message_t* other) const ZMQ_NOTHROW
+        {
+            if (size() != other->size())
+                return false;
+            std::string a(data<char>(), size());
+            std::string b(other->data<char>(), other->size());
+            return a == b;
+        }
 
     private:
         //  The underlying message
@@ -408,7 +416,7 @@ namespace zmq
 
         inline void close() ZMQ_NOTHROW
         {
-            int rc = zmq_ctx_shutdown (ptr);
+            int rc = zmq_ctx_destroy (ptr);
             ZMQ_ASSERT (rc == 0);
         }
 
@@ -487,12 +495,12 @@ namespace zmq
             close();
         }
 
-        inline ZMQ_EXPLICIT operator void* () ZMQ_NOTHROW
+        inline operator void* () ZMQ_NOTHROW
         {
             return ptr;
         }
 
-        inline ZMQ_EXPLICIT operator void const* () const ZMQ_NOTHROW
+        inline operator void const* () const ZMQ_NOTHROW
         {
             return ptr;
         }
