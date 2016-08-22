@@ -113,7 +113,7 @@ void Proxy::control()
     router.setsockopt(ZMQ_ROUTER_HANDOVER, 1);
 #endif
 
-    while (is_alive_.load()) {
+    while (is_alive_) {
         try {
             auto in_msg = core::recv_msg<3>(control);
 

@@ -56,7 +56,7 @@ public:
 
 private:
     zmq::context_t ctx_;
-    xmsg::ProxyAddress addr_;
+    ProxyAddress addr_;
 
     std::atomic_bool is_alive_;
     std::thread ctrl_;
