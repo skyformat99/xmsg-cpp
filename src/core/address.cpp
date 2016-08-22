@@ -27,6 +27,7 @@
 #include <xmsg/util.h>
 
 #include <cstdint>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
@@ -89,6 +90,15 @@ RegAddress::RegAddress(const std::string& host, int port)
     if (invalid_port(port_)) {
         throw std::invalid_argument{"invalid reg port: " + std::to_string(port_)};
     };
+}
+
+
+std::ostream& operator<<(std::ostream& os, const ProxyAddress& a) {
+    return os << a.host() << ":" << a.pub_port();
+}
+
+std::ostream& operator<<(std::ostream& os, const RegAddress& a) {
+    return os << a.host() << ":" << a.port();
 }
 
 } // end namespace xmsg

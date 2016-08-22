@@ -124,6 +124,11 @@ inline bool operator!=(const RegAddress& lhs, const RegAddress& rhs)
     return !(lhs == rhs);
 }
 
+
+std::ostream& operator<<(std::ostream& os, const ProxyAddress& a);
+
+std::ostream& operator<<(std::ostream& os, const RegAddress& a);
+
 } // end namespace xmsg
 
 
