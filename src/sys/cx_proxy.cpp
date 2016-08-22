@@ -24,8 +24,40 @@
 #include <xmsg/proxy.h>
 
 #include <cstdlib>
+#include <csignal>
 #include <iostream>
 #include <string>
+
+#include <unistd.h>
+
+static volatile sig_atomic_t signal_value = 0;
+
+
+static void signal_handler(int signal)
+{
+    signal_value = signal;
+}
+
+
+static void wait_signals()
+{
+    struct sigaction action;
+
+    action.sa_handler = signal_handler;
+    action.sa_flags = 0;
+    sigemptyset(&action.sa_mask);
+
+    sigaction(SIGINT, &action, NULL);
+    sigaction(SIGTERM, &action, NULL);
+
+    pause();
+
+    if (signal_value == SIGINT) {
+        std::cout << std::endl;
+    }
+    std::cout << "Exiting..." << std::endl;
+}
+
 
 int main()
 {
@@ -33,7 +65,7 @@ int main()
         xmsg::sys::Proxy proxy{{}};
         proxy.start();
 
-        for (;;) ;
+        wait_signals();
     } catch (std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
