@@ -52,6 +52,8 @@ public:
     void start();
     void stop();
 
+private:
+    void proxy();
     void control();
 
 private:
@@ -59,6 +61,7 @@ private:
     ProxyAddress addr_;
 
     std::atomic_bool is_alive_;
+    std::thread proxy_;
     std::thread ctrl_;
 };
 

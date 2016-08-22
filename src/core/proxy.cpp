@@ -69,8 +69,13 @@ Proxy::~Proxy()
 void Proxy::start()
 {
     is_alive_ = true;
+    proxy_ = std::thread{&Proxy::proxy, this};
     ctrl_ = std::thread{&Proxy::control, this};
+}
 
+
+void Proxy::proxy()
+{
     try {
         auto in = create_socket(ctx_, zmq::socket_type::xsub);
         auto out = create_socket(ctx_, zmq::socket_type::xpub);
@@ -147,6 +152,7 @@ void Proxy::stop()
 {
     is_alive_ = false;
     ctx_.close();
+    proxy_.join();
     ctrl_.join();
 }
 

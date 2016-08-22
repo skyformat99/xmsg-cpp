@@ -22,25 +22,21 @@ class ProxyThread {
 public:
     ProxyThread()
     {
-        thread_ = std::thread {[&]() {
-            try {
-                proxy_.start();
-            } catch (std::exception& e) {
-                std::cerr << e.what() << std::endl;
-            }
-        }};
+        try {
+            proxy_.start();
+        } catch (std::exception& e) {
+            std::cerr << e.what() << std::endl;
+        }
         xmsg::util::sleep(100);
     }
 
     ~ProxyThread()
     {
         proxy_.stop();
-        thread_.join();
     }
 
 private:
     xmsg::sys::Proxy proxy_{{}};
-    std::thread thread_{};
 };
 
 } // end namespace test
