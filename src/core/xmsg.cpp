@@ -35,6 +35,16 @@
 
 #include <random>
 
+#ifdef __APPLE__
+using tls = xmsg::detail::ThreadLocal<xmsg::ConnectionPool>;
+#endif
+
+namespace {
+#ifdef __APPLE__
+auto main_pool = std::shared_ptr<xmsg::ConnectionPool>{tls::getThreadInstance()};
+#endif
+}
+
 namespace xmsg {
 
 /// \cond HIDDEN_SYMBOLS
@@ -52,7 +62,6 @@ struct xMsg::Impl {
     ConnectionPool* con_pool()
     {
 #ifdef __APPLE__
-        using tls = detail::ThreadLocal<ConnectionPool>;
         return tls::getThreadInstance();
 #else
         static thread_local ConnectionPool pool{};
