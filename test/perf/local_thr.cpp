@@ -57,6 +57,7 @@ int main(int argc, char** argv)
         auto cb = LocalCallback{};
 
         auto sub = subscriber.subscribe(topic, std::move(connection), cb);
+        std::cout << "Waiting for messages..." << std::endl;
 
         {
             auto lock = std::unique_lock<std::mutex>{mtx};

@@ -25,9 +25,11 @@ int main(int argc, char** argv)
         auto data = std::vector<std::uint8_t>(message_size);
         auto msg = xmsg::Message{topic, "data/binary", data};
 
+        std::cout << "Publishing messages..." << std::endl;
         for (int i = 0; i < message_count; ++i) {
             publisher.publish(connection, msg);
         }
+        std::cout << "Done!" << std::endl;
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;
