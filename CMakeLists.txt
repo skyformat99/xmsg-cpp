@@ -1,5 +1,5 @@
-project(xMsg C CXX)
 cmake_minimum_required(VERSION 3.1.3)
+project(xMsg C CXX)
 
 if (NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type selected, default to RelWithDebInfo")
