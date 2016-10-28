@@ -20,7 +20,7 @@ TEST(Subscription, UnsubscribeStopsThread)
     auto actor = xmsg::xMsg{"test"};
     auto con = actor.connect();
 
-    auto cb = [] (xmsg::Message& msg) { return std::move(msg); };
+    auto cb = [] (xmsg::Message&) { };
     auto sub = actor.subscribe(xmsg::Topic::build("test"), std::move(con), cb);
     xmsg::util::sleep(1000);
 
@@ -51,7 +51,6 @@ TEST(Subscription, SuscribeReceivesAllMessages)
                 auto i = xmsg::parse_message<int>(msg);
                 check.counter.fetch_add(1);
                 check.sum.fetch_add(i);
-                return std::move(msg);
             };
 
             auto sub = actor.subscribe(topic, std::move(connection), cb);

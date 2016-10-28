@@ -24,7 +24,7 @@ std::condition_variable cond;
 class LocalCallback
 {
 public:
-    xmsg::Message operator()(xmsg::Message& msg);
+    void operator()(xmsg::Message& msg);
 
 private:
     using Time = std::chrono::high_resolution_clock;
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 }
 
 
-xmsg::Message LocalCallback::operator()(xmsg::Message& msg)
+void LocalCallback::operator()(xmsg::Message& msg)
 {
     int size = msg.data().size();
     if (size != message_size) {
@@ -105,8 +105,6 @@ xmsg::Message LocalCallback::operator()(xmsg::Message& msg)
         auto lock = std::unique_lock<std::mutex>{mtx};
         cond.notify_one();
     }
-
-    return std::move(msg);
 }
 
 
