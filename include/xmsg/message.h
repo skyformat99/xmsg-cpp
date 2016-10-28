@@ -298,8 +298,8 @@ inline Message make_response(const Message& msg)
 
 inline bool operator==(const Message& lhs, const Message& rhs)
 {
-    return std::tie(lhs.topic(), *lhs.meta(), lhs.data())
-        == std::tie(rhs.topic(), *rhs.meta(), rhs.data());
+    return std::tie(lhs.topic().str(), *lhs.meta(), lhs.data())
+        == std::tie(rhs.topic().str(), *rhs.meta(), rhs.data());
 }
 
 inline bool operator!=(const Message& lhs, const Message& rhs)
