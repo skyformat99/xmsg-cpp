@@ -89,7 +89,7 @@ Install GCC and CMake from the repositories:
 
     sudo apt-get install build-essential cmake
 
-#### OS X El Capitan
+#### Mac OS X 10.9 and newer
 
 Install Xcode command line tools:
 
@@ -110,7 +110,7 @@ Install from the repositories:
 
     sudo apt-get install libzmq3-dev libprotobuf-dev protobuf-compiler
 
-#### OS X
+#### Mac OS X 10.9 and newer
 
 Use Homebrew:
 
