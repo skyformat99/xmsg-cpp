@@ -114,7 +114,8 @@ Install from the repositories:
 
 Use Homebrew:
 
-    brew install zmq protobuf
+    brew tap homebrew/versions
+    brew install zmq protobuf260
 
 ### Installation
 
