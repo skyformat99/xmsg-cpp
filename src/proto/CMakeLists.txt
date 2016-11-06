@@ -7,16 +7,15 @@ set(PROTO_FILES
 PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS ${PROTO_FILES})
 
 add_library(xmsgproto OBJECT ${PROTO_SOURCES})
-target_compile_options(xmsgproto PRIVATE -fPIC -Wno-extra)
+target_compile_options(xmsgproto PRIVATE -fPIC)
 target_include_directories(xmsgproto SYSTEM PRIVATE
   ${PROTOBUF_INCLUDE_DIRS}
 )
 
 add_library(xmsgproto_headers INTERFACE)
 target_link_libraries(xmsgproto_headers INTERFACE ${PROTOBUF_LIBRARIES})
-target_include_directories(xmsgproto_headers INTERFACE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 target_include_directories(xmsgproto_headers SYSTEM INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   ${PROTOBUF_INCLUDE_DIRS}
 )
 
