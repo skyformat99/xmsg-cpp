@@ -25,6 +25,7 @@
 #define XMSG_CORE_CONNECTION_POOL_H_
 
 #include <xmsg/connection.h>
+#include <xmsg/connection_setup.h>
 
 #include <memory>
 
@@ -34,12 +35,8 @@ class context_t;
 
 namespace xmsg {
 
-class ConnectionSetup;
-
-using SetupPtr = std::unique_ptr<ConnectionSetup>;
-using SetupSharedPtr = std::shared_ptr<ConnectionSetup>;
-
-class ConnectionPool {
+class ConnectionPool
+{
 public:
     ConnectionPool();
     ConnectionPool(std::shared_ptr<zmq::context_t> ctx);
@@ -54,25 +51,25 @@ public:
 
 public:
     ProxyConnection get_connection(const ProxyAddress& addr);
-    ProxyConnection get_connection(const ProxyAddress& addr, SetupPtr&& setup);
-    void set_default_setup(SetupPtr&& setup);
 
     RegConnection get_connection(const RegAddress& addr);
 
+public:
+    void set_default_setup(std::unique_ptr<ConnectionSetup>&& setup);
+
 private:
-    virtual detail::ProxyDriverPtr create_connection(const ProxyAddress& addr,
-                                                     SetupSharedPtr&& setup);
+    virtual detail::ProxyDriverPtr create_connection(const ProxyAddress& addr);
     virtual detail::RegDriverPtr create_connection(const RegAddress& addr);
 
 private:
-    std::shared_ptr<zmq::context_t> ctx_;
-    SetupSharedPtr default_setup_;
-
     template<typename A, typename U>
     class ConnectionCache;
 
     using ProxyDriverCache = ConnectionCache<ProxyAddress, detail::ProxyDriverPtr>;
     using RegDriverCache = ConnectionCache<RegAddress, detail::RegDriverPtr>;
+
+    std::shared_ptr<zmq::context_t> ctx_;
+    std::shared_ptr<ConnectionSetup> setup_;
 
     std::unique_ptr<ProxyDriverCache> proxy_cache_;
     std::unique_ptr<RegDriverCache> reg_cache_;

@@ -34,7 +34,7 @@ namespace detail {
 
 ProxyDriver::ProxyDriver(zmq::context_t& ctx,
                          const ProxyAddress& addr,
-                         std::shared_ptr<ConnectionSetup>&& setup)
+                         std::shared_ptr<ConnectionSetup> setup)
   : addr_{addr},
     setup_{std::move(setup)},
     pub_{ctx, zmq::socket_type::pub},

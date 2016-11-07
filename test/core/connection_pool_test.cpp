@@ -25,11 +25,10 @@ public:
     int new_connections = 0;
 
 private:
-    detail::ProxyDriverPtr create_connection(const ProxyAddress& addr,
-                                             SetupSharedPtr&& setup) override
+    detail::ProxyDriverPtr create_connection(const ProxyAddress& addr) override
     {
         new_connections++;
-        return detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx, addr, std::move(setup))};
+        return detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx, addr, {})};
     }
 
     detail::RegDriverPtr create_connection(const RegAddress& addr) override

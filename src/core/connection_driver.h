@@ -45,7 +45,7 @@ class ProxyDriver final {
 public:
     ProxyDriver(zmq::context_t& ctx,
                 const ProxyAddress& addr,
-                std::shared_ptr<ConnectionSetup>&& setup);
+                std::shared_ptr<ConnectionSetup> setup);
 
     ProxyDriver(const ProxyDriver&) = delete;
     ProxyDriver& operator=(const ProxyDriver&) = delete;

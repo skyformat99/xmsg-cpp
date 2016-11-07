@@ -86,7 +86,7 @@ private:
 
 ConnectionPool::ConnectionPool()
   : ctx_{Context::instance()->ctx_},
-    default_setup_{std::make_shared<ConnectionSetup>()},
+    setup_{std::make_shared<ConnectionSetup>()},
     proxy_cache_{std::make_unique<ProxyDriverCache>()},
     reg_cache_{std::make_unique<RegDriverCache>()}
 { }
@@ -94,7 +94,7 @@ ConnectionPool::ConnectionPool()
 
 ConnectionPool::ConnectionPool(std::shared_ptr<zmq::context_t> ctx)
   : ctx_{std::move(ctx)},
-    default_setup_{std::make_shared<ConnectionSetup>()},
+    setup_{std::make_shared<ConnectionSetup>()},
     proxy_cache_{std::make_unique<ProxyDriverCache>()},
     reg_cache_{std::make_unique<RegDriverCache>()}
 { }
@@ -109,7 +109,7 @@ ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr)
 {
     auto con = proxy_cache_->get(addr);
     if (!con) {
-        con = create_connection(addr, SetupSharedPtr{default_setup_});
+        con = create_connection(addr);
     }
     auto del = [this](detail::ProxyDriverPtr&& c) {
         proxy_cache_->set(c->address(), std::move(c));
@@ -118,23 +118,9 @@ ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr)
 }
 
 
-ProxyConnection ConnectionPool::get_connection(const ProxyAddress& addr,
-                                             SetupPtr&& setup)
+void ConnectionPool::set_default_setup(std::unique_ptr<ConnectionSetup>&& setup)
 {
-    auto con = proxy_cache_->get(addr);
-    if (!con) {
-        con = create_connection(addr, SetupSharedPtr{std::move(setup)});
-    }
-    auto del = [this](detail::ProxyDriverPtr&& c) {
-        proxy_cache_->set(c->address(), std::move(c));
-    };
-    return { ProxyAddress{addr}, std::move(con), std::move(del) };
-}
-
-
-void ConnectionPool::set_default_setup(SetupPtr&& setup)
-{
-    default_setup_ = std::move(setup);
+    setup_ = std::move(setup);
 }
 
 
@@ -151,10 +137,9 @@ RegConnection ConnectionPool::get_connection(const RegAddress& addr)
 }
 
 
-detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& addr,
-                                                         SetupSharedPtr&& setup)
+detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& addr)
 {
-    auto con = detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx_, addr, std::move(setup))};
+    auto con = detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx_, addr, setup_)};
     con->connect();
     return con;
 }
