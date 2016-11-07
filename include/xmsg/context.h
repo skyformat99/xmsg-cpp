@@ -26,14 +26,19 @@
 
 #include <memory>
 
-namespace zmq {
-class context_t;
-} // end namespace zmq
-
 namespace xmsg {
 
+namespace detail {
+class Context;
+} // end namespace detail
+
+namespace sys {
+class Proxy;
+} // end namespace sys
+
+
 /**
- * Singleton class that provides unique 0MQ context for entire JVM process.
+ * Singleton class that provides unique 0MQ context for entire process.
  */
 class Context
 {
@@ -41,8 +46,14 @@ public:
     /**
      * Returns the global singleton context.
      */
-    static Context* instance();
+    static std::shared_ptr<Context> instance();
 
+    /**
+     * Creates a new context.
+     */
+    static std::unique_ptr<Context> create();
+
+public:
     /**
      * Sets the size of the 0MQ thread pool to handle I/O operations.
      */
@@ -66,18 +77,17 @@ public:
 private:
     Context();
 
+public:
     Context(const Context&) = delete;
     Context(Context&&) = delete;
-
-    Context& operator=(const Context&) = delete;
-    Context& operator=(Context&&) = delete;
 
     ~Context();
 
 private:
-    std::shared_ptr<zmq::context_t> ctx_;
+    std::unique_ptr<detail::Context> impl_;
 
     friend class ConnectionPool;
+    friend class sys::Proxy;
 };
 
 } // end namespace xmsg

@@ -78,7 +78,7 @@ TEST(Response, CreateDataResponse)
 
 
 
-class MockContext : public zmq::context_t
+class MockContext : public Context
 {
 };
 

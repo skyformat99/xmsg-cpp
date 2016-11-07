@@ -31,15 +31,6 @@
 #include <mutex>
 
 namespace {
-
-zmq::socket_t create_socket(zmq::context_t& ctx, zmq::socket_type type)
-{
-    auto out = zmq::socket_t{ctx, type};
-    out.setsockopt(ZMQ_RCVHWM, 0);
-    out.setsockopt(ZMQ_SNDHWM, 0);
-    return out;
-}
-
 std::mutex mtx;
 
 }
@@ -48,13 +39,17 @@ std::mutex mtx;
 namespace xmsg {
 namespace sys {
 
-Proxy::Proxy(zmq::context_t&& ctx, const ProxyAddress& addr)
-  : ctx_{std::move(ctx)}, addr_{addr}, is_alive_{false}
+Proxy::Proxy(std::unique_ptr<Context>&& ctx, const ProxyAddress& addr)
+  : ctx_{std::move(ctx)},
+    addr_{addr},
+    is_alive_{false}
 { }
 
 
 Proxy::Proxy(const ProxyAddress& addr)
-    : Proxy({}, addr)
+  : ctx_{Context::create()},
+    addr_{addr},
+    is_alive_{false}
 { }
 
 
@@ -77,8 +72,8 @@ void Proxy::start()
 void Proxy::proxy()
 {
     try {
-        auto in = create_socket(ctx_, zmq::socket_type::xsub);
-        auto out = create_socket(ctx_, zmq::socket_type::xpub);
+        auto in = ctx_->impl_->create_socket(zmq::socket_type::xsub);
+        auto out = ctx_->impl_->create_socket(zmq::socket_type::xpub);
 
         detail::bind(in, addr_.pub_port());
         detail::bind(out, addr_.sub_port());
@@ -98,9 +93,9 @@ void Proxy::proxy()
 
 void Proxy::control()
 {
-    auto control = create_socket(ctx_, zmq::socket_type::sub);
-    auto publisher = create_socket(ctx_, zmq::socket_type::pub);
-    auto router = create_socket(ctx_, zmq::socket_type::router);
+    auto control = ctx_->impl_->create_socket(zmq::socket_type::sub);
+    auto publisher = ctx_->impl_->create_socket(zmq::socket_type::pub);
+    auto router = ctx_->impl_->create_socket(zmq::socket_type::router);
 
     try {
         detail::connect(control, addr_.host(), addr_.sub_port());
@@ -151,7 +146,8 @@ void Proxy::control()
 void Proxy::stop()
 {
     is_alive_ = false;
-    ctx_.close();
+    ctx_->impl_->close();
+
     proxy_.join();
     ctrl_.join();
 }

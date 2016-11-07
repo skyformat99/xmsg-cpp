@@ -23,61 +23,56 @@
 
 #include <xmsg/context.h>
 
-#include <xmsg/third_party/zmq.hpp>
+#include "zhelper.h"
+
+
+#include <iostream>
 
 namespace xmsg {
 
 Context::Context()
-  : ctx_{std::make_shared<zmq::context_t>()}
+  : impl_{std::make_unique<detail::Context>()}
 {
     // nop
 }
 
+
 Context::~Context() = default;
 
 
-Context* Context::instance()
+std::shared_ptr<Context> Context::instance()
 {
-    static Context ctx{};
-    return &ctx;
+    static auto ctx = std::shared_ptr<Context>(new Context{});
+    return ctx;
+}
+
+std::unique_ptr<Context> Context::create()
+{
+    return std::unique_ptr<Context>{new Context()};
 }
 
 
 void Context::set_io_threads(int threads)
 {
-    int rc = zmq_ctx_set((void*) *ctx_, ZMQ_IO_THREADS, threads);
-    if (rc < 0) {
-        throw zmq::error_t{};
-    }
+    impl_->set_option(ZMQ_IO_THREADS, threads);
 }
 
 
 int Context::io_threads()
 {
-    int rc = zmq_ctx_get((void*) *ctx_, ZMQ_IO_THREADS);
-    if (rc < 0) {
-        throw zmq::error_t{};
-    }
-    return rc;
+    return impl_->get_option(ZMQ_IO_THREADS);
 }
 
 
 void Context::set_max_sockets(int sockets)
 {
-    int rc = zmq_ctx_set((void*) *ctx_, ZMQ_MAX_SOCKETS, sockets);
-    if (rc < 0) {
-        throw zmq::error_t{};
-    }
+    impl_->set_option(ZMQ_MAX_SOCKETS, sockets);
 }
 
 
 int Context::max_sockets()
 {
-    int rc = zmq_ctx_get((void*) *ctx_, ZMQ_MAX_SOCKETS);
-    if (rc < 0) {
-        throw zmq::error_t{};
-    }
-    return rc;
+    return impl_->get_option(ZMQ_MAX_SOCKETS);
 }
 
 } // end namespace xmsg

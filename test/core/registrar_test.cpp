@@ -25,7 +25,7 @@ Registration discovery_request(const std::string&, bool);
 RegDataSet find(const std::string&, bool);
 bool check_publisher(const Registration&);
 
-zmq::context_t ctx;
+detail::Context ctx;
 RegDriver driver{ctx, {}};
 
 RegDataSet reg_data;

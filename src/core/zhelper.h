@@ -32,6 +32,44 @@
 namespace xmsg {
 namespace detail {
 
+class Context
+{
+public:
+    zmq::socket_t create_socket(zmq::socket_type type)
+    {
+        auto out = zmq::socket_t{ctx_, type};
+        out.setsockopt(ZMQ_RCVHWM, 0);
+        out.setsockopt(ZMQ_SNDHWM, 0);
+        return out;
+    }
+
+    void set_option(int opt, int val)
+    {
+        int rc = zmq_ctx_set((void*) ctx_, opt, val);
+        if (rc < 0) {
+            throw zmq::error_t{};
+        }
+    }
+
+    int get_option(int opt)
+    {
+        int rc = zmq_ctx_get((void*) ctx_, opt);
+        if (rc < 0) {
+            throw zmq::error_t{};
+        }
+        return rc;
+    }
+
+    void close()
+    {
+        ctx_.close();
+    }
+
+private:
+    zmq::context_t ctx_;
+};
+
+
 class BasicPoller final
 {
 public:

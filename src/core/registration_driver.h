@@ -28,7 +28,7 @@
 #include <xmsg/proto/registration.h>
 #include <xmsg/topic.h>
 
-#include <xmsg/third_party/zmq.hpp>
+#include "zhelper.h"
 
 #include <array>
 #include <memory>
@@ -110,7 +110,7 @@ private:
 class RegDriver
 {
 public:
-    RegDriver(zmq::context_t& ctx, RegAddress addr);
+    RegDriver(Context& ctx, RegAddress addr);
     virtual ~RegDriver() = default;
 
     void add(const proto::Registration& data, bool is_publisher);
@@ -126,7 +126,6 @@ private:
     virtual Response request(Request&, int);
 
 private:
-    zmq::context_t& ctx_;
     RegAddress addr_;
     zmq::socket_t socket_;
 };

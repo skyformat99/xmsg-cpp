@@ -43,7 +43,7 @@ namespace detail {
  */
 class ProxyDriver final {
 public:
-    ProxyDriver(zmq::context_t& ctx,
+    ProxyDriver(Context& ctx,
                 const ProxyAddress& addr,
                 std::shared_ptr<ConnectionSetup> setup);
 

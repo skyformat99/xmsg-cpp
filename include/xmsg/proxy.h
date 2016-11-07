@@ -25,8 +25,7 @@
 #define XMSG_CORE_PROXY_H_
 
 #include <xmsg/address.h>
-
-#include <xmsg/third_party/zmq.hpp>
+#include <xmsg/context.h>
 
 #include <atomic>
 #include <thread>
@@ -37,7 +36,7 @@ namespace sys {
 class Proxy final
 {
 public:
-    Proxy(zmq::context_t&& ctx, const ProxyAddress& addr);
+    Proxy(std::unique_ptr<Context>&& ctx, const ProxyAddress& addr);
     Proxy(const ProxyAddress& addr);
 
     ~Proxy();
@@ -57,7 +56,9 @@ private:
     void control();
 
 private:
-    zmq::context_t ctx_;
+    using ProxyContext = std::unique_ptr<Context>;
+
+    ProxyContext ctx_;
     ProxyAddress addr_;
 
     std::atomic_bool is_alive_;

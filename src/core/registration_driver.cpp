@@ -186,10 +186,9 @@ ResponseMsg Response::msg()
 }
 
 
-RegDriver::RegDriver(zmq::context_t& ctx, RegAddress addr)
-  : ctx_{ctx},
-    addr_{addr},
-    socket_{ctx_, zmq::socket_type::req}
+RegDriver::RegDriver(Context& ctx, RegAddress addr)
+  : addr_{addr},
+    socket_{ctx.create_socket(zmq::socket_type::req)}
 {
     socket_.setsockopt(ZMQ_RCVHWM, 0);
     socket_.setsockopt(ZMQ_SNDHWM, 0);

@@ -12,13 +12,13 @@
 using namespace testing;
 using namespace xmsg;
 
-auto ctx = std::make_shared<zmq::context_t>();
+auto ctx = std::make_shared<detail::Context>();
 
 
 class ConnectionPoolMock : public ConnectionPool {
 public:
     ConnectionPoolMock()
-        : ConnectionPool(ctx)
+        : ConnectionPool(Context::instance())
     { }
 
 public:

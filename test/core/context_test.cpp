@@ -33,9 +33,18 @@ TEST(Context, SingletonMultiThreadInstances)
 }
 
 
+TEST(Context, CreateNewContexts)
+{
+    auto ctx1 = xmsg::Context::create();
+    auto ctx2 = xmsg::Context::create();
+
+    ASSERT_THAT(ctx1.get(), Ne(ctx2.get()));
+}
+
+
 TEST(Context, SetIOThreads)
 {
-    auto ctx = xmsg::Context::instance();
+    auto ctx = xmsg::Context::create();
 
     ctx->set_io_threads(4);
 
@@ -45,7 +54,7 @@ TEST(Context, SetIOThreads)
 
 TEST(Context, SetMaxSockets)
 {
-    auto ctx = xmsg::Context::instance();
+    auto ctx = xmsg::Context::create();
 
     ctx->set_max_sockets(2048);
 

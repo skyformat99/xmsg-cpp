@@ -85,19 +85,25 @@ private:
 
 
 ConnectionPool::ConnectionPool()
-  : ctx_{Context::instance()->ctx_},
-    setup_{std::make_shared<ConnectionSetup>()},
-    proxy_cache_{std::make_unique<ProxyDriverCache>()},
-    reg_cache_{std::make_unique<RegDriverCache>()}
+  : ConnectionPool{Context::instance()}
 { }
 
 
-ConnectionPool::ConnectionPool(std::shared_ptr<zmq::context_t> ctx)
+ConnectionPool::ConnectionPool(std::shared_ptr<Context> ctx)
   : ctx_{std::move(ctx)},
     setup_{std::make_shared<ConnectionSetup>()},
     proxy_cache_{std::make_unique<ProxyDriverCache>()},
     reg_cache_{std::make_unique<RegDriverCache>()}
 { }
+
+
+ConnectionPool::ConnectionPool(std::unique_ptr<Context>&& ctx)
+  : ctx_{std::move(ctx)},
+    setup_{std::make_shared<ConnectionSetup>()},
+    proxy_cache_{std::make_unique<ProxyDriverCache>()},
+    reg_cache_{std::make_unique<RegDriverCache>()}
+{ }
+
 
 ConnectionPool::ConnectionPool(ConnectionPool&&) = default;
 ConnectionPool& ConnectionPool::operator=(ConnectionPool&&) = default;
@@ -139,7 +145,7 @@ RegConnection ConnectionPool::get_connection(const RegAddress& addr)
 
 detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& addr)
 {
-    auto con = detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx_, addr, setup_)};
+    auto con = detail::ProxyDriverPtr{new detail::ProxyDriver(*ctx_->impl_, addr, setup_)};
     con->connect();
     return con;
 }
@@ -147,7 +153,7 @@ detail::ProxyDriverPtr ConnectionPool::create_connection(const ProxyAddress& add
 
 detail::RegDriverPtr ConnectionPool::create_connection(const RegAddress& addr)
 {
-    return detail::RegDriverPtr{new detail::RegDriver(*ctx_, addr)};
+    return detail::RegDriverPtr{new detail::RegDriver(*ctx_->impl_, addr)};
 }
 
 } // end namespace xmsg

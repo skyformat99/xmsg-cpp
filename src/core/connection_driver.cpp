@@ -32,14 +32,14 @@
 namespace xmsg {
 namespace detail {
 
-ProxyDriver::ProxyDriver(zmq::context_t& ctx,
+ProxyDriver::ProxyDriver(Context& ctx,
                          const ProxyAddress& addr,
                          std::shared_ptr<ConnectionSetup> setup)
   : addr_{addr},
     setup_{std::move(setup)},
-    pub_{ctx, zmq::socket_type::pub},
-    sub_{ctx, zmq::socket_type::sub},
-    control_{ctx, zmq::socket_type::dealer},
+    pub_{ctx.create_socket(zmq::socket_type::pub)},
+    sub_{ctx.create_socket(zmq::socket_type::sub)},
+    control_{ctx.create_socket(zmq::socket_type::dealer)},
     id_{detail::get_random_id()}
 {
     // nop

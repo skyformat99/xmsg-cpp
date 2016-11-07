@@ -26,12 +26,9 @@
 
 #include <xmsg/connection.h>
 #include <xmsg/connection_setup.h>
+#include <xmsg/context.h>
 
 #include <memory>
-
-namespace zmq {
-class context_t;
-} // end namespace zmq
 
 namespace xmsg {
 
@@ -39,7 +36,8 @@ class ConnectionPool
 {
 public:
     ConnectionPool();
-    ConnectionPool(std::shared_ptr<zmq::context_t> ctx);
+    ConnectionPool(std::shared_ptr<Context> ctx);
+    ConnectionPool(std::unique_ptr<Context>&& ctx);
 
     ConnectionPool(const ConnectionPool&) = delete;
     ConnectionPool& operator=(const ConnectionPool&) = delete;
@@ -68,7 +66,7 @@ private:
     using ProxyDriverCache = ConnectionCache<ProxyAddress, detail::ProxyDriverPtr>;
     using RegDriverCache = ConnectionCache<RegAddress, detail::RegDriverPtr>;
 
-    std::shared_ptr<zmq::context_t> ctx_;
+    std::shared_ptr<Context> ctx_;
     std::shared_ptr<ConnectionSetup> setup_;
 
     std::unique_ptr<ProxyDriverCache> proxy_cache_;
