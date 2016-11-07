@@ -51,18 +51,6 @@ private:
 };
 
 
-inline void bind(zmq::socket_t& socket, int port)
-{
-    socket.bind("tcp://*:" + std::to_string(port));
-}
-
-
-inline void connect(zmq::socket_t& socket, const std::string& host, int port)
-{
-    socket.connect("tcp://" + host + ":" + std::to_string(port));
-}
-
-
 template<size_t N>
 using RawMessage = std::array<zmq::message_t, N>;
 
@@ -82,6 +70,20 @@ RawMessage<N> recv_msg(zmq::socket_t& socket)
         throw std::runtime_error{"Invalid multi-part message"};
     }
     return multi_msg;
+}
+
+
+inline
+void bind(zmq::socket_t& socket, int port)
+{
+    socket.bind("tcp://*:" + std::to_string(port));
+}
+
+
+inline
+void connect(zmq::socket_t& socket, const std::string& host, int port)
+{
+    socket.connect("tcp://" + host + ":" + std::to_string(port));
 }
 
 
