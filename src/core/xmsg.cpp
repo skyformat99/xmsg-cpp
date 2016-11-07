@@ -23,8 +23,8 @@
 
 #include <xmsg/xmsg.h>
 
-#include <xmsg/context.h>
 #include <xmsg/connection_pool.h>
+#include <xmsg/context.h>
 #include <xmsg/util.h>
 
 #include "connection_driver.h"
@@ -48,15 +48,16 @@ auto main_pool = std::shared_ptr<xmsg::ConnectionPool>{tls::getThreadInstance()}
 namespace xmsg {
 
 /// \cond HIDDEN_SYMBOLS
-struct xMsg::Impl {
+struct xMsg::Impl
+{
 
     Impl(const std::string& name,
          const ProxyAddress& proxy_addr,
          const RegAddress& reg_addr)
-      : name{name},
-        id{detail::encode_identity(proxy_addr.host(), name)},
-        default_proxy_addr{proxy_addr},
-        default_reg_addr{reg_addr}
+      : name{name}
+      , id{detail::encode_identity(proxy_addr.host(), name)}
+      , default_proxy_addr{proxy_addr}
+      , default_reg_addr{reg_addr}
     { }
 
     ConnectionPool* con_pool()
@@ -80,7 +81,9 @@ class ScopedSubscription final
 {
 public:
     ScopedSubscription(detail::ProxyDriver& connection, const Topic& topic)
-      : connection_{connection}, topic_{topic}, poller_{connection_.sub_socket()}
+      : connection_{connection}
+      , topic_{topic}
+      , poller_{connection_.sub_socket()}
     {
         connection_.subscribe(topic_);
         util::sleep(10);

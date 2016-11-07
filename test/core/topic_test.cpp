@@ -8,7 +8,7 @@
 using namespace testing;
 using namespace xmsg;
 
-using TopicQuery = std::string(Topic::*)(void) const;
+using TopicQuery = std::string (Topic::*)(void) const;
 
 
 template<typename S>
@@ -38,14 +38,16 @@ inline void assert_not_parent(const T& t1, const S& t2)
 }
 
 
-TEST(Topic, BuildWithValidValues) {
+TEST(Topic, BuildWithValidValues)
+{
     assert_topic(Topic::build("rock"), "rock");
     assert_topic(Topic::build("rock", "metal"), "rock:metal");
     assert_topic(Topic::build("rock", "metal", "metallica"), "rock:metal:metallica");
 }
 
 
-TEST(Topic, BuildWithExtendedTopic) {
+TEST(Topic, BuildWithExtendedTopic)
+{
     assert_topic(Topic::build("rock", "metal", "metallica:lars:*"),
                  "rock:metal:metallica:lars");
     assert_topic(Topic::build("rock", "metal", "metallica:lars:james"),
@@ -53,15 +55,17 @@ TEST(Topic, BuildWithExtendedTopic) {
 }
 
 
-TEST(Topic, BuildWithValidUndefinedValues) {
+TEST(Topic, BuildWithValidUndefinedValues)
+{
     assert_topic(Topic::build("rock", "*"), "rock");
     assert_topic(Topic::build("rock", "*", "*"), "rock");
     assert_topic(Topic::build("rock", "metal", "*"), "rock:metal");
 }
 
 
-TEST(Topic, BuildWithInvalidUndefinedValues) {
-    auto check_exception = [] (auto... params) {
+TEST(Topic, BuildWithInvalidUndefinedValues)
+{
+    auto check_exception = [](auto... params) {
         ASSERT_THROW(Topic::build(params...), std::invalid_argument);
     };
     check_exception("*");
@@ -70,8 +74,9 @@ TEST(Topic, BuildWithInvalidUndefinedValues) {
 }
 
 
-TEST(Topic, WrapRawTopic) {
-    auto assert_raw = [] (auto t) {
+TEST(Topic, WrapRawTopic)
+{
+    auto assert_raw = [](auto t) {
         assert_topic(Topic::raw(t), t);
     };
     assert_raw("rock");
@@ -81,8 +86,9 @@ TEST(Topic, WrapRawTopic) {
 }
 
 
-TEST(Topic, GetDomain) {
-    auto assert_domain = [] (auto t) {
+TEST(Topic, GetDomain)
+{
+    auto assert_domain = [](auto t) {
         assert_call(t, &Topic::domain, "rock");
     };
     assert_domain("rock");
@@ -92,8 +98,9 @@ TEST(Topic, GetDomain) {
 }
 
 
-TEST(Topic, GetSubject) {
-    auto assert_subject = [] (auto t, auto s) {
+TEST(Topic, GetSubject)
+{
+    auto assert_subject = [](auto t, auto s) {
         assert_call(t, &Topic::subject, s);
     };
     assert_subject("rock", Topic::ANY);
@@ -103,8 +110,9 @@ TEST(Topic, GetSubject) {
 }
 
 
-TEST(Topic, GetType) {
-    auto assert_type = [] (auto t, auto s) {
+TEST(Topic, GetType)
+{
+    auto assert_type = [](auto t, auto s) {
         assert_call(t, &Topic::type, s);
     };
     assert_type("rock", Topic::ANY);
@@ -114,7 +122,8 @@ TEST(Topic, GetType) {
 }
 
 
-TEST(Topic, IsParentCompareDomain) {
+TEST(Topic, IsParentCompareDomain)
+{
     assert_parent("rock", "rock");
     assert_parent("rock", "rock:metal");
     assert_parent("rock", "rock:metal:slayer");
@@ -125,7 +134,8 @@ TEST(Topic, IsParentCompareDomain) {
 }
 
 
-TEST(Topic, IsParentCompareSubject) {
+TEST(Topic, IsParentCompareSubject)
+{
     assert_parent("rock:metal", "rock:metal");
     assert_parent("rock:metal", "rock:metal:metallica");
 
@@ -139,7 +149,8 @@ TEST(Topic, IsParentCompareSubject) {
 }
 
 
-TEST(Topic, IsParentCompareType) {
+TEST(Topic, IsParentCompareType)
+{
     assert_parent("rock:metal:metallica", "rock:metal:metallica");
 
     assert_not_parent("rock:metal:metallica", "rock");
@@ -157,7 +168,7 @@ TEST(Topic, IsParentCompareType) {
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

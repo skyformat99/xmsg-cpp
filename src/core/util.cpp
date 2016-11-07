@@ -24,8 +24,8 @@
 #include <xmsg/util.h>
 
 #include <arpa/inet.h>
-#include <ifaddrs.h>
 #include <chrono>
+#include <ifaddrs.h>
 #include <netdb.h>
 #include <regex>
 #include <system_error>
@@ -70,7 +70,7 @@ void update_localhost_addrs()
             continue;
         }
         if (ifa->ifa_addr->sa_family == AF_INET) {
-            void* s_addr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            void* s_addr = &((struct sockaddr_in*) ifa->ifa_addr)->sin_addr;
             char addr_buf[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, s_addr, addr_buf, INET_ADDRSTRLEN);
 
@@ -104,14 +104,18 @@ std::string to_host_addr(const std::string& hostname)
 }
 
 
-bool is_ipaddr(const std::string& hostname) {
+bool is_ipaddr(const std::string& hostname)
+{
+    // clang-format off
     auto r = std::regex{"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}"
                             "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"};
+    // clang-format on
     return std::regex_match(hostname, r);
 }
 
 
-void validate_ipaddr(const std::string& address) {
+void validate_ipaddr(const std::string& address)
+{
     if (!is_ipaddr(address)) {
         throw std::invalid_argument{"invalid IP address: " + address};
     }

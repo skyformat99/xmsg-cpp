@@ -38,12 +38,12 @@ class RegDriver;
 
 struct ProxyDriverDeleter
 {
-    void operator()(ProxyDriver *p);
+    void operator()(ProxyDriver* p);
 };
 
 struct RegDriverDeleter
 {
-    void operator()(RegDriver *p);
+    void operator()(RegDriver* p);
 };
 
 using ProxyDriverPtr = std::unique_ptr<ProxyDriver, ProxyDriverDeleter>;
@@ -65,9 +65,9 @@ public:
 
 private:
     ScopedConnection(const A& addr, U&& con, deleter&& del)
-        : addr_{addr},
-          con_{std::move(con)},
-          del_{std::move(del)}
+      : addr_{addr}
+      , con_{std::move(con)}
+      , del_{std::move(del)}
     {
         // nop
     }

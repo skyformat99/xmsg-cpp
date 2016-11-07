@@ -23,8 +23,8 @@
 
 #include <xmsg/proxy.h>
 
-#include <cstdlib>
 #include <csignal>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 

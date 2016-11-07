@@ -33,8 +33,8 @@
 
 #include <functional>
 #include <memory>
-#include <string>
 #include <set>
+#include <string>
 
 /**
  * Core %xMsg classes and functions.

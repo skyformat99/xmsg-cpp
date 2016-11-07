@@ -103,4 +103,4 @@ void sleep(long millis);
 
 } // end namespace xmsg
 
-#endif  // XMSG_CORE_UTIL_H_
+#endif // XMSG_CORE_UTIL_H_

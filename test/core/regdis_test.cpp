@@ -62,7 +62,7 @@ TEST(Response, CreateErrorResponse)
 
 TEST(Response, CreateDataResponse)
 {
-    auto data = RegDataSet {
+    auto data = RegDataSet{
         new_registration("asimov", "10.2.9.1", "writer.scifi:books", true),
         new_registration("bradbury", "10.2.9.1", "writer.scifi:books", true),
     };
@@ -86,7 +86,8 @@ class MockDriver : public RegDriver
 {
     friend struct DriverTest;
 
-    MockDriver(MockContext& ctx) : RegDriver{ctx, {}} {};
+    MockDriver(MockContext& ctx)
+      : RegDriver{ctx, {}} {};
 
     MOCK_METHOD2(request, Response(Request&, int));
 };
@@ -94,11 +95,11 @@ class MockDriver : public RegDriver
 struct DriverTest : public Test
 {
     DriverTest()
-      : driver{ctx},
-        subscriber{new_registration("bradbury_sub", "localhost",
-                                    "writer:scifi:books", false)},
-        publisher {new_registration("bradbury_pub", "localhost",
-                                    "writer:scifi:books", true)}
+      : driver{ctx}
+      , subscriber{new_registration("bradbury_sub", "localhost",
+                                    "writer:scifi:books", false)}
+      , publisher{new_registration("bradbury_pub", "localhost",
+                                   "writer:scifi:books", true)}
     {
         ON_CALL(driver, request(_, _))
             .WillByDefault(Return(Response{"", "", ""}));
@@ -210,7 +211,7 @@ TEST_F(DriverTest, GetRegistration)
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

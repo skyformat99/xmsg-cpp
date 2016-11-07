@@ -1,10 +1,10 @@
-#include <xmsg/xmsg.h>
 #include <xmsg/util.h>
+#include <xmsg/xmsg.h>
 
 #include <chrono>
 #include <condition_variable>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <mutex>
 #include <string>

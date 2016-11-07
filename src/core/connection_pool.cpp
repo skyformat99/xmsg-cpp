@@ -36,12 +36,12 @@ namespace xmsg {
 
 namespace detail {
 
-void ProxyDriverDeleter::operator()(ProxyDriver *p)
+void ProxyDriverDeleter::operator()(ProxyDriver* p)
 {
     delete p;
 }
 
-void RegDriverDeleter::operator()(RegDriver *p)
+void RegDriverDeleter::operator()(RegDriver* p)
 {
     delete p;
 }
@@ -50,7 +50,8 @@ void RegDriverDeleter::operator()(RegDriver *p)
 
 
 template <typename A, typename U>
-class ConnectionPool::ConnectionCache {
+class ConnectionPool::ConnectionCache
+{
     using ConnectionQueue = std::queue<U>;
     using ConnectionMap = std::unordered_map<A, ConnectionQueue>;
 
@@ -90,18 +91,18 @@ ConnectionPool::ConnectionPool()
 
 
 ConnectionPool::ConnectionPool(std::shared_ptr<Context> ctx)
-  : ctx_{std::move(ctx)},
-    setup_{std::make_shared<ConnectionSetup>()},
-    proxy_cache_{std::make_unique<ProxyDriverCache>()},
-    reg_cache_{std::make_unique<RegDriverCache>()}
+  : ctx_{std::move(ctx)}
+  , setup_{std::make_shared<ConnectionSetup>()}
+  , proxy_cache_{std::make_unique<ProxyDriverCache>()}
+  , reg_cache_{std::make_unique<RegDriverCache>()}
 { }
 
 
 ConnectionPool::ConnectionPool(std::unique_ptr<Context>&& ctx)
-  : ctx_{std::move(ctx)},
-    setup_{std::make_shared<ConnectionSetup>()},
-    proxy_cache_{std::make_unique<ProxyDriverCache>()},
-    reg_cache_{std::make_unique<RegDriverCache>()}
+  : ctx_{std::move(ctx)}
+  , setup_{std::make_shared<ConnectionSetup>()}
+  , proxy_cache_{std::make_unique<ProxyDriverCache>()}
+  , reg_cache_{std::make_unique<RegDriverCache>()}
 { }
 
 

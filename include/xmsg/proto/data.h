@@ -54,6 +54,7 @@ namespace proto {
  * and serialization routines.
  */
 
+// clang-format off
 namespace detail {
 
 template <typename T>
@@ -143,6 +144,7 @@ template<> inline std::string get_mimetype<std::vector<std::string>>()
         { return mimetype::array_string; }
 
 } // end namespace detail
+// clang-format on
 
 
 /**

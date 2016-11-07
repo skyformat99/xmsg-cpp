@@ -24,9 +24,9 @@
 #ifndef XMSG_CORE_MESSAGE_HPP_
 #define XMSG_CORE_MESSAGE_HPP_
 
-#include <xmsg/topic.h>
-#include <xmsg/proto/meta.h>
 #include <xmsg/proto/data.h>
+#include <xmsg/proto/meta.h>
+#include <xmsg/topic.h>
 
 #include <cstdint>
 #include <memory>
@@ -89,10 +89,10 @@ public:
      */
     template<typename T, typename V>
     Message(T&& topic, std::unique_ptr<proto::Meta>&& metadata, V&& data)
-      : topic_{std::forward<T>(topic)},
-        meta_{metadata ? std::move(metadata)
-                       : throw std::invalid_argument{"null metadata"}},
-        data_{std::forward<V>(data)}
+      : topic_{std::forward<T>(topic)}
+      , meta_{metadata ? std::move(metadata)
+                       : throw std::invalid_argument{"null metadata"}}
+      , data_{std::forward<V>(data)}
     {
         // nothing
     }
@@ -113,17 +113,17 @@ public:
      */
     template<typename T, typename S, typename V>
     Message(T&& topic, S&& mimetype, V&& data)
-      : topic_{std::forward<T>(topic)},
-        meta_{proto::make_meta()},
-        data_{std::forward<V>(data)}
+      : topic_{std::forward<T>(topic)}
+      , meta_{proto::make_meta()}
+      , data_{std::forward<V>(data)}
     {
         proto::detail::set_datatype(*meta_, mimetype);
     }
 
     Message(const Message& other)
-      : topic_{other.topic_},
-        meta_{proto::copy_meta(*other.meta_)},
-        data_{other.data_}
+      : topic_{other.topic_}
+      , meta_{proto::copy_meta(*other.meta_)}
+      , data_{other.data_}
     { }
 
     Message& operator=(const Message& other)

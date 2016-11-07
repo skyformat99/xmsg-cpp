@@ -11,14 +11,16 @@ using namespace testing;
 using namespace xmsg;
 
 
-AssertionResult is_ip(const std::string& address) {
+AssertionResult is_ip(const std::string& address)
+{
     return util::is_ipaddr(address)
         ? AssertionSuccess() << address << " is a valid IP"
         : AssertionFailure() << address << " is not a valid IP";
 }
 
 
-TEST(ip_utils, check_valid_ips) {
+TEST(ip_utils, check_valid_ips)
+{
     std::string addrs[] = {
         "1.1.1.1",
         "255.255.255.255",
@@ -35,7 +37,8 @@ TEST(ip_utils, check_valid_ips) {
 }
 
 
-TEST(ip_utils, check_invalid_ips) {
+TEST(ip_utils, check_invalid_ips)
+{
     std::string addrs[] = {
         "10.10.10",
         "10.10",
@@ -55,7 +58,8 @@ TEST(ip_utils, check_invalid_ips) {
 }
 
 
-TEST(ip_utils, check_only_ip_v4) {
+TEST(ip_utils, check_only_ip_v4)
+{
     std::string addrs[] = {
         "2001:cdba:0000:0000:0000:0000:3257:9652",
         "2001:cdba:0:0:0:0:3257:9652",
@@ -69,7 +73,7 @@ TEST(ip_utils, check_only_ip_v4) {
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

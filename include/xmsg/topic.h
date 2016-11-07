@@ -197,7 +197,8 @@ private:
         >
     >
     Topic(T&& topic)
-        : topic_{std::forward<T>(topic)} { }
+      : topic_{std::forward<T>(topic)}
+    { }
 
 private:
     std::string topic_;

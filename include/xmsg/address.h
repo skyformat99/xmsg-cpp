@@ -51,13 +51,13 @@ public:
     ProxyAddress(const std::string& host, int pub_port);
 
 public:
-     /// The host IP of the proxy
+    /// The host IP of the proxy
     const std::string& host() const { return host_; }
 
-     /// The publication port of the proxy
+    /// The publication port of the proxy
     int pub_port() const { return pub_port_; }
 
-     /// The subscription port of the proxy
+    /// The subscription port of the proxy
     int sub_port() const { return sub_port_; }
 
 private:
@@ -88,10 +88,10 @@ public:
     RegAddress(const std::string& host, int port);
 
 public:
-     /// The host IP of the registrar service
+    /// The host IP of the registrar service
     const std::string& host() const { return host_; }
 
-     /// The listening port of the registrar service
+    /// The listening port of the registrar service
     int port() const { return port_; }
 
 private:

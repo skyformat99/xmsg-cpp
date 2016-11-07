@@ -1,5 +1,5 @@
-#include <xmsg/xmsg.h>
 #include <xmsg/util.h>
+#include <xmsg/xmsg.h>
 
 #include <cstdlib>
 #include <iostream>

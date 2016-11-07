@@ -47,7 +47,8 @@ namespace proto {
  */
 
 /// \cond HIDDEN_SYMBOLS
-struct CompareRegistration {
+struct CompareRegistration
+{
     bool operator()(const Registration& lhs, const Registration& rhs) const;
 };
 /// \endcond

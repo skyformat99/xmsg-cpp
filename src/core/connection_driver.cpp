@@ -35,12 +35,12 @@ namespace detail {
 ProxyDriver::ProxyDriver(Context& ctx,
                          const ProxyAddress& addr,
                          std::shared_ptr<ConnectionSetup> setup)
-  : addr_{addr},
-    setup_{std::move(setup)},
-    pub_{ctx.create_socket(zmq::socket_type::pub)},
-    sub_{ctx.create_socket(zmq::socket_type::sub)},
-    control_{ctx.create_socket(zmq::socket_type::dealer)},
-    id_{detail::get_random_id()}
+  : addr_{addr}
+  , setup_{std::move(setup)}
+  , pub_{ctx.create_socket(zmq::socket_type::pub)}
+  , sub_{ctx.create_socket(zmq::socket_type::sub)}
+  , control_{ctx.create_socket(zmq::socket_type::dealer)}
+  , id_{detail::get_random_id()}
 {
     // nop
 }

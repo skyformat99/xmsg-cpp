@@ -22,15 +22,15 @@ TEST(UniqueReplyTo, GenerateUniqueReplyTo)
 
     detail::set_unique_replyto(900000);
 
-    auto t1 = std::thread{[](){
-            for (int i = 1; i < 50000; i++) {
-                detail::get_unique_replyto("id");
-            }
+    auto t1 = std::thread{[]() {
+        for (int i = 1; i < 50000; i++) {
+            detail::get_unique_replyto("id");
+        }
     }};
-    auto t2 = std::thread{[](){
-            for (int i = 0; i < 40000; i++) {
-                detail::get_unique_replyto("id");
-            }
+    auto t2 = std::thread{[]() {
+        for (int i = 0; i < 40000; i++) {
+            detail::get_unique_replyto("id");
+        }
     }};
 
     t1.join();
@@ -58,14 +58,16 @@ TEST(UniqueReplyTo, OverflowUniqueReplyTo)
 }
 
 
-TEST(UniqueReplyTo, EncodeIdentity) {
+TEST(UniqueReplyTo, EncodeIdentity)
+{
     auto encode = detail::encode_identity("10.2.9.1", "test_actor");
 
     ASSERT_EQ(8u, encode.size());
 }
 
 
-TEST(RandomControlId, NineDigitsLong) {
+TEST(RandomControlId, NineDigitsLong)
+{
     auto id1 = detail::get_random_id();
     auto id2 = detail::get_random_id();
     auto id3 = detail::get_random_id();
@@ -76,7 +78,8 @@ TEST(RandomControlId, NineDigitsLong) {
 }
 
 
-TEST(RandomControlId, SameThreeDigitsPrefix) {
+TEST(RandomControlId, SameThreeDigitsPrefix)
+{
     auto pre1 = detail::get_random_id().substr(1, 4);
     auto pre2 = detail::get_random_id().substr(1, 4);
     auto pre3 = detail::get_random_id().substr(1, 4);
@@ -86,7 +89,8 @@ TEST(RandomControlId, SameThreeDigitsPrefix) {
 }
 
 
-TEST(RandomControlId, FourthDigitIsCppIdentifier) {
+TEST(RandomControlId, FourthDigitIsCppIdentifier)
+{
     auto id1 = detail::get_random_id();
     auto id2 = detail::get_random_id();
     auto id3 = detail::get_random_id();
@@ -97,7 +101,8 @@ TEST(RandomControlId, FourthDigitIsCppIdentifier) {
 }
 
 
-TEST(RandomControlId, RamdomLastFiveDigits) {
+TEST(RandomControlId, RamdomLastFiveDigits)
+{
     auto suff1 = detail::get_random_id().substr(4);
     auto suff2 = detail::get_random_id().substr(4);
     auto suff3 = detail::get_random_id().substr(4);
@@ -108,7 +113,7 @@ TEST(RandomControlId, RamdomLastFiveDigits) {
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

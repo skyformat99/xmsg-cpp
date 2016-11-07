@@ -72,8 +72,10 @@ const std::string ctrl_subscribe = "sub";
 const std::string ctrl_reply = "rep";
 /// \endcond
 
+// clang-format off
 const int default_port = 7771;      ///< Default publication port for proxies
 const int registrar_port = 8888;    ///< Default listening port for registrar services
+// clang-format on
 
 } // end namespace constants
 
@@ -92,6 +94,7 @@ const int registrar_port = 8888;    ///< Default listening port for registrar se
  */
 namespace mimetype {
 
+// clang-format off
 const std::string single_sint32 = "binary/sint32";          ///< Signed integer. Uses variable-length encoding.
 const std::string single_sint64 = "binary/sint64";          ///< Signed integer. Uses variable-length encoding.
 const std::string single_sfixed32 = "binary/sfixed32";      ///< Signed integer. Always use 4 bytes.
@@ -114,9 +117,10 @@ const std::string xmsg_data = "binary/native";              ///< A serialized \r
 const std::string java_object = "binary/java";              ///< A serialized Java object
 const std::string cpp_object = "binary/cpp";                ///< A serialized C++ object
 const std::string python_object = "binary/python";          ///< A serialized Python object
+// clang-format on
 
 } // end namespace mime
 
 } // end namespace xmsg
 
-#endif  // XMSG_CORE_CONSTANTS_H_
+#endif // XMSG_CORE_CONSTANTS_H_

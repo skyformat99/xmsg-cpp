@@ -41,7 +41,8 @@ namespace detail {
  * Contains ProxyAddress object and two 0MQ sockets for publishing and
  * subscribing %xMsg messages respectfully.
  */
-class ProxyDriver final {
+class ProxyDriver final
+{
 public:
     ProxyDriver(Context& ctx,
                 const ProxyAddress& addr,

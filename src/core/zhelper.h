@@ -74,7 +74,7 @@ class BasicPoller final
 {
 public:
     BasicPoller(zmq::socket_t& socket)
-      : items_{ {(void*) socket, 0, ZMQ_POLLIN, 0} }
+      : items_{{(void*) socket, 0, ZMQ_POLLIN, 0}}
     { }
 
     bool poll(int timeout)
@@ -151,4 +151,4 @@ std::string get_random_id();
 } // end namespace detail
 } // end namespace xmsg
 
-#endif  // XMSG_CORE_ZHELPER_H
+#endif // XMSG_CORE_ZHELPER_H

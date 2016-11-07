@@ -26,9 +26,9 @@
 #include <xmsg/constants.h>
 
 #include <iostream>
-#include <string>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 
 namespace {
 
@@ -44,7 +44,8 @@ const std::string Topic::ANY = constants::any;
 
 Topic Topic::build(const std::string& domain,
                    const std::string& subject,
-                   const std::string& type) {
+                   const std::string& type)
+{
     if (domain == ANY) {
         throw std::invalid_argument("domain is not defined");
     }
@@ -74,7 +75,8 @@ Topic Topic::build(const std::string& domain,
 }
 
 
-std::string Topic::domain() const {
+std::string Topic::domain() const
+{
     auto firstSep = topic_.find(SEPARATOR);
     if (firstSep == std::string::npos) {
         return { topic_ };
@@ -83,7 +85,8 @@ std::string Topic::domain() const {
 }
 
 
-std::string Topic::subject() const {
+std::string Topic::subject() const
+{
     auto firstSep = topic_.find(SEPARATOR);
     if (firstSep == std::string::npos) {
         return { ANY };
@@ -96,7 +99,8 @@ std::string Topic::subject() const {
 }
 
 
-std::string Topic::type() const {
+std::string Topic::type() const
+{
     auto firstSep = topic_.find(SEPARATOR);
     if (firstSep == std::string::npos) {
         return { ANY };

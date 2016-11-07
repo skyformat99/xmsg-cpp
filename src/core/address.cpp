@@ -60,9 +60,9 @@ ProxyAddress::ProxyAddress(const std::string& host)
 
 
 ProxyAddress::ProxyAddress(const std::string& host, int pub_port)
-  : host_{util::to_host_addr(host)},
-    pub_port_{pub_port},
-    sub_port_{default_sub_port(pub_port)}
+  : host_{util::to_host_addr(host)}
+  , pub_port_{pub_port}
+  , sub_port_{default_sub_port(pub_port)}
 {
     if (invalid_port(pub_port_)) {
         throw std::invalid_argument{"invalid pub port: " + std::to_string(pub_port_)};
@@ -74,7 +74,7 @@ ProxyAddress::ProxyAddress(const std::string& host, int pub_port)
 
 
 RegAddress::RegAddress()
- : RegAddress{util::localhost(), constants::registrar_port}
+  : RegAddress{util::localhost(), constants::registrar_port}
 { }
 
 
@@ -84,8 +84,8 @@ RegAddress::RegAddress(const std::string& host)
 
 
 RegAddress::RegAddress(const std::string& host, int port)
-  : host_{util::to_host_addr(host)},
-    port_{port}
+  : host_{util::to_host_addr(host)}
+  , port_{port}
 {
     if (invalid_port(port_)) {
         throw std::invalid_argument{"invalid reg port: " + std::to_string(port_)};
@@ -93,11 +93,13 @@ RegAddress::RegAddress(const std::string& host, int port)
 }
 
 
-std::ostream& operator<<(std::ostream& os, const ProxyAddress& a) {
+std::ostream& operator<<(std::ostream& os, const ProxyAddress& a)
+{
     return os << a.host() << ":" << a.pub_port();
 }
 
-std::ostream& operator<<(std::ostream& os, const RegAddress& a) {
+std::ostream& operator<<(std::ostream& os, const RegAddress& a)
+{
     return os << a.host() << ":" << a.port();
 }
 

@@ -16,7 +16,8 @@ namespace xmsg {
 
 namespace test {
 
-class ProxyThread {
+class ProxyThread
+{
 public:
     ProxyThread()
     {

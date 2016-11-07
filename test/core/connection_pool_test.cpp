@@ -15,10 +15,11 @@ using namespace xmsg;
 auto ctx = std::make_shared<detail::Context>();
 
 
-class ConnectionPoolMock : public ConnectionPool {
+class ConnectionPoolMock : public ConnectionPool
+{
 public:
     ConnectionPoolMock()
-        : ConnectionPool(Context::instance())
+      : ConnectionPool(Context::instance())
     { }
 
 public:
@@ -125,7 +126,7 @@ TEST_F(RegConnectionTest, ReleaseConnection)
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

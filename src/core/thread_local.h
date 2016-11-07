@@ -8,8 +8,8 @@
 
 #include <utility>
 
-#include <stdio.h>
 #include <pthread.h>
+#include <stdio.h>
 
 namespace xmsg {
 namespace detail {
@@ -32,7 +32,7 @@ private:
     }
 
 public:
-    template <typename ...Args>
+    template <typename... Args>
     static T* getThreadInstance(Args&&... args)
     {
         pthread_once(&once_control, ThreadLocal::make_key);
@@ -58,4 +58,4 @@ pthread_once_t ThreadLocal<T>::once_control = PTHREAD_ONCE_INIT;
 } // end namespace detail
 } // end namespace xmsg
 
-#endif  // XMSG_INTERNAL_THREAD_LOCAL_H
+#endif // XMSG_INTERNAL_THREAD_LOCAL_H

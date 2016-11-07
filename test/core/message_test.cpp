@@ -41,7 +41,7 @@ TEST(Data, Serialize)
 
 TEST(Message, CreateWithBytes)
 {
-    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
     auto msg = xmsg::Message{topic, "test/binary", data};
 
     EXPECT_THAT(msg.data(), ContainerEq(data));
@@ -51,25 +51,25 @@ TEST(Message, CreateWithBytes)
 
 TEST(Message, PassingNullMetadataThrows)
 {
-    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
     auto meta = std::unique_ptr<xmsg::proto::Meta>{};
 
     EXPECT_EXCEPTION(xmsg::Message(topic, std::move(meta), data),
-                     std::invalid_argument,  "null metadata");
+                     std::invalid_argument, "null metadata");
 }
 
 
 TEST(Message, PassingNullMimeTypeThrows)
 {
-    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
     EXPECT_EXCEPTION(xmsg::Message(topic, nullptr, data),
-                     std::invalid_argument,  "null mime-type");
+                     std::invalid_argument, "null mime-type");
 }
 
 
 TEST(Message, EqualMessages)
 {
-    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
 
     auto msg1 = xmsg::Message{topic, "test/binary", data};
     auto msg2 = xmsg::Message{topic, "test/binary", data};
@@ -80,7 +80,7 @@ TEST(Message, EqualMessages)
 
 TEST(Message, CreateCopy)
 {
-    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
 
     auto msg1 = xmsg::Message{topic, "test/binary", data};
     auto msg2 = xmsg::Message{msg1};
@@ -93,8 +93,8 @@ TEST(Message, SwapMessages)
 {
     auto topic1 = xmsg::Topic::raw("topic1");
     auto topic2 = xmsg::Topic::raw("topic2");
-    auto data1 = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
-    auto data2 = std::vector<std::uint8_t>{ 0x0, 0x4, 0x5, 0x6, 0xc, 0xd };
+    auto data1 = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
+    auto data2 = std::vector<std::uint8_t>{0x0, 0x4, 0x5, 0x6, 0xc, 0xd};
 
     auto msg1 = xmsg::Message{topic1, "test/binary1", data1};
     auto msg2 = xmsg::Message{topic2, "test/binary2", data2};
@@ -154,7 +154,7 @@ TEST(Message, CreateWithStringData)
 
 TEST(Message, CreateWithIntegerArray)
 {
-    auto data = std::vector<std::int64_t>{ 1000L, 2000L, 3000L };
+    auto data = std::vector<std::int64_t>{1000L, 2000L, 3000L};
     auto msg = xmsg::make_message(topic, data);
     auto result = xmsg::parse_message<std::vector<std::int64_t>>(msg);
 
@@ -165,7 +165,7 @@ TEST(Message, CreateWithIntegerArray)
 
 TEST(Message, CreateWithFloatArray)
 {
-    auto data = std::vector<double>{ 1000., 2000., 3000. };
+    auto data = std::vector<double>{1000., 2000., 3000.};
     auto msg = xmsg::make_message(topic, data);
     auto result = xmsg::parse_message<std::vector<double>>(msg);
 
@@ -176,7 +176,7 @@ TEST(Message, CreateWithFloatArray)
 
 TEST(Message, CreateWithStringArray)
 {
-    auto data = std::vector<std::string>{ "one", "two", "three" };
+    auto data = std::vector<std::string>{"one", "two", "three"};
     auto msg = xmsg::make_message(topic, data);
     auto result = xmsg::parse_message<std::vector<std::string>>(msg);
 
@@ -187,7 +187,7 @@ TEST(Message, CreateWithStringArray)
 
 TEST(Message, CreateCopyResponse)
 {
-    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
     auto meta = xmsg::proto::make_meta();
     meta->set_replyto("return_123");
     meta->set_datatype("test/binary");
@@ -203,7 +203,7 @@ TEST(Message, CreateCopyResponse)
 
 TEST(Message, CreateMoveResponse)
 {
-    auto data = std::vector<std::uint8_t>{ 0x0, 0x1, 0x2, 0x3, 0xa, 0xb };
+    auto data = std::vector<std::uint8_t>{0x0, 0x1, 0x2, 0x3, 0xa, 0xb};
     auto meta = xmsg::proto::make_meta();
     meta->set_replyto("return_123");
     meta->set_datatype("test/binary");
@@ -221,7 +221,7 @@ TEST(Message, CreateMoveResponse)
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

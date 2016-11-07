@@ -36,14 +36,8 @@ auto make_tie(const xmsg::proto::Registration& reg, int& port, int& owner)
 {
     port = reg.port();
     owner = int{reg.ownertype()};
-    return std::tie(reg.name(),
-                    reg.domain(),
-                    reg.subject(),
-                    reg.type(),
-                    reg.host(),
-                    port,
-                    owner,
-                    reg.description());
+    return std::tie(reg.name(), reg.domain(), reg.subject(), reg.type(),
+                    reg.host(), port, owner, reg.description());
 }
 
 }
@@ -84,29 +78,29 @@ namespace detail {
 Request::Request(std::string topic,
                  std::string sender,
                  const proto::Registration& data)
-  : topic_  {std::move(topic)},
-    sender_ {std::move(sender)},
-    data_   {data.SerializeAsString()}
+  : topic_ {std::move(topic)}
+  , sender_{std::move(sender)}
+  , data_  {data.SerializeAsString()}
 {
     // nothing
 }
 
 
 Request::Request(std::string topic, std::string sender, std::string text)
-  : topic_  {std::move(topic)},
-    sender_ {std::move(sender)},
-    data_   {std::move(text)}
+  : topic_ {std::move(topic)}
+  , sender_{std::move(sender)}
+  , data_  {std::move(text)}
 {
-  // nothing
+    // nothing
 }
 
 
 Request::Request(const RequestMsg& msg)
-  : topic_  {detail::to_string(msg[0])},
-    sender_ {detail::to_string(msg[1])},
-    data_   {detail::to_string(msg[2])}
+  : topic_ {detail::to_string(msg[0])}
+  , sender_{detail::to_string(msg[1])}
+  , data_  {detail::to_string(msg[2])}
 {
-  // nothing
+    // nothing
 }
 
 
@@ -130,37 +124,37 @@ proto::Registration Request::data() const
 
 
 Response::Response(std::string topic, std::string sender)
-  : topic_{std::move(topic)},
-    sender_{std::move(sender)},
-    status_{constants::success}
+  : topic_ {std::move(topic)}
+  , sender_{std::move(sender)}
+  , status_{constants::success}
 {
-  // nothing
+    // nothing
 }
 
 
 Response::Response(std::string topic, std::string sender, RegDataSet data)
-  : topic_{std::move(topic)},
-    sender_{std::move(sender)},
-    status_{constants::success},
-    data_{std::move(data)}
+  : topic_ {std::move(topic)}
+  , sender_{std::move(sender)}
+  , status_{constants::success}
+  , data_{std::move(data)}
 {
-  // nothing
+    // nothing
 }
 
 
 Response::Response(std::string topic, std::string sender, std::string error_msg)
-  : topic_{std::move(topic)},
-    sender_{std::move(sender)},
-    status_{std::move(error_msg)}
+  : topic_ {std::move(topic)}
+  , sender_{std::move(sender)}
+  , status_{std::move(error_msg)}
 {
-  // nothing
+    // nothing
 }
 
 
 Response::Response(const ResponseMsg& msg)
-  : topic_  {detail::to_string(msg[0])},
-    sender_ {detail::to_string(msg[1])},
-    status_ {detail::to_string(msg[2])}
+  : topic_ {detail::to_string(msg[0])}
+  , sender_{detail::to_string(msg[1])}
+  , status_{detail::to_string(msg[2])}
 {
     using ZFrame = const zmq::message_t;
     std::for_each(msg.begin() + n_fields, msg.end(), [=](ZFrame& f) {
@@ -187,8 +181,8 @@ ResponseMsg Response::msg()
 
 
 RegDriver::RegDriver(Context& ctx, RegAddress addr)
-  : addr_{addr},
-    socket_{ctx.create_socket(zmq::socket_type::req)}
+  : addr_{addr}
+  , socket_{ctx.create_socket(zmq::socket_type::req)}
 {
     socket_.setsockopt(ZMQ_RCVHWM, 0);
     socket_.setsockopt(ZMQ_SNDHWM, 0);

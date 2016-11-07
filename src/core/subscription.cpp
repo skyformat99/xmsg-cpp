@@ -54,11 +54,11 @@ namespace xmsg {
 Subscription::Subscription(const Topic& topic,
                            ConnectionWrapperPtr connection,
                            Callback handler)
-    : topic_{topic},
-      connection_{std::move(connection)},
-      handler_{std::move(handler)},
-      thread_{},
-      is_alive_{false}
+  : topic_{topic}
+  , connection_{std::move(connection)}
+  , handler_{std::move(handler)}
+  , thread_{}
+  , is_alive_{false}
 {
     connection_->subscribe(topic_);
     thread_ = std::thread{&Subscription::run, this};
