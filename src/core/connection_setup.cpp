@@ -23,14 +23,40 @@
 
 #include <xmsg/connection_setup.h>
 
-#include <xmsg/third_party/zmq.hpp>
+#include <zmq.h>
+
+#include <stdexcept>
 
 namespace xmsg {
 
-void ConnectionSetup::pre_connection(zmq::socket_t& socket)
+void SocketSetup::set_option(int opt, const void* val, size_t val_len)
 {
-    socket.setsockopt(ZMQ_RCVHWM, 0);
-    socket.setsockopt(ZMQ_SNDHWM, 0);
+    int rc = zmq_setsockopt(socket_, opt, val, val_len);
+    if (rc != 0) {
+        throw new std::runtime_error{zmq_strerror(errno)};
+    }
+}
+
+
+void SocketSetup::get_option(int opt, void* val, size_t* val_len) const
+{
+    int rc = zmq_getsockopt(socket_, opt, val, val_len);
+    if (rc != 0) {
+        throw new std::runtime_error{zmq_strerror(errno)};
+    }
+}
+
+
+int SocketSetup::type() const
+{
+    return get_option<int>(ZMQ_TYPE);
+}
+
+
+void ConnectionSetup::pre_connection(SocketSetup& socket)
+{
+    socket.set_option(ZMQ_RCVHWM, 0);
+    socket.set_option(ZMQ_SNDHWM, 0);
 }
 
 

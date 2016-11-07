@@ -24,9 +24,59 @@
 #ifndef XMSG_CORE_ADVANCED_H_
 #define XMSG_CORE_ADVANCED_H_
 
-#include <xmsg/third_party/zmq.hpp>
+#include <cstddef>
+#include <type_traits>
 
 namespace xmsg {
+
+/**
+ * Sets options on a new ZMQ socket.
+ *
+ * \see <a href="http://api.zeromq.org/4-1:zmq-setsockopt">zmq_setsockopt</a>
+ */
+class SocketSetup
+{
+public:
+    explicit SocketSetup(void* socket)
+      : socket_{socket}
+    { }
+
+    SocketSetup(const SocketSetup& rhs) = delete;
+    SocketSetup& operator=(const SocketSetup& rhs) = delete;
+
+public:
+    /// Sets the value of a ØMQ socket option
+    void set_option(int opt, const void* val, size_t val_len);
+
+    /// Sets the value of a ØMQ socket option
+    template <typename Integer,
+              typename = std::enable_if_t<std::is_integral<Integer>::value>>
+    void set_option(int opt, const Integer& val)
+    {
+        set_option(opt, &val, sizeof(Integer));
+    }
+
+    /// Gets the value of a ØMQ socket option
+    void get_option(int opt, void* val, size_t* val_len) const;
+
+    /// Gets the value of a ØMQ socket option
+    template <typename Integer,
+              typename = std::enable_if_t<std::is_integral<Integer>::value>>
+    Integer get_option(int opt) const
+    {
+        Integer val;
+        size_t val_len = sizeof(Integer);
+        get_option(opt, &val, &val_len);
+        return val;
+    }
+
+    /// Gets the type of the 0MQ socket
+    int type() const;
+
+private:
+    void* socket_;
+};
+
 
 /**
  * Advanced setup of a connection to an %xMsg proxy.
@@ -45,10 +95,8 @@ public:
      * It should be used to set options on the socket.
      *
      * Leave empty if no configuration is required.
-     *
-     * \see <a href="http://api.zeromq.org/3-2:zmq-setsockopt">zmq_setsockopt</a>
      */
-    virtual void pre_connection(zmq::socket_t& socket);
+    virtual void pre_connection(SocketSetup& socket);
 
     /**
      * Runs after the two sockets have been connected.

@@ -48,8 +48,11 @@ ProxyDriver::ProxyDriver(zmq::context_t& ctx,
 
 void ProxyDriver::connect()
 {
-    setup_->pre_connection(pub_);
-    setup_->pre_connection(sub_);
+    SocketSetup pub_setup{pub_};
+    SocketSetup sub_setup{sub_};
+
+    setup_->pre_connection(pub_setup);
+    setup_->pre_connection(sub_setup);
 
     detail::connect(pub_, addr_.host(), addr_.pub_port());
     detail::connect(sub_, addr_.host(), addr_.sub_port());
