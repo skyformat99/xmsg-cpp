@@ -17,6 +17,7 @@ add_library(xmsg SHARED ${XMSG_FILES} $<TARGET_OBJECTS:xmsgproto>)
 target_link_libraries(xmsg xmsgproto_headers ${ZMQ_LIBRARIES})
 target_include_directories(xmsg PUBLIC
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/src/third_party>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_include_directories(xmsg SYSTEM PUBLIC ${ZMQ_INCLUDE_DIRS})
 

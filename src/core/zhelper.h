@@ -24,7 +24,7 @@
 #ifndef XMSG_CORE_ZHELPER_H
 #define XMSG_CORE_ZHELPER_H
 
-#include <xmsg/third_party/zmq.hpp>
+#include <zmq.hpp>
 
 #include <array>
 #include <string>
