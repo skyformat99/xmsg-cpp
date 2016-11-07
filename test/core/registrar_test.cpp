@@ -13,17 +13,17 @@ using namespace xmsg;
 using namespace xmsg::detail;
 using namespace xmsg::proto;
 
-void test_registration_database(void);
-void add_random(int);
-void remove_random(int);
-void remove_random_host(void);
-void remove_host(const std::string&);
-void remove_all(void);
-void check(void);
-void check(bool);
-Registration discovery_request(const std::string&, bool);
-RegDataSet find(const std::string&, bool);
-bool check_publisher(const Registration&);
+void test_registration_database();
+void add_random(int size);
+void remove_random(int size);
+void remove_random_host();
+void remove_host(const std::string& host);
+void remove_all();
+void check();
+void check(bool is_publisher);
+Registration discovery_request(const std::string& topic, bool is_publisher);
+RegDataSet find(const std::string& topic, bool is_publisher);
+bool check_publisher(const Registration& reg);
 
 detail::Context ctx;
 RegDriver driver{ctx, {}};
@@ -133,7 +133,7 @@ void remove_all()
 }
 
 
-void check(void)
+void check()
 {
     check(true);
     check(false);

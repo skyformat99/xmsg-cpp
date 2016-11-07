@@ -64,7 +64,7 @@ namespace detail {
 
 inline void set_datatype(Meta& meta, const char* datatype)
 {
-    if (datatype) {
+    if (datatype != nullptr) {
         meta.set_datatype(datatype);
     } else {
         throw std::invalid_argument{"null mime-type"};

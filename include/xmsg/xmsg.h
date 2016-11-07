@@ -135,11 +135,11 @@ public:
                   const ProxyAddress& default_proxy,
                   const RegAddress& default_registrar);
 
-    xMsg(const xMsg&) = delete;
-    xMsg& operator=(const xMsg&) = delete;
+    xMsg(const xMsg& rhs) = delete;
+    xMsg& operator=(const xMsg& rhs) = delete;
 
-    xMsg(xMsg&&);
-    xMsg& operator=(xMsg&&);
+    xMsg(xMsg&& rhs);
+    xMsg& operator=(xMsg&& rhs);
 
     virtual ~xMsg();
 
@@ -190,7 +190,7 @@ public:
      * \param timeout the length of time to wait a response, in milliseconds
      * \return the response message
      */
-    Message sync_publish(ProxyConnection&, Message& msg, int timeout);
+    Message sync_publish(ProxyConnection& connection, Message& msg, int timeout);
 
     /**
      * Subscribes to a topic of interest through the specified proxy

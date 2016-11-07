@@ -115,7 +115,7 @@ std::string Topic::type() const
 
 bool Topic::is_parent(const Topic& other) const
 {
-    return !other.str().compare(0, topic_.size(), topic_);
+    return other.topic_.compare(0, topic_.size(), topic_) == 0;
 }
 
 } // end namespace xmsg

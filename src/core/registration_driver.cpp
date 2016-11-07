@@ -244,9 +244,8 @@ Response RegDriver::request(Request& req, int timeout)
             }
         }
         return { in_msg };
-    } else {
-        throw std::runtime_error{"timeout"};
     }
+    throw std::runtime_error{"timeout"};
 }
 
 

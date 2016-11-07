@@ -66,7 +66,7 @@ void update_localhost_addrs()
     std::vector<std::string> tmp_addrs;
 
     for (struct ifaddrs* ifa = ifl; ifa != nullptr; ifa = ifa->ifa_next) {
-        if (!ifa->ifa_addr) {
+        if (ifa->ifa_addr == nullptr) {
             continue;
         }
         if (ifa->ifa_addr->sa_family == AF_INET) {
@@ -94,13 +94,12 @@ std::string to_host_addr(const std::string& hostname)
     }
     if (hostname == "localhost") {
         return get_localhost_addrs()[0];
-    } else {
-        struct hostent* h = gethostbyname(hostname.data());
-        if (h == nullptr) {
-            throw std::system_error{EFAULT, std::system_category()};
-        }
-        return { inet_ntoa(*((struct in_addr*) h->h_addr)) };
     }
+    struct hostent* h = gethostbyname(hostname.data());
+    if (h == nullptr) {
+        throw std::system_error{EFAULT, std::system_category()};
+    }
+    return { inet_ntoa(*((struct in_addr*) h->h_addr)) };
 }
 
 

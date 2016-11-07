@@ -65,7 +65,7 @@ private:
     int pub_port_;
     int sub_port_;
 
-    friend bool operator==(const ProxyAddress&, const ProxyAddress&);
+    friend bool operator==(const ProxyAddress& lhs, const ProxyAddress& rhs);
 };
 
 
@@ -98,7 +98,7 @@ private:
     std::string host_;
     int port_;
 
-    friend bool operator==(const RegAddress&, const RegAddress&);
+    friend bool operator==(const RegAddress& lhs, const RegAddress& rhs);
 };
 
 

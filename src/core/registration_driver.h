@@ -123,7 +123,7 @@ public:
     const RegAddress& address() const { return addr_; }
 
 private:
-    virtual Response request(Request&, int);
+    virtual Response request(Request& req, int timeout);
 
 private:
     RegAddress addr_;

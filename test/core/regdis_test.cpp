@@ -202,7 +202,7 @@ TEST_F(DriverTest, GetRegistration)
     auto all_reg = RegDataSet{publisher, subscriber};
     auto data = new_registration("10.2.9.1_node", "10.2.9.1",
                                  "bradbury:scifi:books", false);
-    set_response({"", "", all_reg});
+    set_response({"", "", all_reg}); // NOLINT
 
     auto res = driver.find(data, false);
 

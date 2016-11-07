@@ -87,7 +87,7 @@ private:
 class ConnectionSetup
 {
 public:
-    virtual ~ConnectionSetup() { }
+    virtual ~ConnectionSetup() = default;
 
     /**
      * Configures the socket before it is connected.

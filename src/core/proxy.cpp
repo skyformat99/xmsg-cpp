@@ -78,7 +78,7 @@ void Proxy::proxy()
         detail::bind(in, addr_.pub_port());
         detail::bind(out, addr_.sub_port());
 
-        zmq::proxy((void*) in, (void*) out, NULL);
+        zmq::proxy((void*) in, (void*) out, nullptr);
     } catch (const zmq::error_t& e) {
         if (e.num() != ETERM) {
             std::lock_guard<std::mutex> lock(mtx);

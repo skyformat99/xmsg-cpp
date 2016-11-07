@@ -47,8 +47,8 @@ static void wait_signals()
     action.sa_flags = 0;
     sigemptyset(&action.sa_mask);
 
-    sigaction(SIGINT, &action, NULL);
-    sigaction(SIGTERM, &action, NULL);
+    sigaction(SIGINT, &action, nullptr);
+    sigaction(SIGTERM, &action, nullptr);
 
     pause();
 

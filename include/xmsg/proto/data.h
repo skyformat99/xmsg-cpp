@@ -58,7 +58,7 @@ namespace proto {
 namespace detail {
 
 template <typename T>
-inline void set_value(Data&, const T&)
+inline void set_value(Data& /*data*/, const T& /*value*/)
         { static_assert(sizeof(T) == 0, "Unsupported data type"); }
 
 inline void set_value(Data& data, std::int32_t value)
@@ -90,7 +90,7 @@ inline void set_value(Data& data, const std::vector<std::string>& value)
         { set_repeated(data.mutable_stringa(), value); }
 
 template <typename T>
-inline T get_value(const Data&)
+inline T get_value(const Data& /*data*/)
         { static_assert(sizeof(T) == 0, "Unsupported data type"); return T{}; }
 
 template<> inline std::int32_t get_value(const Data& data)

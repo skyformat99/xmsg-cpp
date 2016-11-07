@@ -42,8 +42,8 @@ public:
     ConnectionPool(const ConnectionPool&) = delete;
     ConnectionPool& operator=(const ConnectionPool&) = delete;
 
-    ConnectionPool(ConnectionPool&&);
-    ConnectionPool& operator=(ConnectionPool&&);
+    ConnectionPool(ConnectionPool&& rhs);
+    ConnectionPool& operator=(ConnectionPool&& rhs);
 
     virtual ~ConnectionPool();
 

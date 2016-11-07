@@ -80,7 +80,7 @@ public:
     bool poll(int timeout)
     {
         zmq::poll(items_.data(), 1, timeout);
-        return items_[0].revents & ZMQ_POLLIN;
+        return (items_[0].revents & ZMQ_POLLIN) != 0;
     }
 
 private:
