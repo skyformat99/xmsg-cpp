@@ -30,7 +30,7 @@
 #include <string>
 
 namespace xmsg {
-namespace core {
+namespace detail {
 
 class BasicPoller final
 {
@@ -108,7 +108,7 @@ std::string encode_identity(const std::string& address, const std::string& name)
 
 std::string get_random_id();
 
-} // end namespace core
+} // end namespace detail
 } // end namespace xmsg
 
 #endif  // XMSG_CORE_ZHELPER_H

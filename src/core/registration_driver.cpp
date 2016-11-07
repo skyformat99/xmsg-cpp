@@ -102,9 +102,9 @@ Request::Request(std::string topic, std::string sender, std::string text)
 
 
 Request::Request(const RequestMsg& msg)
-  : topic_  {core::to_string(msg[0])},
-    sender_ {core::to_string(msg[1])},
-    data_   {core::to_string(msg[2])}
+  : topic_  {detail::to_string(msg[0])},
+    sender_ {detail::to_string(msg[1])},
+    data_   {detail::to_string(msg[2])}
 {
   // nothing
 }
@@ -158,9 +158,9 @@ Response::Response(std::string topic, std::string sender, std::string error_msg)
 
 
 Response::Response(const ResponseMsg& msg)
-  : topic_  {core::to_string(msg[0])},
-    sender_ {core::to_string(msg[1])},
-    status_ {core::to_string(msg[2])}
+  : topic_  {detail::to_string(msg[0])},
+    sender_ {detail::to_string(msg[1])},
+    status_ {detail::to_string(msg[2])}
 {
     using ZFrame = const zmq::message_t;
     std::for_each(msg.begin() + n_fields, msg.end(), [=](ZFrame& f) {
@@ -193,7 +193,7 @@ RegDriver::RegDriver(zmq::context_t& ctx, RegAddress addr)
 {
     socket_.setsockopt(ZMQ_RCVHWM, 0);
     socket_.setsockopt(ZMQ_SNDHWM, 0);
-    core::connect(socket_, addr_.host(), addr_.port());
+    detail::connect(socket_, addr_.host(), addr_.port());
 }
 
 
@@ -239,7 +239,7 @@ Response RegDriver::request(Request& req, int timeout)
     socket_.send(out_msg[1], ZMQ_SNDMORE);
     socket_.send(out_msg[2], 0);
 
-    auto poller = core::BasicPoller{socket_};
+    auto poller = detail::BasicPoller{socket_};
     if (poller.poll(timeout)) {
         auto in_msg = ResponseMsg{};
         while (true) {

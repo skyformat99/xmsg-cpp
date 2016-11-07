@@ -80,8 +80,8 @@ void Proxy::proxy()
         auto in = create_socket(ctx_, zmq::socket_type::xsub);
         auto out = create_socket(ctx_, zmq::socket_type::xpub);
 
-        core::bind(in, addr_.pub_port());
-        core::bind(out, addr_.sub_port());
+        detail::bind(in, addr_.pub_port());
+        detail::bind(out, addr_.sub_port());
 
         zmq::proxy((void*) in, (void*) out, NULL);
     } catch (const zmq::error_t& e) {
@@ -103,9 +103,9 @@ void Proxy::control()
     auto router = create_socket(ctx_, zmq::socket_type::router);
 
     try {
-        core::connect(control, addr_.host(), addr_.sub_port());
-        core::connect(publisher, addr_.host(), addr_.pub_port());
-        core::bind(router, addr_.pub_port() + 2);
+        detail::connect(control, addr_.host(), addr_.sub_port());
+        detail::connect(publisher, addr_.host(), addr_.pub_port());
+        detail::bind(router, addr_.pub_port() + 2);
     } catch (const zmq::error_t& e) {
         std::lock_guard<std::mutex> lock(mtx);
         std::cerr << "Control socket: " << e.what() << std::endl;
@@ -120,10 +120,10 @@ void Proxy::control()
 
     while (is_alive_) {
         try {
-            auto in_msg = core::recv_msg<3>(control);
+            auto in_msg = detail::recv_msg<3>(control);
 
-            auto type = core::to_string(in_msg[1]);
-            auto id = core::to_string(in_msg[2]);
+            auto type = detail::to_string(in_msg[1]);
+            auto id = detail::to_string(in_msg[2]);
 
             if (type == constants::ctrl_connect) {
                 router.send(id.data(), id.size(), ZMQ_SNDMORE);

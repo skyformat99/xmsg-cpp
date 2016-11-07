@@ -54,7 +54,7 @@ struct xMsg::Impl {
          const ProxyAddress& proxy_addr,
          const RegAddress& reg_addr)
       : name{name},
-        id{core::encode_identity(proxy_addr.host(), name)},
+        id{detail::encode_identity(proxy_addr.host(), name)},
         default_proxy_addr{proxy_addr},
         default_reg_addr{reg_addr}
     { }
@@ -99,7 +99,7 @@ public:
 private:
     detail::ProxyDriver& connection_;
     Topic topic_;
-    core::BasicPoller poller_;
+    detail::BasicPoller poller_;
 };
 /// \endcond
 
@@ -156,7 +156,7 @@ Message xMsg::sync_publish(ProxyConnection& connection,
                            Message& msg,
                            int timeout)
 {
-    auto return_addr = core::get_unique_replyto(xmsg_->id);
+    auto return_addr = detail::get_unique_replyto(xmsg_->id);
     msg.meta_->set_replyto(return_addr);
 
     auto sub = ScopedSubscription{*connection, Topic::raw(return_addr)};

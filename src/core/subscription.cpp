@@ -76,7 +76,7 @@ Subscription::~Subscription()
 
 void Subscription::run()
 {
-    auto poller = core::BasicPoller{connection_->sub_socket()};
+    auto poller = detail::BasicPoller{connection_->sub_socket()};
     const int timeout = 100;
     while (is_alive_.load()) {
         try {

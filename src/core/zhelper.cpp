@@ -52,7 +52,7 @@ const auto id_prefix = cpp_id * 100'000'000 + (ip_hash % 1000) * 100'000;
 
 
 namespace xmsg {
-namespace core {
+namespace detail {
 
 std::string get_unique_replyto(const std::string& subject)
 {

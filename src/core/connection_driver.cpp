@@ -40,7 +40,7 @@ ProxyDriver::ProxyDriver(zmq::context_t& ctx,
     pub_{ctx, zmq::socket_type::pub},
     sub_{ctx, zmq::socket_type::sub},
     control_{ctx, zmq::socket_type::dealer},
-    id_{core::get_random_id()}
+    id_{detail::get_random_id()}
 {
     // nop
 }
@@ -51,17 +51,17 @@ void ProxyDriver::connect()
     setup_->pre_connection(pub_);
     setup_->pre_connection(sub_);
 
-    core::connect(pub_, addr_.host(), addr_.pub_port());
-    core::connect(sub_, addr_.host(), addr_.sub_port());
+    detail::connect(pub_, addr_.host(), addr_.pub_port());
+    detail::connect(sub_, addr_.host(), addr_.sub_port());
 
     const auto& topic = constants::ctrl_topic;
     const auto& request = constants::ctrl_connect;
     const auto& identity = id_;
 
     control_.setsockopt(ZMQ_IDENTITY, identity.data(), identity.size());
-    core::connect(control_, addr_.host(), addr_.sub_port() + 1);
+    detail::connect(control_, addr_.host(), addr_.sub_port() + 1);
 
-    auto poller = core::BasicPoller{control_};
+    auto poller = detail::BasicPoller{control_};
     auto retry = 0;
     while (retry < 10) {
         retry++;
@@ -71,7 +71,7 @@ void ProxyDriver::connect()
             pub_.send(identity.data(), identity.size(), 0);
 
             if (poller.poll(100)) {
-                auto response = core::recv_msg<1>(control_);
+                auto response = detail::recv_msg<1>(control_);
                 break;
             }
         } catch (zmq::error_t& e) {
@@ -101,9 +101,9 @@ void ProxyDriver::send(Message& msg)
 
 Message ProxyDriver::recv()
 {
-    auto multi_msg = core::recv_msg<3>(sub_);
+    auto multi_msg = detail::recv_msg<3>(sub_);
 
-    auto topic = core::to_string(multi_msg[0]);
+    auto topic = detail::to_string(multi_msg[0]);
     auto meta = proto::make_meta();
     meta->ParseFromArray(multi_msg[1].data(), multi_msg[1].size());
 
@@ -123,7 +123,7 @@ void ProxyDriver::subscribe(const Topic& topic)
 
     sub_.setsockopt(ZMQ_SUBSCRIBE, identity.data(), identity.size());
 
-    auto poller = core::BasicPoller{sub_};
+    auto poller = detail::BasicPoller{sub_};
     auto retry = 0;
     while (retry < 10) {
         retry++;
@@ -133,7 +133,7 @@ void ProxyDriver::subscribe(const Topic& topic)
             pub_.send(identity.data(), identity.size(), 0);
 
             if (poller.poll(100)) {
-                auto response = core::recv_msg<2>(sub_);
+                auto response = detail::recv_msg<2>(sub_);
                 break;
             }
         } catch (zmq::error_t& e) {
