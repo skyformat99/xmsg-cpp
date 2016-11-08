@@ -96,7 +96,7 @@ public:
      *
      * Leave empty if no configuration is required.
      */
-    virtual void pre_connection(SocketSetup& socket);
+    virtual void pre_connection(SocketSetup& /*socket*/) {};
 
     /**
      * Runs after the two sockets have been connected.
@@ -106,7 +106,7 @@ public:
      *
      * Leave empty if no action is required.
      */
-    virtual void post_connection();
+    virtual void post_connection() {};
 };
 
 } // end namespace xmsg

@@ -52,17 +52,4 @@ int SocketSetup::type() const
     return get_option<int>(ZMQ_TYPE);
 }
 
-
-void ConnectionSetup::pre_connection(SocketSetup& socket)
-{
-    socket.set_option(ZMQ_RCVHWM, 0);
-    socket.set_option(ZMQ_SNDHWM, 0);
-}
-
-
-void ConnectionSetup::post_connection()
-{
-    // nothing
-}
-
 } // end namespace xmsg
