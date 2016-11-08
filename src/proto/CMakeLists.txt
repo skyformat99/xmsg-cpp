@@ -8,6 +8,7 @@ PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS ${PROTO_FILES})
 
 add_library(xmsgproto OBJECT ${PROTO_SOURCES})
 set_target_properties(xmsgproto PROPERTIES
+  CXX_CLANG_TIDY ""
   POSITION_INDEPENDENT_CODE ON)
 target_include_directories(xmsgproto SYSTEM PRIVATE
   ${PROTOBUF_INCLUDE_DIRS}
