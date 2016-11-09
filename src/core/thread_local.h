@@ -1,7 +1,11 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /* vim: set ts=8 sts=4 et sw=4 tw=80: */
 // Workaround for older compilers not having thread_local storage.
-// Based on http://stackoverflow.com/q/16147621
+//
+// Based on <http://stackoverflow.com/q/16147621> by
+// <http://stackoverflow.com/users/1412605/pontomedon>.
+//
+// Licensed under CC-BY-SA <https://creativecommons.org/licenses/by-sa/3.0/>.
 
 #ifndef XMSG_INTERNAL_THREAD_LOCAL_H
 #define XMSG_INTERNAL_THREAD_LOCAL_H
