@@ -1,2 +1,9 @@
+.idea/
+.metadata/
+.recommenders/
+.settings/
+.cproject
+.project
+
 build/
 Makefile
