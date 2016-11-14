@@ -35,8 +35,14 @@ RegDataSet find(const std::string& topic, bool is_publisher)
             continue;
         }
         auto reg_topic = Topic::build(reg.domain(), reg.subject(), reg.type());
-        if (search_topic.is_parent(reg_topic)) {
-            data.insert(reg);
+        if (is_publisher) {
+            if (search_topic.is_parent(reg_topic)) {
+                data.insert(reg);
+            }
+        } else {
+            if (reg_topic.is_parent(search_topic)) {
+                data.insert(reg);
+            }
         }
     }
     return data;
