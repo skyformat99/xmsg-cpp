@@ -13,59 +13,33 @@ using namespace xmsg;
 using namespace xmsg::detail;
 using namespace xmsg::proto;
 
-void test_registration_database();
-void add_random(int size);
-void remove_random(int size);
-void remove_random_host();
-void remove_host(const std::string& host);
-void remove_all();
-void check();
-void check(bool is_publisher);
-Registration discovery_request(const std::string& topic, bool is_publisher);
-RegDataSet find(const std::string& topic, bool is_publisher);
-bool check_publisher(const Registration& reg);
-
 detail::Context ctx;
 RegDriver driver{ctx, {}};
 
 RegDataSet reg_data;
 std::string name = "registrat_test";
 
-int main()
+
+bool check_publisher(const Registration& reg)
 {
-    using Time = std::chrono::high_resolution_clock;
-    using s = std::chrono::duration<float>;
-
-    auto timer = [t = Time::now()]() {
-        return std::chrono::duration_cast<s>(Time::now() - t).count();
-    };
-
-    test_registration_database();
-
-    printf("Total time: %.2f [s]\n", timer());
-    return 0;
+    return reg.ownertype() == Registration::PUBLISHER;
 }
 
 
-void test_registration_database()
+RegDataSet find(const std::string& topic, bool is_publisher)
 {
-    add_random(10000);
-    check();
-
-    remove_random(2500);
-    check();
-
-    add_random(1000);
-    check();
-
-    remove_random_host();
-    check();
-
-    add_random(1000);
-    check();
-
-    remove_all();
-    check();
+    RegDataSet data;
+    Topic search_topic = Topic::raw(topic);
+    for (auto& reg : reg_data) {
+        if (is_publisher != check_publisher(reg)) {
+            continue;
+        }
+        auto reg_topic = Topic::build(reg.domain(), reg.subject(), reg.type());
+        if (search_topic.is_parent(reg_topic)) {
+            data.insert(reg);
+        }
+    }
+    return data;
 }
 
 
@@ -103,12 +77,6 @@ void remove_random(int size)
 }
 
 
-void remove_random_host()
-{
-    remove_host(test::random(test::hosts));
-}
-
-
 void remove_host(const std::string& host)
 {
     printf("INFO: Removing host %s\n", host.data());
@@ -123,6 +91,12 @@ void remove_host(const std::string& host)
 }
 
 
+void remove_random_host()
+{
+    remove_host(test::random(test::hosts));
+}
+
+
 void remove_all()
 {
     printf("INFO: Removing all actors\n");
@@ -133,10 +107,9 @@ void remove_all()
 }
 
 
-void check()
+Registration discovery_request(const std::string& topic, bool is_publisher)
 {
-    check(true);
-    check(false);
+    return test::new_registration(name, "localhost", topic, is_publisher);
 }
 
 
@@ -162,30 +135,46 @@ void check(bool is_publisher)
 }
 
 
-Registration discovery_request(const std::string& topic, bool is_publisher)
+void check()
 {
-    return test::new_registration(name, "localhost", topic, is_publisher);
+    check(true);
+    check(false);
 }
 
 
-RegDataSet find(const std::string& topic, bool is_publisher)
+void test_registration_database()
 {
-    RegDataSet data;
-    Topic search_topic = Topic::raw(topic);
-    for (auto& reg : reg_data) {
-        if (is_publisher != check_publisher(reg)) {
-            continue;
-        }
-        auto reg_topic = Topic::build(reg.domain(), reg.subject(), reg.type());
-        if (search_topic.is_parent(reg_topic)) {
-            data.insert(reg);
-        }
-    }
-    return data;
+    add_random(10000);
+    check();
+
+    remove_random(2500);
+    check();
+
+    add_random(1000);
+    check();
+
+    remove_random_host();
+    check();
+
+    add_random(1000);
+    check();
+
+    remove_all();
+    check();
 }
 
 
-bool check_publisher(const Registration& reg)
+int main()
 {
-    return reg.ownertype() == Registration::PUBLISHER;
+    using Time = std::chrono::high_resolution_clock;
+    using s = std::chrono::duration<float>;
+
+    auto timer = [t = Time::now()]() {
+        return std::chrono::duration_cast<s>(Time::now() - t).count();
+    };
+
+    test_registration_database();
+
+    printf("Total time: %.2f [s]\n", timer());
+    return 0;
 }
