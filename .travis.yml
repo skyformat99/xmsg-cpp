@@ -1,0 +1,49 @@
+language: cpp
+sudo: false
+
+matrix:
+  include:
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release
+      os: linux
+      addons: &gcc49
+        apt:
+          packages: g++-4.9
+          sources: &sources
+            - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=5 BUILD_TYPE=Release
+      os: linux
+      addons: &gcc5
+        apt:
+          packages: g++-5
+          sources: *sources
+    - env: BUILD_TYPE=Release
+      os: osx
+      osx_image: xcode6.4
+      compiler: clang
+    - env: BUILD_TYPE=Release
+      os: osx
+      osx_image: xcode8
+      compiler: clang
+
+install:
+  - if [[ -n "$GCC_VERSION" ]]; then export CXX=g++-$GCC_VERSION CC=gcc-$GCC_VERSION; fi
+  - export DEPS_DIR=${TRAVIS_BUILD_DIR}/deps INSTALL_DIR=${HOME}/.local JOBS=2
+  - ./.travis/install.sh
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      export PATH="${DEPS_DIR}/cmake/bin:${PATH}:${INSTALL_DIR}/bin"
+      export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${INSTALL_DIR}/lib"
+      export CMAKE_PREFIX_PATH="${INSTALL_DIR}"
+    fi
+
+
+before_script:
+  - cd "${TRAVIS_BUILD_DIR}"
+  - ./configure --build-type=${BUILD_TYPE}
+  - make -j$JOBS
+
+script:
+  - make check
+
+notifications:
+  email: false
