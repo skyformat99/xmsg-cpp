@@ -163,7 +163,7 @@ uninstall:
 
 check:
 	+@if \$(MAKE) -sn -C \$(BUILDDIR) test > /dev/null 2>&1; \\
-	then \$(MAKE) -C \$(BUILDDIR) test; \\
+	then \$(MAKE) -C \$(BUILDDIR) test CTEST_OUTPUT_ON_FAILURE=1; \\
 	else echo "No tests found!"; fi
 
 clean:
