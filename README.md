@@ -114,8 +114,15 @@ Install from the repositories:
 
 Use Homebrew:
 
-    brew tap homebrew/versions
-    brew install zmq protobuf260
+    brew update
+    brew install zmq protobuf@2.6
+    brew link --force protobuf@2.6
+
+The `protobuf@2.6` formula is keg-only.
+If you do not want to symlink it into `/usr/local`,
+follow the instructions given by:
+
+    brew info protobuf@2.6
 
 ### Installation
 
