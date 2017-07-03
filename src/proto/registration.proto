@@ -19,6 +19,8 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
+syntax = "proto2";
+
 option optimize_for = SPEED;
 
 package xmsg.proto;
