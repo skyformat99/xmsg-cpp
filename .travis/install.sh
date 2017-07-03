@@ -43,7 +43,7 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
     wget --no-check-certificate --quiet -O - "${ZMQ_URL}"   | tar --strip-components=1 -xz -C "${DEPS_DIR}/zmq"
     (cd "${DEPS_DIR}/zmq"   && ./configure --prefix="${INSTALL_DIR}" && make -j"$JOBS" && make install)
 else
-    brew install zmq
+    brew install zeromq
     brew install protobuf@2.6
     brew link --force protobuf@2.6
 fi
