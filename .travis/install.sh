@@ -44,6 +44,5 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
     (cd "${DEPS_DIR}/zmq"   && ./configure --prefix="${INSTALL_DIR}" && make -j"$JOBS" && make install)
 else
     brew install zeromq
-    brew install protobuf@2.6
-    brew link --force protobuf@2.6
+    brew install protobuf
 fi

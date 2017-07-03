@@ -115,14 +115,7 @@ Install from the repositories:
 Use Homebrew:
 
     brew update
-    brew install zeromq protobuf@2.6
-    brew link --force protobuf@2.6
-
-The `protobuf@2.6` formula is keg-only.
-If you do not want to symlink it into `/usr/local`,
-follow the instructions given by:
-
-    brew info protobuf@2.6
+    brew install zeromq protobuf
 
 ### Installation
 
