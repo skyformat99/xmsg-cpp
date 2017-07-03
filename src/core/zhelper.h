@@ -104,7 +104,7 @@ RawMessage<N> recv_msg(zmq::socket_t& socket)
             break;
         }
     }
-    if (counter != N || multi_msg.end()->more()) {
+    if (counter != N || multi_msg.back().more()) {
         throw std::runtime_error{"Invalid multi-part message"};
     }
     return multi_msg;
